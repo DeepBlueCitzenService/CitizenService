@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "438489857706",
+    "project_id": "citizen-service"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:438489857706:android:542b702e1c06fcfc",
+        "android_client_info": {
+          "package_name": "io.github.deepbluecitizenservice.citizenservice"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "438489857706-7i8rc4i5j0mvtaj43vkujs7bt729a4qc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.github.deepbluecitizenservice.citizenservice",
+            "certificate_hash": "E5C2DC94B073BE6DF1C927B5F1157C45A9DF7CE1"
+          }
+        },
+        {
+          "client_id": "438489857706-kftln07mjg60o9lpfpqe03kd61orqa1c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBg08Z-OTRw7CBjULIpvPihKTbJeoZTd4E"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

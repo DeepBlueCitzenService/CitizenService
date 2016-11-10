@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">CitizenService</string>
+    <string name="google_login">Login with Google</string>
 </resources>
