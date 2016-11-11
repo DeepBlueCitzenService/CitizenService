@@ -1,19 +1,21 @@
 {
   "project_info": {
-    "project_number": "438489857706",
-    "project_id": "citizen-service"
+    "project_number": "382495725967",
+    "firebase_url": "https://deep-citizen-service.firebaseio.com",
+    "project_id": "deep-citizen-service",
+    "storage_bucket": "deep-citizen-service.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:438489857706:android:542b702e1c06fcfc",
+        "mobilesdk_app_id": "1:382495725967:android:542b702e1c06fcfc",
         "android_client_info": {
           "package_name": "io.github.deepbluecitizenservice.citizenservice"
         }
       },
       "oauth_client": [
         {
-          "client_id": "438489857706-7i8rc4i5j0mvtaj43vkujs7bt729a4qc.apps.googleusercontent.com",
+          "client_id": "382495725967-65d48ipsdef58akq3hhuui8c7mafvojl.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "io.github.deepbluecitizenservice.citizenservice",
@@ -21,13 +23,17 @@
           }
         },
         {
-          "client_id": "438489857706-kftln07mjg60o9lpfpqe03kd61orqa1c.apps.googleusercontent.com",
+          "client_id": "382495725967-imhqnsm4rfn0kr2fuq08ibcgdbn0to7t.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "382495725967-pgljfqdg4v7er9r7mqj3bghdnkf3bl43.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBg08Z-OTRw7CBjULIpvPihKTbJeoZTd4E"
+          "current_key": "AIzaSyAhmuJc6GzNfhw-8OKPHa0rYBa1Wr_xG2o"
         }
       ],
       "services": {
@@ -35,11 +41,16 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "382495725967-imhqnsm4rfn0kr2fuq08ibcgdbn0to7t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }

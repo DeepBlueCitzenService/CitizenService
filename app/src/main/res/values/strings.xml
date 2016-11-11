@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">CitizenService</string>
+    <string name="logged_in_state">LoggedInState</string>
+    <string name="user_name">UserName</string>
+    <string name="user_email">UserEmail</string>
     <string name="google_login">Login with Google</string>
+    <string name="google_logout">Logout from Google</string>
+    <string name="user_preferences_id">User Preferences</string>
+
+    <string name="web_client_id">382495725967-imhqnsm4rfn0kr2fuq08ibcgdbn0to7t.apps.googleusercontent.com</string>
 </resources>
