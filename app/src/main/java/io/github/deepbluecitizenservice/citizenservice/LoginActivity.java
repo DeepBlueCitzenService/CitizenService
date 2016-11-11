@@ -36,18 +36,24 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        //Enable the google sign in API
+        //Request for email as well
+        //The ID token is required for FireBase Authorization
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.web_client_id))
                 .requestEmail()
                 .build();
 
+        //Build the Google Api client
         mGAP = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
+        //Get FireBase Authorization instance
         mAuth = FirebaseAuth.getInstance();
 
+        //Listen for changes in authorization (this is just for testing for now)
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -62,6 +68,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     }
 
 
+    //Connect to google api and start listening for firebase changes
     @Override
     protected void onStart() {
         super.onStart();
@@ -70,6 +77,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
     }
 
+    //Disconnect from google api and stop listening for firebase changes
     @Override
     protected void onStop() {
         super.onStop();
@@ -94,6 +102,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        //If sign in is successful, start the process for authorizing next activities
         if(requestCode ==  RC_SIGN_IN){
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
@@ -106,6 +115,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     protected void handleSignInResult(GoogleSignInResult result){
         if(result.isSuccess()){
             GoogleSignInAccount account = result.getSignInAccount();
+            //Authorize firebase with current google account
             firebaseAuthWithGoogle(account);
         }
     }
@@ -114,22 +124,30 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private void firebaseAuthWithGoogle(GoogleSignInAccount account){
         Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
 
+        //To access the account inside inner anonymous class
         final GoogleSignInAccount act = account;
 
+        //Get credentials to sign into firebase
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+
+        //Sign into firebase
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
 
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithCredential", task.getException());
                         }
 
+                        //Start an intent to start the main activity
                         Intent startMainActivity = new Intent(getBaseContext(), MainActivity.class);
                         startMainActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
+                        //In shared preferences, store some user data and the log in state
+                        //This is to let the app work when offline and faster access
                         SharedPreferences prefs = getSharedPreferences(getString(R.string.user_preferences_id), Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = prefs.edit();
 
@@ -144,9 +162,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 });
     }
 
+    //This prevents the login activity from going back to the main activity (which launches it)
+    //So when the user press 'back' it acts as the home button. The advantage is that the back stack
+    //is not cleared this way, it just acts like it for this screen
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
         moveTaskToBack(true);
     }
 }

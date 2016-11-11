@@ -42,9 +42,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
 
         SharedPreferences prefs = getSharedPreferences(getString(R.string.user_preferences_id), Context.MODE_PRIVATE);
+
+        //Check if logged in through shared preferences
         isLoggedIn = prefs.getBoolean(getString(R.string.logged_in_state), false);
 
+        //Check if user is logged in to firebase
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
         if(user!=null){
             Log.d(TAG, "Current user is: "+ user.getDisplayName());
         }
@@ -52,13 +56,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         Log.d(TAG, "Logged in state in shared preferences" + (isLoggedIn? "True": "False"));
         Log.d(TAG, prefs.getBoolean(getString(R.string.logged_in_state), false)? "True" : "False");
 
+        //While we redirect to the login activity if not connected to firebase OR google, it might be
+        //wise to handle these values separately. This is because shared preferences are available offline
+        //So the non login screens should be visible if user was logged in before the connection was lost
         if(!isLoggedIn || user==null){
+            //If not logged in, start the login activity
             Intent startLoginActivity = new Intent(this, LoginActivity.class);
             startActivity(startLoginActivity);
         }
     }
 
-    public void handleButtonClick(View v){
+    //Handle clicking logout button
+    //Might replace this to another screen later
+    //This is here for testing logging out and logging in
+    public void handleLogoutButtonClick(View v){
         if(mGAP.isConnected()) {
             Auth.GoogleSignInApi.signOut(mGAP).setResultCallback(
                     new ResultCallback<Status>() {
@@ -68,10 +79,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                             SharedPreferences prefs = getSharedPreferences(getString(R.string.user_preferences_id), MODE_PRIVATE);
                             SharedPreferences.Editor editor = prefs.edit();
 
+                            //Set logged in state to false
                             editor.putBoolean(getString(R.string.logged_in_state), false);
                             editor.apply();
 
-                            FirebaseAuth.getInstance().signOut();
+                            //Log out of firebase
+                            if(FirebaseAuth.getInstance().getCurrentUser()!=null)
+                                FirebaseAuth.getInstance().signOut();
 
                             Intent login = new Intent(getBaseContext(), LoginActivity.class);
                             startActivity(login);
