@@ -49,6 +49,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             Log.d(TAG, "Current user is: "+ user.getDisplayName());
         }
 
+        Log.d(TAG, "Logged in state in shared preferences" + (isLoggedIn? "True": "False"));
+        Log.d(TAG, prefs.getBoolean(getString(R.string.logged_in_state), false)? "True" : "False");
+
         if(!isLoggedIn || user==null){
             Intent startLoginActivity = new Intent(this, LoginActivity.class);
             startActivity(startLoginActivity);
@@ -62,6 +65,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         @Override
                         public void onResult(Status status) {
                             Log.d(TAG, "Logged out");
+                            SharedPreferences prefs = getSharedPreferences(getString(R.string.user_preferences_id), MODE_PRIVATE);
+                            SharedPreferences.Editor editor = prefs.edit();
+
+                            editor.putBoolean(getString(R.string.logged_in_state), false);
+                            editor.apply();
+
+                            FirebaseAuth.getInstance().signOut();
+
                             Intent login = new Intent(getBaseContext(), LoginActivity.class);
                             startActivity(login);
                         }
