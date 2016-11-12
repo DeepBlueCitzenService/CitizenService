@@ -3,13 +3,17 @@ package io.github.deepbluecitizenservice.citizenservice;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
+import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
@@ -22,13 +26,14 @@ import com.google.firebase.auth.FirebaseUser;
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     private final String TAG = "Main Activity:";
-    private boolean isLoggedIn = false;
     private GoogleApiClient mGAP;
+    private static final int REQUEST_IMAGE_CAPTURE= 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        createBottomBar();
         handleLogCheck();
     }
 
@@ -48,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         SharedPreferences prefs = getSharedPreferences(getString(R.string.user_preferences_id), Context.MODE_PRIVATE);
 
         //Check if logged in through shared preferences
-        isLoggedIn = prefs.getBoolean(getString(R.string.logged_in_state), false);
+        boolean isLoggedIn = prefs.getBoolean(getString(R.string.logged_in_state), false);
 
         //Check if user is logged in to firebase
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -101,5 +106,76 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+    private void createBottomBar(){
+        AHBottomNavigation bottomNavigation = (AHBottomNavigation) findViewById(R.id.bottom_navigation);
+
+        // Create items
+        AHBottomNavigationItem item1 = new AHBottomNavigationItem(R.string.bottom_bar_tab1, R.drawable.ic_home, R.color.colorPrimary);
+        AHBottomNavigationItem item2 = new AHBottomNavigationItem(R.string.bottom_bar_tab2, R.drawable.ic_world, R.color.colorPrimary);
+        AHBottomNavigationItem item3 = new AHBottomNavigationItem(R.string.bottom_bar_tab3, R.drawable.ic_camera, R.color.colorPrimary);
+        AHBottomNavigationItem item4 = new AHBottomNavigationItem(R.string.bottom_bar_tab4, R.drawable.ic_settings, R.color.colorPrimary);
+
+        // Add items
+        bottomNavigation.addItem(item1);
+        bottomNavigation.addItem(item2);
+        bottomNavigation.addItem(item3);
+        bottomNavigation.addItem(item4);
+
+        // Set background color
+        bottomNavigation.setDefaultBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
+
+        // Disable the translation inside the CoordinatorLayout
+        bottomNavigation.setBehaviorTranslationEnabled(false);
+
+        // Change colors of icons, when active and inactive
+        bottomNavigation.setAccentColor(ContextCompat.getColor(this, R.color.colorAccent));
+        bottomNavigation.setInactiveColor(ContextCompat.getColor(this, R.color.inactiveBottomBar));
+
+        // Force to tint the drawable (useful for font with icon for example)
+        bottomNavigation.setForceTint(true);
+
+        // Manage titles
+        bottomNavigation.setTitleState(AHBottomNavigation.TitleState.ALWAYS_SHOW);
+
+        // Set current item programmatically
+        bottomNavigation.setCurrentItem(0);
+
+        // Set listeners
+        bottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
+            @Override
+            public boolean onTabSelected(int position, boolean wasSelected) {
+                if(position == 2){
+                    openCameraActivity();
+                }
+                else
+                    return true;
+
+                return true;
+            }
+        });
+
+        bottomNavigation.setOnNavigationPositionListener(new AHBottomNavigation.OnNavigationPositionListener() {
+            @Override public void onPositionChange(int y) {
+                // Manage the new y position
+            }
+        });
+    }
+
+    private void openCameraActivity(){
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if(takePictureIntent.resolveActivity(getPackageManager())!=null){
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == REQUEST_IMAGE_CAPTURE){
+            Log.d(TAG, "Back from camera activity");
+        }
     }
 }

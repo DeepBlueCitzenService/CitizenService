@@ -30,6 +30,7 @@ dependencies {
     compile 'com.google.firebase:firebase-core:9.8.0'
     compile 'com.google.firebase:firebase-storage:9.8.0'
     compile 'com.google.firebase:firebase-auth:9.8.0'
+    compile 'com.aurelhubert:ahbottomnavigation:2.0.1'
     testCompile 'junit:junit:4.12'
 }
 
