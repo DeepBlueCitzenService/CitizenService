@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private final String TAG = "Main Activity:";
     private GoogleApiClient mGAP;
     private static final int REQUEST_IMAGE_CAPTURE= 1;
+    private AHBottomNavigation bottomNavigation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
     private void createBottomBar(){
-        AHBottomNavigation bottomNavigation = (AHBottomNavigation) findViewById(R.id.bottom_navigation);
+        bottomNavigation = (AHBottomNavigation) findViewById(R.id.bottom_navigation);
 
         // Create items
         AHBottomNavigationItem item1 = new AHBottomNavigationItem(R.string.bottom_bar_tab1, R.drawable.ic_home, R.color.colorPrimary);
@@ -146,6 +147,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         bottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
             @Override
             public boolean onTabSelected(int position, boolean wasSelected) {
+                Log.d(TAG, "Tab changed to "+ position);
                 if(position == 2){
                     openCameraActivity();
                 }
@@ -176,6 +178,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         if(requestCode == REQUEST_IMAGE_CAPTURE){
             Log.d(TAG, "Back from camera activity");
+            bottomNavigation.setCurrentItem(0);
         }
     }
 }
