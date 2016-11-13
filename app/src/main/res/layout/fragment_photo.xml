@@ -1,0 +1,52 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum = "2"
+    tools:context="io.github.deepbluecitizenservice.citizenservice.PhotoFragment">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:id="@+id/PhotoFragmentImageView"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_height="160dp"
+        android:contentDescription="@string/photofragment_imageview_description"
+        app:srcCompat="@drawable/ic_camera"
+        android:scaleType="fitCenter" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:weightSum="2"
+        android:layout_below="@+id/PhotoFragmentImageView"
+        android:layout_alignParentStart="true">
+
+        <Button
+            style="?android:attr/borderlessButtonStyle"
+            android:id= "@+id/PhotoFragmentCamera"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textColor="@color/inactiveBottomBar"
+            android:text= "@string/photofragment_button_camera"
+            android:background="@color/colorPrimary"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:translationX="-1dp"
+            />
+
+        <Button
+            style="?android:attr/borderlessButtonStyle"
+            android:id = "@+id/PhotoFragmentGallery"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text= "@string/photofragment_button_gallery"
+            android:textColor="@color/inactiveBottomBar"
+            android:background="@color/colorPrimary"
+            android:translationX="1dp"
+            />
+    </LinearLayout>
+</RelativeLayout>

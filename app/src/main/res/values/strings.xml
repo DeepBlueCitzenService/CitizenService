@@ -16,4 +16,11 @@
     <string name="bottom_bar_tab4">Settings</string>
 
     <string name="web_client_id">382495725967-imhqnsm4rfn0kr2fuq08ibcgdbn0to7t.apps.googleusercontent.com</string>
+
+    <string name="photofragment_button_camera">Camera</string>
+    <string name="photofragment_button_gallery">Gallery</string>
+    <string name="photofragment_imageview_description">Image to be uploaded</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

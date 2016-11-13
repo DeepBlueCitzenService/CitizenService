@@ -1,9 +1,11 @@
 package io.github.deepbluecitizenservice.citizenservice;
 
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 
 import android.support.v4.content.ContextCompat;
@@ -26,9 +28,10 @@ import com.google.firebase.auth.FirebaseUser;
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     private final String TAG = "Main Activity:";
-    private GoogleApiClient mGAP;
+    //private GoogleApiClient mGAP;
     private static final int REQUEST_IMAGE_CAPTURE= 1;
     private AHBottomNavigation bottomNavigation;
+    private Fragment lastFragment = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,15 +43,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     //Login check and handler
     private void handleLogCheck(){
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.web_client_id))
-                .requestEmail()
-                .build();
-
-        mGAP = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
+//        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//                .requestIdToken(getString(R.string.web_client_id))
+//                .requestEmail()
+//                .build();
+//
+//        mGAP = new GoogleApiClient.Builder(this)
+//                .enableAutoManage(this, this)
+//                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+//                .build();
 
 
         SharedPreferences prefs = getSharedPreferences(getString(R.string.user_preferences_id), Context.MODE_PRIVATE);
@@ -79,30 +82,32 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     //Handle clicking logout button
     //Might replace this to another screen later
     //This is here for testing logging out and logging in
-    public void handleLogoutButtonClick(View v){
-        if(mGAP.isConnected()) {
-            Auth.GoogleSignInApi.signOut(mGAP).setResultCallback(
-                    new ResultCallback<Status>() {
-                        @Override
-                        public void onResult(@NonNull Status status) {
-                            Log.d(TAG, "Logged out");
-                            SharedPreferences prefs = getSharedPreferences(getString(R.string.user_preferences_id), MODE_PRIVATE);
-                            SharedPreferences.Editor editor = prefs.edit();
+    //Need to move this to settings fragment
 
-                            //Set logged in state to false
-                            editor.putBoolean(getString(R.string.logged_in_state), false);
-                            editor.apply();
-
-                            //Log out of firebase
-                            if(FirebaseAuth.getInstance().getCurrentUser()!=null)
-                                FirebaseAuth.getInstance().signOut();
-
-                            Intent login = new Intent(getBaseContext(), LoginActivity.class);
-                            startActivity(login);
-                        }
-                    });
-        }
-    }
+//    public void handleLogoutButtonClick(View v){
+//        if(mGAP.isConnected()) {
+//            Auth.GoogleSignInApi.signOut(mGAP).setResultCallback(
+//                    new ResultCallback<Status>() {
+//                        @Override
+//                        public void onResult(@NonNull Status status) {
+//                            Log.d(TAG, "Logged out");
+//                            SharedPreferences prefs = getSharedPreferences(getString(R.string.user_preferences_id), MODE_PRIVATE);
+//                            SharedPreferences.Editor editor = prefs.edit();
+//
+//                            //Set logged in state to false
+//                            editor.putBoolean(getString(R.string.logged_in_state), false);
+//                            editor.apply();
+//
+//                            //Log out of firebase
+//                            if(FirebaseAuth.getInstance().getCurrentUser()!=null)
+//                                FirebaseAuth.getInstance().signOut();
+//
+//                            Intent login = new Intent(getBaseContext(), LoginActivity.class);
+//                            startActivity(login);
+//                        }
+//                    });
+//        }
+//    }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -147,12 +152,51 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         bottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
             @Override
             public boolean onTabSelected(int position, boolean wasSelected) {
-                Log.d(TAG, "Tab changed to "+ position);
-                if(position == 2){
-                    openCameraActivity();
+                Log.d(TAG, "Tab changed to "+ position +" was selected: "+wasSelected);
+                FragmentManager fm = getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fm.beginTransaction();
+
+                switch(position){
+                    case 0:
+                    case 1:
+                        if(lastFragment!=null) {
+                            Log.d(TAG, lastFragment instanceof  PhotoFragment? "Coming from photo fragment": "Oops");
+                            if (lastFragment instanceof PhotoFragment) {
+                                fragmentTransaction
+                                        .remove(lastFragment)
+                                        .commit();
+                                lastFragment = null;
+                            }
+                        }
+
+                        break;
+
+                    case 2:
+                        if(!wasSelected) {
+                            PhotoFragment photoFragment = new PhotoFragment();
+                            lastFragment = photoFragment;
+                            fragmentTransaction
+                                    .add(R.id.fragment_container, photoFragment)
+                                    .commit();
+                            break;
+                        }
+
+                        break;
+
+                    case 3:
+                        if(lastFragment!=null) {
+                            if (lastFragment instanceof PhotoFragment) {
+                                fragmentTransaction
+                                        .remove(lastFragment)
+                                        .commit();
+                                lastFragment = null;
+                            }
+                        }
+                        break;
+
+                    default:
+                        return true;
                 }
-                else
-                    return true;
 
                 return true;
             }
@@ -163,13 +207,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 // Manage the new y position
             }
         });
-    }
 
-    private void openCameraActivity(){
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if(takePictureIntent.resolveActivity(getPackageManager())!=null){
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        }
+        //For implementing back stack UI changes when all fragments are added
+//        getSupportFragmentManager().addOnBackStackChangedListener(
+//                new FragmentManager.OnBackStackChangedListener() {
+//                    @Override
+//                    public void onBackStackChanged() {
+//
+//                    }
+//                }
+//        );
     }
 
     @Override
@@ -180,5 +227,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             Log.d(TAG, "Back from camera activity");
             bottomNavigation.setCurrentItem(0);
         }
+
+//        else if(requestCode== 100){
+//            Log.d(TAG, "Camera fired from fragment");
+//        }
     }
 }
