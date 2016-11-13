@@ -33,7 +33,7 @@
                         android:layout_height="40dp"
                         android:layout_width="match_parent"
                         android:id="@+id/user_image"
-                        android:src="@drawable/ccd"
+                        android:src="@drawable/ic_media_play"
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true">
                     </ImageView>

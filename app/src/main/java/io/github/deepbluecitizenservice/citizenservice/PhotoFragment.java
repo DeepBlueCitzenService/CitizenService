@@ -205,14 +205,14 @@ public class PhotoFragment extends Fragment {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Log.d(TAG, "Upload successful");
-                mListener.onPhotoUploadComplete(true);
+                //mListener.onPhotoUploadComplete(true);
             }
         })
         .addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.d(TAG, "Upload unsuccessful");
-                mListener.onPhotoUploadComplete(false);
+                //mListener.onPhotoUploadComplete(false);
             }
         })
         .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
