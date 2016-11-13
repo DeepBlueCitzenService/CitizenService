@@ -25,11 +25,10 @@ import com.google.android.gms.common.api.Status;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, PhotoFragment.OnPhotoListener {
 
     private final String TAG = "Main Activity:";
     //private GoogleApiClient mGAP;
-    private static final int REQUEST_IMAGE_CAPTURE= 1;
     private AHBottomNavigation bottomNavigation;
     private Fragment lastFragment = null;
 
@@ -219,17 +218,27 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 //        );
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(requestCode == REQUEST_IMAGE_CAPTURE){
-            Log.d(TAG, "Back from camera activity");
-            bottomNavigation.setCurrentItem(0);
-        }
-
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        if(requestCode == REQUEST_IMAGE_CAPTURE){
+//            Log.d(TAG, "Back from camera activity");
+//            bottomNavigation.setCurrentItem(0);
+//        }
+//
 //        else if(requestCode== 100){
 //            Log.d(TAG, "Camera fired from fragment");
 //        }
+//    }
+
+    @Override
+    public void changeView(int toWhere) {
+        bottomNavigation.setCurrentItem(toWhere);
+    }
+
+    @Override
+    public void onPhotoUploadComplete(boolean wasSuccessful) {
+
     }
 }
