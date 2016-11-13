@@ -24,4 +24,6 @@
     <string name="location_content_description">Location</string>
     <string name="add_location">Add Location</string>
     <string name="upload_content_description">Upload Image Icon</string>
+
+    <string name="title_activity_maps">Map</string>
 </resources>
