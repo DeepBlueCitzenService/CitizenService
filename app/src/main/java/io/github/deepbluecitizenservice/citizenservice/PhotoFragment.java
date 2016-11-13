@@ -1,6 +1,7 @@
 package io.github.deepbluecitizenservice.citizenservice;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -11,14 +12,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-
 import android.support.v4.app.NotificationCompat;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -27,7 +28,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -64,14 +64,28 @@ public class PhotoFragment extends Fragment {
         imagePath= "";
         hasLocation = false;
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_photo, container, false);
+        View view = inflater.inflate(R.layout.activity_add, container, false);
 
-        Button cameraButton = (Button) view.findViewById(R.id.PhotoFragmentCamera);
-        Button galleryButton = (Button) view.findViewById(R.id.PhotoFragmentGallery);
-        Button uploadButton = (Button) view.findViewById(R.id.PhotoFragmentUpload);
-        Button locationButton = (Button) view.findViewById(R.id.PhotoFragmentLocation);
+        final Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.dialog_source);
 
-        mImageView = (ImageView) view.findViewById(R.id.PhotoFragmentImageView);
+        ImageView cameraButton = (ImageView) dialog.findViewById(R.id.dialog_camera_button);
+        ImageView galleryButton = (ImageView) dialog.findViewById(R.id.dialog_gallery_button);
+
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.problem_fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.show();
+            }
+        });
+
+        Toolbar toolbar = ((MainActivity)this.getActivity()).getToolbar();
+        ImageView uploadButton = (ImageView) toolbar.findViewById(R.id.toolbar_upload);
+
+        ImageView locationButton = (ImageView) view.findViewById(R.id.problem_location_edit);
+
+        mImageView = (ImageView) view.findViewById(R.id.problem_image);
 
         //Handle button clicks
         cameraButton.setOnClickListener(new View.OnClickListener() {
@@ -81,6 +95,7 @@ public class PhotoFragment extends Fragment {
 
                 Intent startCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(startCamera, CAMERA_CALL);
+                dialog.dismiss();
             }
         });
 
@@ -90,6 +105,7 @@ public class PhotoFragment extends Fragment {
                 Log.d(TAG, "Gallery Button clicked");
                 Intent startGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(startGallery, GALLERY_CALL);
+                dialog.dismiss();
             }
         });
 

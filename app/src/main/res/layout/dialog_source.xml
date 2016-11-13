@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:layout_marginBottom="20dp"
+        android:id="@+id/dialog_title"
+        android:text="Select Source"/>
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_below="@+id/dialog_title"
+        android:id="@+id/dialog_camera_button"
+        android:layout_alignParentStart="true"
+        android:scaleX="0.5"
+        android:scaleY="0.5"
+        android:src="@drawable/ic_camera"/>
+
+    <TextView
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="Camera"
+        android:gravity="center"
+        android:layout_below="@id/dialog_camera_button"
+        android:layout_alignStart="@id/dialog_camera_button"/>
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_below="@+id/dialog_title"
+        android:id="@+id/dialog_gallery_button"
+        android:layout_toRightOf="@+id/dialog_camera_button"
+        android:scaleX="0.5"
+        android:scaleY="0.5"
+        android:src="@drawable/ic_image_black"/>
+
+    <TextView
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="Gallery"
+        android:gravity="center"
+        android:layout_below="@id/dialog_gallery_button"
+        android:layout_alignStart="@id/dialog_gallery_button"/>
+
+</RelativeLayout>
