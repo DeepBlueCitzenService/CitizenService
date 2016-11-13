@@ -1,6 +1,5 @@
 package io.github.deepbluecitizenservice.citizenservice.database;
 
-import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties

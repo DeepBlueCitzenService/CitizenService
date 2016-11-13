@@ -1,9 +1,13 @@
 package io.github.deepbluecitizenservice.citizenservice.database;
 
 import android.net.Uri;
+import android.util.Log;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +16,7 @@ import io.github.deepbluecitizenservice.citizenservice.data.Problem;
 
 public class CustomDatabase{
     private DatabaseReference db;
+    public static final int DB_OPTION_OPEN = 1111, DB_OPTION_SOLVED=22222;
 
     public CustomDatabase(DatabaseReference reference){
         this.db = reference;
@@ -52,13 +57,5 @@ public class CustomDatabase{
         db.child("users").child(uid).child(ProblemModel.OPEN_PROBLEM).removeValue();
         db.child("users").child(uid).child(ProblemModel.SOLVED_PROBLEM).setValue(problemId);
         db.child("problems").child(problemId).child("solutionUrl").setValue(SolutionURL);
-    }
-
-    public ArrayList<UserModel> getAllUsers(int start, int howMany){
-        return null;
-    }
-
-    public ArrayList<ProblemModel> getAllProblems(int start , int howMany){
-        return null;
     }
 }
