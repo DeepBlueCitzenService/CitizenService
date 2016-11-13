@@ -1,11 +1,12 @@
 package io.github.deepbluecitizenservice.citizenservice.database;
 
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
 public class ProblemModel{
 
-    public String url, creatorKey, description, locationAddress;
+    public String url, creatorKey, description, locationAddress, solutionUrl;
     public double locationX, locationY;
     public long SLA, timeCreated;
     public int status, category;

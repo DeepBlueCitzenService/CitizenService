@@ -2,6 +2,7 @@ package io.github.deepbluecitizenservice.citizenservice.database;
 
 import android.net.Uri;
 
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
@@ -47,32 +48,10 @@ public class CustomDatabase{
         db.child("problems").child(key).setValue(problem);
     }
 
-    public void addProblemToUser(String key){
-
-    }
-
-    public void updateProblem(UserModel user){
-
-    }
-
-    public void updateUser(ProblemModel problem){
-
-    }
-
-    public void updateProblemById(String id){
-
-    }
-
-    public UserModel getUserById(String id){
-        return null;
-    }
-
-    public UserModel getUserByEmail(String email){
-        return null;
-    }
-
-    public ProblemModel getProblemById(int id){
-        return null;
+    public void updateProblemToSolved(String uid, String problemId, Uri SolutionURL){
+        db.child("users").child(uid).child(ProblemModel.OPEN_PROBLEM).removeValue();
+        db.child("users").child(uid).child(ProblemModel.SOLVED_PROBLEM).setValue(problemId);
+        db.child("problems").child(problemId).child("solutionUrl").setValue(SolutionURL);
     }
 
     public ArrayList<UserModel> getAllUsers(int start, int howMany){
