@@ -19,8 +19,9 @@
 
     <string name="photofragment_button_camera">Camera</string>
     <string name="photofragment_button_gallery">Gallery</string>
+    <string name="photofragment_button_upload">Upload Image</string>
     <string name="photofragment_imageview_description">Image to be uploaded</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="location_content_description">Location</string>
+    <string name="add_location">Add Location</string>
+    <string name="upload_content_description">Upload Image Icon</string>
 </resources>

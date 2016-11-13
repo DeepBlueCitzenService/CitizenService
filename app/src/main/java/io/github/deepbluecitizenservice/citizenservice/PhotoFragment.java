@@ -25,9 +25,9 @@ import java.io.File;
 
 public class PhotoFragment extends Fragment {
     private final String TAG = "PhotoFragment";
-    public final static int GALLERY_CALL = 200;
-    public final static int CAMERA_CALL = 100;
-
+    private final static int GALLERY_CALL = 200;
+    private final static int CAMERA_CALL = 100;
+    private String imagePath ="";
     private ImageView mImageView;
     //private OnPhotoListener mListener;
 
@@ -80,29 +80,33 @@ public class PhotoFragment extends Fragment {
         if(requestCode== GALLERY_CALL){
             Log.d(TAG, "Gallery activity "+"Result code "+ resultCode);
              if(resultCode== Activity.RESULT_OK) {
-                 String picturepath = getFilePathFromGallery(data);
-
-                 //Get data URI
-                 Log.d(TAG, "Picture path: "+picturepath);
-
-                 //Change image using setImageBitmap
-                 if(mImageView!=null) {
-                     try{
-                         Bitmap bitmap = BitmapFactory.decodeFile(picturepath);
-                         Log.d(TAG, (bitmap==null? "Bitmap not loaded":"Bitmap loaded"));
-                         mImageView.setImageBitmap(bitmap);
-                     }
-
-                     catch(OutOfMemoryError e){
-                         Log.d(TAG, "Image too large");
-                     }
-
-                     catch (Exception e){
-                         Log.d(TAG, "Other error");
-                         e.printStackTrace();
-                     }
-                 }
+                 handleGalleryUpload(data);
              }
+        }
+    }
+
+    private void handleGalleryUpload(Intent data){
+        imagePath = getFilePathFromGallery(data);
+
+        //Get data URI
+        Log.d(TAG, "Picture path: "+imagePath);
+
+        //Change image using setImageBitmap
+        if(mImageView!=null) {
+            try{
+                Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+                Log.d(TAG, (bitmap==null? "Bitmap not loaded":"Bitmap loaded"));
+                mImageView.setImageBitmap(bitmap);
+            }
+
+            catch(OutOfMemoryError e){
+                Log.d(TAG, "Image too large");
+            }
+
+            catch (Exception e){
+                Log.d(TAG, "Other error");
+                e.printStackTrace();
+            }
         }
     }
 
