@@ -27,6 +27,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -34,14 +36,22 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 
+import io.github.deepbluecitizenservice.citizenservice.data.Problem;
+import io.github.deepbluecitizenservice.citizenservice.database.CustomDatabase;
+
 public class PhotoFragment extends Fragment {
     private final String TAG = "PhotoFragment";
     private final static int GALLERY_CALL = 200;
     private final static int CAMERA_CALL = 100;
-    private String imagePath ="";
-    private boolean hasLocation = false;
+
     private ImageView mImageView;
     private OnPhotoListener mListener;
+
+    //Set these values before upload is available
+    private String imagePath ="", locationAddress = "";
+    private boolean hasLocation = false, hasCategory = false;
+    private double locationX, locationY;
+    private int category;
 
     public PhotoFragment() {
         // Required empty public constructor
@@ -52,6 +62,7 @@ public class PhotoFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         imagePath= "";
+        hasLocation = false;
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_photo, container, false);
 
@@ -94,7 +105,7 @@ public class PhotoFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "Upload button clicked");
-                if(hasLocation && imagePath.length()>0)
+                if(hasLocation && imagePath.length()>0 && hasCategory)
                     handleImageUpload();
             }
         });
@@ -161,9 +172,22 @@ public class PhotoFragment extends Fragment {
         return picturepath;
     }
 
-    //Get the current location and store it in a global variable
+    //TODO: Get the current location and store it in a global variable
     private void setCurrentLocation(){
+        locationAddress = "Bandra Kurla Complex";
+        locationX = 3.333;
+        locationY = 44.5555;
         hasLocation= true;
+
+        //TODO: START DEBUG BLOCK: Remove this after implementation
+        getImageCategory();
+        //TODO: END DEBUG BLOCK: Remove this after implementation
+    }
+
+    //TODO: Set category
+    private void getImageCategory(){
+        hasCategory = true;
+        category = Problem.CATEGORY_GARBAGE;
     }
 
     //Handle uploads
@@ -191,8 +215,13 @@ public class PhotoFragment extends Fragment {
         }
 
         //Create a unique file reference in FireBase
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child(userName+"/openProblems/problem-"+ts+".jpg");
+        StorageReference storageRef = FirebaseStorage.getInstance()
+                                            .getReference()
+                                            .child(userName+"/openProblems/problem-"+ts+".jpg");
+
         Uri file = Uri.fromFile(new File(imagePath));
+
+        updateDatabase(userName+"/openProblems/problem-"+ts+".jpg", tsLong);
 
         //Start uploading in the background
         UploadTask uploadTask = storageRef.putFile(file);
@@ -205,14 +234,12 @@ public class PhotoFragment extends Fragment {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Log.d(TAG, "Upload successful");
-                //mListener.onPhotoUploadComplete(true);
             }
         })
         .addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.d(TAG, "Upload unsuccessful");
-                //mListener.onPhotoUploadComplete(false);
             }
         })
         .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
@@ -234,6 +261,15 @@ public class PhotoFragment extends Fragment {
         });
     }
 
+    //Update database with the current problem, attaching it to the user as well
+    private void updateDatabase(String url, Long timeCreated){
+        CustomDatabase db = new CustomDatabase(FirebaseDatabase.getInstance().getReference());
+
+        db.createProblem(url, Problem.STATUS_UNSOLVED, locationX, locationY, locationAddress,
+                FirebaseAuth.getInstance().getCurrentUser().getUid(), 7, timeCreated, "A problem",
+                Problem.CATEGORY_POTHOLES);
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -253,7 +289,6 @@ public class PhotoFragment extends Fragment {
     }
 
     public interface OnPhotoListener {
-        void onPhotoUploadComplete(boolean wasSuccessful);
         void changeView(int toWhere);
     }
 }

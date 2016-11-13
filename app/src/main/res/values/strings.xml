@@ -4,6 +4,7 @@
     <string name="logged_in_state">LoggedInState</string>
     <string name="user_name">UserName</string>
     <string name="user_email">UserEmail</string>
+    <string name="user_exists_in_firebase">UserExistsInFirebase</string>
 
     <string name="google_login">Login with Google</string>
     <string name="google_logout">Logout from Google</string>
@@ -26,4 +27,7 @@
     <string name="upload_content_description">Upload Image Icon</string>
 
     <string name="title_activity_maps">Map</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

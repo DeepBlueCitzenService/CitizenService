@@ -22,6 +22,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.FirebaseDatabase;
+
+import io.github.deepbluecitizenservice.citizenservice.database.CustomDatabase;
 
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
@@ -154,6 +157,14 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                         editor.putBoolean(getString(R.string.logged_in_state), true);
                         editor.putString(getString(R.string.user_name), act.getDisplayName());
                         editor.putString(getString(R.string.user_email), act.getEmail());
+
+                        //Create a new user if logging in for the first time
+                        if(!prefs.getBoolean(getString(R.string.user_exists_in_firebase), false)) {
+                            CustomDatabase db = new CustomDatabase(FirebaseDatabase.getInstance().getReference());
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            db.createUser(user.getDisplayName(), user.getEmail(), user.getUid(), user.getPhotoUrl());
+                            editor.putBoolean(getString(R.string.user_exists_in_firebase), true);
+                        }
 
                         editor.apply();
 

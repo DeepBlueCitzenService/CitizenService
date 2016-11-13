@@ -12,7 +12,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
@@ -25,32 +24,33 @@ import com.google.android.gms.common.api.Status;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, PhotoFragment.OnPhotoListener {
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
+        PhotoFragment.OnPhotoListener, SettingsFragment.OnSettingsFragmentInteraction {
 
     private final String TAG = "Main Activity:";
-    //private GoogleApiClient mGAP;
+    private GoogleApiClient mGAP;
     private AHBottomNavigation bottomNavigation;
     private Fragment lastFragment = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        handleLogCheck();
         setContentView(R.layout.activity_main);
         createBottomBar();
-        handleLogCheck();
     }
 
     //Login check and handler
     private void handleLogCheck(){
-//        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//                .requestIdToken(getString(R.string.web_client_id))
-//                .requestEmail()
-//                .build();
-//
-//        mGAP = new GoogleApiClient.Builder(this)
-//                .enableAutoManage(this, this)
-//                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-//                .build();
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.web_client_id))
+                .requestEmail()
+                .build();
+
+        mGAP = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
 
 
         SharedPreferences prefs = getSharedPreferences(getString(R.string.user_preferences_id), Context.MODE_PRIVATE);
@@ -83,30 +83,31 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     //This is here for testing logging out and logging in
     //Need to move this to settings fragment
 
-//    public void handleLogoutButtonClick(View v){
-//        if(mGAP.isConnected()) {
-//            Auth.GoogleSignInApi.signOut(mGAP).setResultCallback(
-//                    new ResultCallback<Status>() {
-//                        @Override
-//                        public void onResult(@NonNull Status status) {
-//                            Log.d(TAG, "Logged out");
-//                            SharedPreferences prefs = getSharedPreferences(getString(R.string.user_preferences_id), MODE_PRIVATE);
-//                            SharedPreferences.Editor editor = prefs.edit();
-//
-//                            //Set logged in state to false
-//                            editor.putBoolean(getString(R.string.logged_in_state), false);
-//                            editor.apply();
-//
-//                            //Log out of firebase
-//                            if(FirebaseAuth.getInstance().getCurrentUser()!=null)
-//                                FirebaseAuth.getInstance().signOut();
-//
-//                            Intent login = new Intent(getBaseContext(), LoginActivity.class);
-//                            startActivity(login);
-//                        }
-//                    });
-//        }
-//    }
+    @Override
+    public void onLogoutClick(){
+        if(mGAP.isConnected()) {
+            Auth.GoogleSignInApi.signOut(mGAP).setResultCallback(
+                    new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(@NonNull Status status) {
+                            Log.d(TAG, "Logged out");
+                            SharedPreferences prefs = getSharedPreferences(getString(R.string.user_preferences_id), MODE_PRIVATE);
+                            SharedPreferences.Editor editor = prefs.edit();
+
+                            //Set logged in state to false
+                            editor.putBoolean(getString(R.string.logged_in_state), false);
+                            editor.apply();
+
+                            //Log out of firebase
+                            if(FirebaseAuth.getInstance().getCurrentUser()!=null)
+                                FirebaseAuth.getInstance().signOut();
+
+                            Intent login = new Intent(getBaseContext(), LoginActivity.class);
+                            startActivity(login);
+                        }
+                    });
+        }
+    }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -159,38 +160,50 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     case 0:
                     case 1:
                         if(lastFragment!=null) {
-                            Log.d(TAG, lastFragment instanceof  PhotoFragment? "Coming from photo fragment": "Oops");
-                            if (lastFragment instanceof PhotoFragment) {
-                                fragmentTransaction
-                                        .remove(lastFragment)
-                                        .commit();
-                                lastFragment = null;
-                            }
+                            fragmentTransaction
+                                    .remove(lastFragment)
+                                    .commit();
+                            lastFragment = null;
                         }
-
                         break;
 
                     case 2:
-                        if(!wasSelected) {
+                        if(!wasSelected){
                             PhotoFragment photoFragment = new PhotoFragment();
+                            if(lastFragment!=null){
+                                fragmentTransaction
+                                        .replace(R.id.fragment_container, photoFragment)
+                                        .commit();
+                            }
+                            else{
+                                fragmentTransaction
+                                        .add(R.id.fragment_container, photoFragment)
+                                        .commit();
+                            }
+
                             lastFragment = photoFragment;
-                            fragmentTransaction
-                                    .add(R.id.fragment_container, photoFragment)
-                                    .commit();
-                            break;
                         }
 
                         break;
 
                     case 3:
-                        if(lastFragment!=null) {
-                            if (lastFragment instanceof PhotoFragment) {
+
+                        if(!wasSelected){
+                            SettingsFragment settingsFragment = new SettingsFragment();
+                            if(lastFragment!=null){
                                 fragmentTransaction
-                                        .remove(lastFragment)
+                                        .replace(R.id.fragment_container, settingsFragment)
                                         .commit();
-                                lastFragment = null;
                             }
+                            else{
+                                fragmentTransaction
+                                        .add(R.id.fragment_container, settingsFragment)
+                                        .commit();
+                            }
+
+                            lastFragment = settingsFragment;
                         }
+
                         break;
 
                     default:
@@ -218,27 +231,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 //        );
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if(requestCode == REQUEST_IMAGE_CAPTURE){
-//            Log.d(TAG, "Back from camera activity");
-//            bottomNavigation.setCurrentItem(0);
-//        }
-//
-//        else if(requestCode== 100){
-//            Log.d(TAG, "Camera fired from fragment");
-//        }
-//    }
 
     @Override
     public void changeView(int toWhere) {
         bottomNavigation.setCurrentItem(toWhere);
-    }
-
-    @Override
-    public void onPhotoUploadComplete(boolean wasSuccessful) {
-
     }
 }
