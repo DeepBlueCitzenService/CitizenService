@@ -3,6 +3,7 @@ package io.github.deepbluecitizenservice.citizenservice;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -79,43 +80,48 @@ public class PhotoFragment extends Fragment {
         if(requestCode== GALLERY_CALL){
             Log.d(TAG, "Gallery activity "+"Result code "+ resultCode);
              if(resultCode== Activity.RESULT_OK) {
+                 String picturepath = getFilePathFromGallery(data);
 
                  //Get data URI
-                 Uri selectedImage = data.getData();
+                 Log.d(TAG, "Picture path: "+picturepath);
 
-                 //Get filepath
-                 String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                 Cursor cursor = getContext().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-
-                 if(cursor!=null) {
-                     cursor.moveToFirst();
-                     int columnindex = cursor.getColumnIndex(filePathColumn[0]);
-                     String picturepath = Environment.getRootDirectory()+ cursor.getString(columnindex);
-
-                     Log.d(TAG, "Picture path: "+picturepath);
-
-                     //Change image using setImageBitmap
-                     if(mImageView!=null) {
-                         try{
-                             Bitmap bitmap = BitmapFactory.decodeFile(picturepath);
-                             Log.d(TAG, (bitmap==null? "Bitmap not loaded":"Bitmap loaded"));
-                             mImageView.setImageBitmap(bitmap);
-                         }
-
-                         catch(OutOfMemoryError e){
-                             Log.d(TAG, "Image too large");
-                         }
-
-                         catch (Exception e){
-                             Log.d(TAG, "Other error");
-                             e.printStackTrace();
-                         }
-
+                 //Change image using setImageBitmap
+                 if(mImageView!=null) {
+                     try{
+                         Bitmap bitmap = BitmapFactory.decodeFile(picturepath);
+                         Log.d(TAG, (bitmap==null? "Bitmap not loaded":"Bitmap loaded"));
+                         mImageView.setImageBitmap(bitmap);
                      }
-                     cursor.close();
+
+                     catch(OutOfMemoryError e){
+                         Log.d(TAG, "Image too large");
+                     }
+
+                     catch (Exception e){
+                         Log.d(TAG, "Other error");
+                         e.printStackTrace();
+                     }
                  }
              }
         }
+    }
+
+    private String getFilePathFromGallery(Intent data){
+        Uri selectedImage = data.getData();
+        String picturepath = "";
+
+        //Get filepath
+        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getContext().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+
+        if(cursor!=null) {
+            cursor.moveToFirst();
+            int columnindex = cursor.getColumnIndex(filePathColumn[0]);
+            picturepath = cursor.getString(columnindex);
+            cursor.close();
+        }
+
+        return picturepath;
     }
 
 //    @Override
