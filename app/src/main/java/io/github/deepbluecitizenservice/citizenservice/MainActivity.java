@@ -1,17 +1,18 @@
 package io.github.deepbluecitizenservice.citizenservice;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
-
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
@@ -32,11 +33,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private AHBottomNavigation bottomNavigation;
     private Fragment lastFragment = null;
 
+    public Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         handleLogCheck();
         setContentView(R.layout.activity_main);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         createBottomBar();
     }
 
@@ -160,6 +167,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     case 0:
                     case 1:
                         if(lastFragment!=null) {
+							toolbar.removeAllViews();
+                            toolbar.setTitle(R.string.app_name);
                             fragmentTransaction
                                     .remove(lastFragment)
                                     .commit();
@@ -168,7 +177,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         break;
 
                     case 2:
-                        if(!wasSelected){
+                        if(!wasSelected) {
+                            View toolbarView = getLayoutInflater().inflate(R.layout.add_toolbar, null);
+                            toolbar.addView(toolbarView);
                             PhotoFragment photoFragment = new PhotoFragment();
                             if(lastFragment!=null){
                                 fragmentTransaction
@@ -188,6 +199,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
                     case 3:
 
+						toolbar.removeAllViews();
+						toolbar.setTitle(R.string.app_name);
                         if(!wasSelected){
                             SettingsFragment settingsFragment = new SettingsFragment();
                             if(lastFragment!=null){
@@ -235,5 +248,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     public void changeView(int toWhere) {
         bottomNavigation.setCurrentItem(toWhere);
+    }
+
+    public Toolbar getToolbar(){
+        return toolbar;
     }
 }
