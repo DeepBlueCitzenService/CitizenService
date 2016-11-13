@@ -46,6 +46,7 @@ public class PhotoFragment extends Fragment {
     private final static int CAMERA_CALL = 100;
 
     private ImageView mImageView;
+    private Toolbar toolbar;
     private OnPhotoListener mListener;
 
     //Set these values before upload is available
@@ -82,7 +83,7 @@ public class PhotoFragment extends Fragment {
 
         View toolbarView = getActivity().getLayoutInflater().inflate(R.layout.add_toolbar, null);
 
-        Toolbar toolbar = ((MainActivity)this.getActivity()).getToolbar();
+        toolbar = ((MainActivity)this.getActivity()).getToolbar();
         toolbar.addView(toolbarView);
 
         ImageView uploadButton = (ImageView) toolbar.findViewById(R.id.toolbar_upload);
@@ -301,6 +302,12 @@ public class PhotoFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        toolbar.removeAllViews();
+        toolbar.setTitle(R.string.app_name);
+    }
 
     @Override
     public void onDetach() {

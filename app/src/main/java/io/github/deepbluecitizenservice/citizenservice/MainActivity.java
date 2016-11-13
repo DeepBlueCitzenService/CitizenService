@@ -1,6 +1,5 @@
 package io.github.deepbluecitizenservice.citizenservice;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,7 +12,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
@@ -32,10 +30,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private final String TAG = "Main Activity:";
     private GoogleApiClient mGAP;
     private AHBottomNavigation bottomNavigation;
-    private Fragment lastFragment = null;
 
     private final String HOME_TAG="HOME", ALL_TAG="ALL", PHOTOS_TAG="PHOTOS", SETTINGS_TAG="SETTINGS";
-    private  boolean comingFromBackStack = false;
+    private boolean backPressed = false;
 
     public Toolbar toolbar;
 
@@ -168,7 +165,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         bottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
             @Override
             public boolean onTabSelected(int position, boolean wasSelected) {
-                Log.d(TAG, "Tab changed to "+ position +" was selected: "+wasSelected);
                 FragmentManager fm = getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fm.beginTransaction();
 
@@ -178,8 +174,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 switch(position){
                     case 0:
                         if(!wasSelected) {
-                            toolbar.removeAllViews();
-                            toolbar.setTitle(R.string.app_name);
                             genericFragment = new HomeFragment();
                             fragmentTAG = HOME_TAG;
                         }
@@ -187,8 +181,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
                     case 1:
                         if(!wasSelected) {
-							toolbar.removeAllViews();
-                            toolbar.setTitle(R.string.app_name);
                             genericFragment = new AllViewFragment();
                             fragmentTAG = ALL_TAG;
                         }
@@ -196,8 +188,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
                     case 2:
                         if(!wasSelected) {
-//                            View toolbarView = getLayoutInflater().inflate(R.layout.add_toolbar, null);
-//                            toolbar.addView(toolbarView);
                             genericFragment = new PhotoFragment();
                             fragmentTAG = PHOTOS_TAG;
                         }
@@ -206,8 +196,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
                     case 3:
                         if(!wasSelected){
-                            toolbar.removeAllViews();
-                            toolbar.setTitle(R.string.app_name);
                             genericFragment = new SettingsFragment();
                             fragmentTAG = SETTINGS_TAG;
                         }
@@ -217,14 +205,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         return true;
                 }
 
-                if(!wasSelected){
-                    Log.d(TAG, "Adding to back stack");
+                if(!wasSelected  && !backPressed){
                     fragmentTransaction
                             .replace(R.id.fragment_container, genericFragment)
                             .addToBackStack(fragmentTAG)
                             .commit();
                 }
-
+                backPressed = false;
                 return true;
             }
         });
@@ -249,6 +236,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        backPressed = true;
         FragmentManager fm = getSupportFragmentManager();
         try {
             String name = fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1).getName();
@@ -266,17 +254,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     bottomNavigation.setCurrentItem(3);
                     break;
             }
-
-            if(!name.equals(PHOTOS_TAG)){
-                toolbar.removeAllViews();
-                toolbar.setTitle(R.string.app_name);
-            }
-
-            fm.popBackStack();
+            //fm.popBackStack();
         }
+
         catch(Exception e){
             bottomNavigation.setCurrentItem(0);
-            fm.popBackStack();
+            //fm.popBackStack();
         }
     }
 }
