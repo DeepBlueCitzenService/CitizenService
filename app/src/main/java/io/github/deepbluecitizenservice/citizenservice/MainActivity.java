@@ -1,5 +1,6 @@
 package io.github.deepbluecitizenservice.citizenservice;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,14 +34,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private AHBottomNavigation bottomNavigation;
     private Fragment lastFragment = null;
 
+    private final String HOME_TAG="HOME", ALL_TAG="ALL", PHOTOS_TAG="PHOTOS", SETTINGS_TAG="SETTINGS";
+    private  boolean comingFromBackStack = false;
+
     public Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        handleLogCheck();
-        setContentView(R.layout.activity_main);
 
+        setContentView(R.layout.activity_main);
+        handleLogCheck();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -154,6 +158,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         // Set current item programmatically
         bottomNavigation.setCurrentItem(0);
+        HomeFragment homeFragment = new HomeFragment();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.fragment_container, homeFragment)
+                .commit();
 
         // Set listeners
         bottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
@@ -163,64 +172,57 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 FragmentManager fm = getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fm.beginTransaction();
 
+                Fragment genericFragment = null;
+                String fragmentTAG = "";
+
                 switch(position){
                     case 0:
+                        if(!wasSelected) {
+                            toolbar.removeAllViews();
+                            toolbar.setTitle(R.string.app_name);
+                            genericFragment = new HomeFragment();
+                            fragmentTAG = HOME_TAG;
+                        }
+                        break;
+
                     case 1:
-                        if(lastFragment!=null) {
+                        if(!wasSelected) {
 							toolbar.removeAllViews();
                             toolbar.setTitle(R.string.app_name);
-                            fragmentTransaction
-                                    .remove(lastFragment)
-                                    .commit();
-                            lastFragment = null;
+                            genericFragment = new AllViewFragment();
+                            fragmentTAG = ALL_TAG;
                         }
                         break;
 
                     case 2:
                         if(!wasSelected) {
-                            View toolbarView = getLayoutInflater().inflate(R.layout.add_toolbar, null);
-                            toolbar.addView(toolbarView);
-                            PhotoFragment photoFragment = new PhotoFragment();
-                            if(lastFragment!=null){
-                                fragmentTransaction
-                                        .replace(R.id.fragment_container, photoFragment)
-                                        .commit();
-                            }
-                            else{
-                                fragmentTransaction
-                                        .add(R.id.fragment_container, photoFragment)
-                                        .commit();
-                            }
-
-                            lastFragment = photoFragment;
+//                            View toolbarView = getLayoutInflater().inflate(R.layout.add_toolbar, null);
+//                            toolbar.addView(toolbarView);
+                            genericFragment = new PhotoFragment();
+                            fragmentTAG = PHOTOS_TAG;
                         }
 
                         break;
 
                     case 3:
-
-						toolbar.removeAllViews();
-						toolbar.setTitle(R.string.app_name);
                         if(!wasSelected){
-                            SettingsFragment settingsFragment = new SettingsFragment();
-                            if(lastFragment!=null){
-                                fragmentTransaction
-                                        .replace(R.id.fragment_container, settingsFragment)
-                                        .commit();
-                            }
-                            else{
-                                fragmentTransaction
-                                        .add(R.id.fragment_container, settingsFragment)
-                                        .commit();
-                            }
-
-                            lastFragment = settingsFragment;
+                            toolbar.removeAllViews();
+                            toolbar.setTitle(R.string.app_name);
+                            genericFragment = new SettingsFragment();
+                            fragmentTAG = SETTINGS_TAG;
                         }
-
                         break;
 
                     default:
                         return true;
+                }
+
+                if(!wasSelected){
+                    Log.d(TAG, "Adding to back stack");
+                    fragmentTransaction
+                            .replace(R.id.fragment_container, genericFragment)
+                            .addToBackStack(fragmentTAG)
+                            .commit();
                 }
 
                 return true;
@@ -232,18 +234,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 // Manage the new y position
             }
         });
-
-        //For implementing back stack UI changes when all fragments are added
-//        getSupportFragmentManager().addOnBackStackChangedListener(
-//                new FragmentManager.OnBackStackChangedListener() {
-//                    @Override
-//                    public void onBackStackChanged() {
-//
-//                    }
-//                }
-//        );
     }
-
 
     @Override
     public void changeView(int toWhere) {
@@ -252,5 +243,40 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     public Toolbar getToolbar(){
         return toolbar;
+    }
+
+    //Handle the back stack navigation
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        FragmentManager fm = getSupportFragmentManager();
+        try {
+            String name = fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1).getName();
+            switch(name){
+                case HOME_TAG:
+                    bottomNavigation.setCurrentItem(0);
+                    break;
+                case ALL_TAG:
+                    bottomNavigation.setCurrentItem(1);
+                    break;
+                case PHOTOS_TAG:
+                    bottomNavigation.setCurrentItem(2);
+                    break;
+                case SETTINGS_TAG:
+                    bottomNavigation.setCurrentItem(3);
+                    break;
+            }
+
+            if(!name.equals(PHOTOS_TAG)){
+                toolbar.removeAllViews();
+                toolbar.setTitle(R.string.app_name);
+            }
+
+            fm.popBackStack();
+        }
+        catch(Exception e){
+            bottomNavigation.setCurrentItem(0);
+            fm.popBackStack();
+        }
     }
 }

@@ -1,5 +1,6 @@
 package io.github.deepbluecitizenservice.citizenservice;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,6 +15,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -33,6 +35,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private FirebaseAuth.AuthStateListener mAuthListener;
     private String TAG = "Login Activity";
     private static int RC_SIGN_IN = 1;
+    private ProgressDialog progressDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,12 +90,20 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         super.onStop();
         mAuth.removeAuthStateListener(mAuthListener);
         mGAP.disconnect();
+        if(progressDialog!=null) {
+            if(progressDialog.isShowing())
+                progressDialog.dismiss();
+        }
     }
 
     //Attach intent for signing in to a button
     public void handleButtonClick(View view){
         Intent SignInIntent = Auth.GoogleSignInApi.getSignInIntent(mGAP);
         startActivityForResult(SignInIntent, RC_SIGN_IN);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Authenticating");
+        progressDialog.show();
     }
 
 

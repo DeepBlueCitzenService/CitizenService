@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
@@ -61,8 +62,7 @@ public class PhotoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        imagePath= "";
-        hasLocation = false;
+        Log.d(TAG, "ONCREATEVIEW"+ imagePath);
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.activity_add, container, false);
 
@@ -80,7 +80,11 @@ public class PhotoFragment extends Fragment {
             }
         });
 
+        View toolbarView = getActivity().getLayoutInflater().inflate(R.layout.add_toolbar, null);
+
         Toolbar toolbar = ((MainActivity)this.getActivity()).getToolbar();
+        toolbar.addView(toolbarView);
+
         ImageView uploadButton = (ImageView) toolbar.findViewById(R.id.toolbar_upload);
 
         ImageView locationButton = (ImageView) view.findViewById(R.id.problem_location_edit);
