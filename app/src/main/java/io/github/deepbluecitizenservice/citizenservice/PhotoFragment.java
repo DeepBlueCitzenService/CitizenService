@@ -8,12 +8,16 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
@@ -21,8 +25,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -36,24 +48,37 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 import io.github.deepbluecitizenservice.citizenservice.data.Problem;
 import io.github.deepbluecitizenservice.citizenservice.database.CustomDatabase;
+import io.github.deepbluecitizenservice.citizenservice.permission.StoragePermission;
+import io.github.deepbluecitizenservice.citizenservice.service.GPSService;
 
 public class PhotoFragment extends Fragment {
     private final String TAG = "PhotoFragment";
     private final static int GALLERY_CALL = 200;
     private final static int CAMERA_CALL = 100;
+    private final static int PICKER_CALL = 400;
 
     private ImageView mImageView;
     private Toolbar toolbar;
     private OnPhotoListener mListener;
 
+    private View view;
+
     //Set these values before upload is available
     private String imagePath ="", locationAddress = "";
     private boolean hasLocation = false, hasCategory = false;
-    private double locationX, locationY;
-    private int category;
+    private double locationX = 0, locationY = 0;
+    private int category = 0;
+    private String description = "";
+
+    private GPSService gpsService;
 
     public PhotoFragment() {
         // Required empty public constructor
@@ -71,77 +96,144 @@ public class PhotoFragment extends Fragment {
         Log.d(TAG, "ONCREATEVIEW"+ imagePath +"Length: "+ imagePath.length());
 
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.activity_add, container, false);
+        view = inflater.inflate(R.layout.activity_add, container, false);
 
-        final Dialog dialog = new Dialog(getContext());
-        dialog.setContentView(R.layout.dialog_source);
+        View toolbarView = getActivity().getLayoutInflater().inflate(R.layout.add_toolbar, null);
+        toolbar = ((MainActivity)this.getActivity()).getToolbar();
+        toolbar.addView(toolbarView);
 
-        ImageView cameraButton = (ImageView) dialog.findViewById(R.id.dialog_camera_button);
-        ImageView galleryButton = (ImageView) dialog.findViewById(R.id.dialog_gallery_button);
+        final Dialog imageSelectDialog = new Dialog(getContext());
+        final Dialog categorySelectDialog = new Dialog(getContext());
 
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.problem_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dialog.show();
+                if(checkStoragePermissions()){
+                    imageSelectDialog.setContentView(R.layout.dialog_source);
+
+                    ImageView cameraButton = (ImageView) imageSelectDialog.findViewById(R.id.dialog_camera_button);
+                    ImageView galleryButton = (ImageView) imageSelectDialog.findViewById(R.id.dialog_gallery_button);
+
+                    cameraButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Log.d(TAG, "Camera button clicked");
+                            Intent startCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            startActivityForResult(startCamera, CAMERA_CALL);
+                            imageSelectDialog.dismiss();
+                        }
+                    });
+
+                    galleryButton.setOnClickListener(new View.OnClickListener(){
+                        @Override
+                        public void onClick(View v){
+                            Log.d(TAG, "Gallery Button clicked");
+                            Intent startGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            startActivityForResult(startGallery, GALLERY_CALL);
+                            imageSelectDialog.dismiss();
+                        }
+                    });
+
+                    imageSelectDialog.show();
+                }
             }
         });
 
-        View toolbarView = getActivity().getLayoutInflater().inflate(R.layout.add_toolbar, null);
-
-        toolbar = ((MainActivity)this.getActivity()).getToolbar();
-        toolbar.addView(toolbarView);
-
-        ImageView uploadButton = (ImageView) toolbar.findViewById(R.id.toolbar_upload);
-
         ImageView locationButton = (ImageView) view.findViewById(R.id.problem_location_edit);
 
+        locationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "Location button clicked");
+                gpsService = new GPSService(getContext(), view);
+                if(gpsService.isGPSPermissionGranted() && gpsService.isGPSEnabled()){
+                    PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                    try {
+                        startActivityForResult(builder.build(getActivity()), PICKER_CALL);
+                    } catch (GooglePlayServicesRepairableException |
+                            GooglePlayServicesNotAvailableException e) {
+                        setCurrentLocation(gpsService);
+                    }
+                }
+            }
+        });
+
+        ImageView categoryButton = (ImageView) view.findViewById(R.id.problem_category_edit);
+
+        categoryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                categorySelectDialog.setContentView(R.layout.dialog_category);
+
+                Button okButton = (Button) categorySelectDialog.findViewById(R.id.dialog_category_ok);
+                Button cancelButton = (Button) categorySelectDialog.findViewById(R.id.dialog_category_cancel);
+
+                okButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        RadioGroup radioGroup = (RadioGroup) categorySelectDialog.findViewById(R.id.dialog_category_radiogroup);
+                        int idx = radioGroup.getCheckedRadioButtonId();
+                        switch (idx){
+                            case R.id.radio_traffic:
+                                setImageCategory(Problem.CATEGORY_TRAFFIC);
+                                break;
+                            case R.id.radio_garbage:
+                                setImageCategory(Problem.CATEGORY_GARBAGE);
+                                break;
+                            case R.id.radio_potholes:
+                                setImageCategory(Problem.CATEGORY_POTHOLES);
+                                break;
+                        }
+                        categorySelectDialog.dismiss();
+                    }
+                });
+
+                cancelButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        categorySelectDialog.dismiss();
+                    }
+                });
+
+                categorySelectDialog.show();
+            }
+        });
+
+
+        ImageView uploadButton = (ImageView) toolbar.findViewById(R.id.toolbar_upload);
         mImageView = (ImageView) view.findViewById(R.id.problem_image);
 
         if(imagePath.length()>0 && mImageView!=null){
             mImageView.setImageBitmap(BitmapFactory.decodeFile(imagePath));
         }
 
-        //Handle button clicks
-        cameraButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "Camera button clicked");
-
-                Intent startCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(startCamera, CAMERA_CALL);
-                dialog.dismiss();
-            }
-        });
-
-        galleryButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                Log.d(TAG, "Gallery Button clicked");
-                Intent startGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(startGallery, GALLERY_CALL);
-                dialog.dismiss();
-            }
-        });
-
-        locationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "Location button clicked");
-                setCurrentLocation();
-            }
-        });
-
         uploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "Upload button clicked");
-                if(hasLocation && imagePath.length()>0 && hasCategory)
+                TextView descriptionTV = (TextView) view.findViewById(R.id.problem_description);
+                description = String.valueOf(descriptionTV.getText());
+                if(imagePath.length() <= 0){
+                    Snackbar.make(view, "Please Load Image", Snackbar.LENGTH_LONG).show();
+                }
+                else if(!hasLocation){
+                    Snackbar.make(view, "Please Select Location", Snackbar.LENGTH_LONG).show();
+                }
+                else {
                     handleImageUpload();
+                }
+
             }
         });
 
         return view;
+    }
+
+    private boolean checkStoragePermissions() {
+        StoragePermission permission = new StoragePermission(getContext());
+        permission.askPermissions(view);
+        return permission.isGranted();
     }
 
     @Override
@@ -149,6 +241,11 @@ public class PhotoFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode== CAMERA_CALL){
             Log.d(TAG, "Camera activity Result code "+ resultCode);
+            if(resultCode == Activity.RESULT_OK){
+                handleCameraUpload(data);
+                //TODO : TensorFlow Comes Here
+                setImageCategory(Problem.CATEGORY_GARBAGE);
+            }
         }
 
         //Get image from Gallery
@@ -156,7 +253,32 @@ public class PhotoFragment extends Fragment {
             Log.d(TAG, "Gallery activity "+"Result code "+ resultCode);
              if(resultCode== Activity.RESULT_OK) {
                  handleGalleryUpload(data);
+                 //TODO : TensorFlow Comes Here
+                 setImageCategory(Problem.CATEGORY_GARBAGE);
              }
+        }
+
+        if(requestCode == PICKER_CALL){
+            if(resultCode== Activity.RESULT_OK) {
+                Place place = PlacePicker.getPlace(getContext(), data);
+                LatLng latLng = place.getLatLng();
+                setCurrentLocation(latLng.latitude, latLng.longitude);
+            }
+        }
+    }
+
+    private void handleCameraUpload(Intent data) {
+        Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+        Log.d(TAG, (bitmap==null? "Bitmap not loaded":"Bitmap loaded"));
+        mImageView.setImageBitmap(bitmap);
+        try {
+            File outputDir = getContext().getCacheDir();
+            File outFile = new File(outputDir,"tmpfile.jpg");
+            FileOutputStream fos = new FileOutputStream(outFile);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            imagePath = outFile.getPath();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
@@ -195,30 +317,67 @@ public class PhotoFragment extends Fragment {
 
         if(cursor!=null) {
             cursor.moveToFirst();
-            int columnindex = cursor.getColumnIndex(filePathColumn[0]);
-            picturepath = cursor.getString(columnindex);
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            picturepath = cursor.getString(columnIndex);
             cursor.close();
         }
 
         return picturepath;
     }
 
-    //TODO: Get the current location and store it in a global variable
-    private void setCurrentLocation(){
-        locationAddress = "Bandra Kurla Complex";
-        locationX = 3.333;
-        locationY = 44.5555;
-        hasLocation= true;
-
-        //TODO: START DEBUG BLOCK: Remove this after implementation
-        getImageCategory();
-        //TODO: END DEBUG BLOCK: Remove this after implementation
+    private void setCurrentLocation(GPSService gpsService){
+        gpsService.getLocation();
+        setCurrentLocation(gpsService.getLatitude(), gpsService.getLongitude());
     }
 
-    //TODO: Set category
-    private void getImageCategory(){
+    private void setCurrentLocation(double locX, double locY){
+        TextView locationTV = (TextView) view.findViewById(R.id.problem_location_tv);
+
+        locationX = locX;
+        locationY = locY;
+
+        locationAddress = String.valueOf(locX + " '" + locY);
+        setTVLocation(locationTV);
+
+        hasLocation = true;
+
+        if(locationX == 0 && locationY == 0){
+            locationTV.setText("Please Select Location");
+            hasLocation = false;
+        }
+    }
+
+    public void setTVLocation(final TextView tv){
+        new AsyncTask<Void, Void, String>() {
+
+            @Override
+            protected String doInBackground(Void... voids) {
+                String location = locationX + ", " + locationY;
+                try {
+                    Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+                    List<Address> listAddresses = geocoder.getFromLocation(locationX, locationY, 1);
+                    if(listAddresses != null && listAddresses.size() > 0){
+                        location = listAddresses.get(0).getAddressLine(1);
+                        locationAddress = location;
+                    }
+                } catch (IOException e) {
+                    return location;
+                }
+                return location;
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                tv.setText(result);
+            }
+        }.execute();
+    }
+
+    private void setImageCategory(int imageCategory){
+        category = imageCategory;
+        TextView categoryTV = (TextView) view.findViewById(R.id.problem_category_tv);
+        categoryTV.setText(Problem.getCategory(category));
         hasCategory = true;
-        category = Problem.CATEGORY_GARBAGE;
     }
 
     //Handle uploads
@@ -297,8 +456,8 @@ public class PhotoFragment extends Fragment {
         CustomDatabase db = new CustomDatabase(FirebaseDatabase.getInstance().getReference());
 
         db.createProblem(url, Problem.STATUS_UNSOLVED, locationX, locationY, locationAddress,
-                FirebaseAuth.getInstance().getCurrentUser().getUid(), 7, timeCreated, "A problem",
-                Problem.CATEGORY_POTHOLES);
+                FirebaseAuth.getInstance().getCurrentUser().getUid(), 604800000L, timeCreated, description,
+                category);
     }
 
     @Override
@@ -322,6 +481,8 @@ public class PhotoFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        if(gpsService != null)
+            gpsService.stopUsingGPS();
         mListener = null;
     }
 

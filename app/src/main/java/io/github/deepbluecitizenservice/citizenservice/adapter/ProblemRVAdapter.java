@@ -51,7 +51,7 @@ public class ProblemRVAdapter extends RecyclerView.Adapter<ProblemRVAdapter.View
         else
             holder.noOfImagesTV.setVisibility(View.GONE);
 
-        problem.setTVLocation(holder.locationTV);
+        holder.locationTV.setText(problem.getLocationAddress());
 
         holder.imageView.setImageBitmap(problem.getMainImage());
         

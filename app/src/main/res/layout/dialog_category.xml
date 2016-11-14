@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="16dp"
+        android:id="@+id/dialog_category_title"
+        android:text="Select Category"/>
+    
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="24dp"
+        android:id="@+id/dialog_category_radiogroup"
+        android:layout_below="@id/dialog_category_title">
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:id="@+id/radio_traffic"
+            android:text="Traffic"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/radio_garbage"
+            android:text="Garbage"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/radio_potholes"
+            android:text="Potholes"/>
+
+    </RadioGroup>
+
+    <Button
+        android:layout_marginStart="48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:id="@+id/dialog_category_cancel"
+        android:text="Cancel"
+        android:layout_below="@id/dialog_category_radiogroup"
+        style="@style/Widget.AppCompat.Button.Borderless" />
+
+    <Button
+        android:layout_margin="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_below="@+id/dialog_category_radiogroup"
+        android:id="@+id/dialog_category_ok"
+        android:text="OK"
+        android:layout_toEndOf="@+id/dialog_category_cancel"
+        style="@style/Widget.AppCompat.Button.Borderless"/>
+
+</RelativeLayout>
