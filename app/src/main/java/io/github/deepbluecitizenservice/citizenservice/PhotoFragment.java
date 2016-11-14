@@ -32,6 +32,8 @@ import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
@@ -41,6 +43,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.vision.text.Text;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
@@ -267,9 +270,12 @@ public class PhotoFragment extends Fragment {
         //Change image using setImageBitmap
         if(mImageView!=null) {
             try{
-                Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-                Log.d(TAG, (bitmap==null? "Bitmap not loaded":"Bitmap loaded"));
-                mImageView.setImageBitmap(bitmap);
+                Glide.with(getActivity())
+                        .load(new File(imagePath))
+                        .override(450, 300)
+                        .centerCrop()
+                        .crossFade()
+                        .into(mImageView);
             }
 
             catch(OutOfMemoryError e){
@@ -397,6 +403,10 @@ public class PhotoFragment extends Fragment {
         locationAddress = "";
         hasLocation = false;
 
+        mImageView.setImageBitmap(null);
+        TextView locationTV = (TextView) getActivity().findViewById(R.id.location_tv);
+        locationTV.setText("");
+
         //Change to home view
         mListener.changeView(0);
 
@@ -460,6 +470,18 @@ public class PhotoFragment extends Fragment {
         if(gpsService != null)
             gpsService.stopUsingGPS();
         mListener = null;
+
+        imagePath = "";
+        locationY = -1;
+        locationX = -1;
+        locationAddress = "";
+        hasLocation = false;
+
+        Log.d(TAG, "Detaching");
+//        if(mImageView.getDrawable()!=null) {
+//            Log.d(TAG, "Removing Bitmap");
+//            mImageView.setImageBitmap(null);
+//        }
     }
 
     public interface OnPhotoListener {

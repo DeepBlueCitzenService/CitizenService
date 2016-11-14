@@ -52,15 +52,33 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        FragmentManager fm = getSupportFragmentManager();
+
         if(savedInstanceState==null){
-            if(homeFragment==null)
-                homeFragment = new HomeFragment();
-            if(photosFragment==null)
-                photosFragment = new PhotoFragment();
-            if(allviewFragment==null)
-                allviewFragment = new AllViewFragment();
-            if(settingsFragment==null)
-                settingsFragment = new SettingsFragment();
+            if(homeFragment==null ) {
+                if(fm.findFragmentByTag(HOME_TAG)==null)
+                    homeFragment = new HomeFragment();
+                else
+                    homeFragment = fm.findFragmentByTag(HOME_TAG);
+            }
+            if(photosFragment==null) {
+                if(fm.findFragmentByTag(HOME_TAG)==null)
+                    photosFragment = new PhotoFragment();
+                else
+                    photosFragment = fm.findFragmentByTag(PHOTOS_TAG);
+            }
+            if(allviewFragment==null) {
+                if(fm.findFragmentByTag(ALL_TAG)==null)
+                    allviewFragment = new AllViewFragment();
+                else
+                    allviewFragment = fm.findFragmentByTag(ALL_TAG);
+            }
+            if(settingsFragment==null) {
+                if(fm.findFragmentByTag(SETTINGS_TAG)==null)
+                    settingsFragment = new SettingsFragment();
+                else
+                    settingsFragment = fm.findFragmentByTag(SETTINGS_TAG);
+            }
 
             if(!homeFragment.isAdded()) {
                 getSupportFragmentManager()
@@ -71,8 +89,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             }
 
             BackStack = new ArrayList<>();
-            createBottomBar(savedInstanceState==null);
         }
+        if(bottomNavigation==null)
+            createBottomBar(savedInstanceState==null);
     }
 
     //Login check and handler
@@ -183,12 +202,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         // Set current item programmatically
         if(isNotSaved)
             bottomNavigation.setCurrentItem(0);
-
-//        HomeFragment homeFragment = new HomeFragment();
-//        getSupportFragmentManager()
-//                .beginTransaction()
-//                .add(R.id.fragment_container, homeFragment)
-//                .commit();
 
         // Set listeners
         bottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
@@ -336,32 +349,5 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             }
             super.onBackPressed();
         }
-
-//        FragmentManager fm = getSupportFragmentManager();
-//        try {
-//            String name = fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1).getName();
-//            switch(name){
-//                case HOME_TAG:
-//                    bottomNavigation.setCurrentItem(0);
-//                    break;
-//                case ALL_TAG:
-//                    bottomNavigation.setCurrentItem(1);
-//                    break;
-//                case PHOTOS_TAG:
-//                    bottomNavigation.setCurrentItem(2);
-//                    break;
-//                case SETTINGS_TAG:
-//                    bottomNavigation.setCurrentItem(3);
-//                    break;
-//            }
-//            lastFragment = name;
-//            //fm.popBackStack();
-//        }
-//
-//        catch(Exception e){
-//            bottomNavigation.setCurrentItem(0);
-//            lastFragment = HOME_TAG;
-//            //fm.popBackStack();
-//        }
     }
 }
