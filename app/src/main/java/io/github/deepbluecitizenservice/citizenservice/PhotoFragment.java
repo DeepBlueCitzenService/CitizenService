@@ -199,9 +199,9 @@ public class PhotoFragment extends Fragment {
 
         mImageView = (ImageView) view.findViewById(R.id.problem_image);
 
-        if(imagePath.length()>0 && mImageView!=null){
-            mImageView.setImageBitmap(BitmapFactory.decodeFile(imagePath));
-        }
+//        if(imagePath.length()>0 && mImageView!=null){
+//            mImageView.setImageBitmap(BitmapFactory.decodeFile(imagePath));
+//        }
 
         return view;
     }

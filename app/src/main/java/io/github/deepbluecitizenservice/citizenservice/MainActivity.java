@@ -228,8 +228,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                                     .add(R.id.fragment_container, genericFragment, fragmentTAG);
                         }
 
-                        if(testFragment!=null){
+                        try {
                             fragmentTransaction.detach(testFragment);
+                        }
+                        catch(Exception e){
+                            e.printStackTrace();
                         }
 
 
