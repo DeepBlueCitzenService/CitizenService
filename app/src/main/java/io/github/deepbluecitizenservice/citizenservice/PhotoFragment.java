@@ -20,9 +20,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -66,14 +68,13 @@ public class PhotoFragment extends Fragment {
     private final static int PICKER_CALL = 400;
 
     private ImageView mImageView;
-    private Toolbar toolbar;
     private OnPhotoListener mListener;
 
     private View view;
 
     //Set these values before upload is available
     private String imagePath ="", locationAddress = "";
-    private boolean hasLocation = false, hasCategory = false;
+    private boolean hasLocation = false;
     private double locationX = 0, locationY = 0;
     private int category = 0;
     private String description = "";
@@ -97,10 +98,6 @@ public class PhotoFragment extends Fragment {
 
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.activity_add, container, false);
-
-        View toolbarView = getActivity().getLayoutInflater().inflate(R.layout.add_toolbar, null);
-        toolbar = ((MainActivity)this.getActivity()).getToolbar();
-        toolbar.addView(toolbarView);
 
         final Dialog imageSelectDialog = new Dialog(getContext());
         final Dialog categorySelectDialog = new Dialog(getContext());
@@ -200,32 +197,11 @@ public class PhotoFragment extends Fragment {
             }
         });
 
-
-        ImageView uploadButton = (ImageView) toolbar.findViewById(R.id.toolbar_upload);
         mImageView = (ImageView) view.findViewById(R.id.problem_image);
 
         if(imagePath.length()>0 && mImageView!=null){
             mImageView.setImageBitmap(BitmapFactory.decodeFile(imagePath));
         }
-
-        uploadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "Upload button clicked");
-                TextView descriptionTV = (TextView) view.findViewById(R.id.problem_description);
-                description = String.valueOf(descriptionTV.getText());
-                if(imagePath.length() <= 0){
-                    Snackbar.make(view, "Please Load Image", Snackbar.LENGTH_LONG).show();
-                }
-                else if(!hasLocation){
-                    Snackbar.make(view, "Please Select Location", Snackbar.LENGTH_LONG).show();
-                }
-                else {
-                    handleImageUpload();
-                }
-
-            }
-        });
 
         return view;
     }
@@ -377,7 +353,6 @@ public class PhotoFragment extends Fragment {
         category = imageCategory;
         TextView categoryTV = (TextView) view.findViewById(R.id.problem_category_tv);
         categoryTV.setText(Problem.getCategory(category));
-        hasCategory = true;
     }
 
     //Handle uploads
@@ -472,13 +447,6 @@ public class PhotoFragment extends Fragment {
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        toolbar.removeAllViews();
-        toolbar.setTitle(R.string.app_name);
-    }
-
-    @Override
     public void onDetach() {
         super.onDetach();
         if(gpsService != null)
@@ -488,5 +456,36 @@ public class PhotoFragment extends Fragment {
 
     public interface OnPhotoListener {
         void changeView(int toWhere);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+        inflater.inflate(R.menu.add_toolbar_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.toolbar_upload) {
+            Log.d(TAG, "Upload button clicked");
+            TextView descriptionTV = (TextView) view.findViewById(R.id.problem_description);
+            description = String.valueOf(descriptionTV.getText());
+            if(imagePath.length() <= 0){
+                Snackbar.make(view, "Please Load Image", Snackbar.LENGTH_LONG).show();
+            }
+            else if(!hasLocation){
+                Snackbar.make(view, "Please Select Location", Snackbar.LENGTH_LONG).show();
+            }
+            else {
+                handleImageUpload();
+            }
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
