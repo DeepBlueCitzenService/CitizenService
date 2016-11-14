@@ -29,13 +29,15 @@ public class CustomDatabase{
     }
 
     //Create a new problem
-    public void createProblem(String url, int status, double locationX, double locationY, String location,
+    public void createProblem(String url, String id, int status, double locationX, double locationY, String location,
                               String creatorKey, long SLA, long timeCreated, String description, int category){
 
-        ProblemModel problem = new ProblemModel(url, status, locationX, locationY, location, creatorKey,
+        String key = db.child("problems").push().getKey();
+
+        ProblemModel problem = new ProblemModel(url, key, status, locationX, locationY, location, creatorKey,
                 SLA, timeCreated, description, category);
 
-        String key = db.child("problems").push().getKey();
+
         HashMap<String, Object> mp = new HashMap<>();
 
         mp.put(key, false);

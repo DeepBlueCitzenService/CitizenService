@@ -257,6 +257,13 @@ public class PhotoFragment extends Fragment {
         //Start uploading in the background
         UploadTask uploadTask = storageRef.putFile(file);
 
+        imagePath = "";
+        locationY = -1;
+        locationX = -1;
+        locationAddress = "";
+        hasLocation = false;
+        hasCategory = false;
+
         //Change to home view
         mListener.changeView(0);
 

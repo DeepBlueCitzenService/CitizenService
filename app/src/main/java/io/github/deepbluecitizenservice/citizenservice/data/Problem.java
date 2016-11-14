@@ -18,7 +18,7 @@ public class Problem {
 
     private Context context;
 
-    private long id;
+    private String id;
     private int status;
     public double locationX;
     public double locationY;
@@ -38,7 +38,7 @@ public class Problem {
     public static final int CATEGORY_GARBAGE = 1;
     public static final int CATEGORY_POTHOLES = 2;
 
-    public Problem(Context context, int id, int status,
+    public Problem(Context context, String id, int status,
                    double locX, double locY, String creator,
                    int category, long sla, long timeCreated,
                    String description, Bitmap mainImage, ArrayList<String> imageUrls){
@@ -128,5 +128,9 @@ public class Problem {
     public int getNoOfImages(){
         if(imageUrls == null) return 0;
         return imageUrls.size();
+    }
+
+    public String getId(){
+        return id;
     }
 }
