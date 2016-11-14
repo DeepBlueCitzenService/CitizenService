@@ -14,25 +14,10 @@ public class ProblemModel{
     public long sla, timeCreated;
     public int status, category;
 
-    private String id, userName;
-    private Uri userURL;
+    private String id;
 
     static final String  SOLVED_PROBLEM = "solved";
     static final String OPEN_PROBLEM = "open";
-
-    public static final String
-            URL = "URL",
-            ID = "id",
-            STATUS = "status",
-            LOCATIONX = "locationX",
-            LOCATIONY = "locationY",
-            LOCATIONADDRESS = "location",
-            CREATOR = "creatorKey",
-            SLA     = "SLA",
-            TIMECREATED = "timeCreated",
-            DESCRIPTION = "description",
-            CATEGORY    = "category";
-
 
     ProblemModel(){
 
@@ -52,32 +37,5 @@ public class ProblemModel{
         this.description     = description;
         this.category        = category;
         this.locationAddress = locationAddress;
-    }
-
-    @Exclude
-    public String getId(){
-        return this.id;
-    }
-
-    @Exclude
-    public HashMap<String, Object> getDetails(){
-        HashMap<String, Object> result = new HashMap<>();
-        result.put(URL, url);
-        result.put(ID, id);
-        result.put(STATUS, status);
-        result.put(LOCATIONADDRESS, locationAddress);
-        result.put(LOCATIONX, locationX);
-        result.put(LOCATIONY, locationY);
-        result.put(SLA, sla);
-        result.put(TIMECREATED, timeCreated);
-        result.put(DESCRIPTION, description);
-        result.put(CATEGORY, category);
-        result.put(CREATOR, creatorKey);
-        return  result;
-    }
-
-    @Exclude
-    public void setUser(Uri URL, String userName){
-        this.userURL = URL;
     }
 }

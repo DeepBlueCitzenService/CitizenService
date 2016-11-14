@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.widget.TextView;
 
@@ -11,24 +12,27 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
 public class Problem {
-
-    private Context context;
-
+    private String url;
+    private String userURL;
     private String id;
     private int status;
+
     public double locationX;
     public double locationY;
-    private String creator;
-    private int category;
+    private String locationAddress;
+
+    private String userName;
+    private String creatorKey;
+    private String category;
     private long sla; // Time in milli-seconds
-    private long timeCreated; // Time in milli-seconds
+    private String timeCreated; // Time in milli-seconds
     private String description;
     private Bitmap mainImage;
-    private ArrayList<String> imageUrls;
 
 
     public static final int STATUS_UNSOLVED = 0;
@@ -38,61 +42,42 @@ public class Problem {
     public static final int CATEGORY_GARBAGE = 1;
     public static final int CATEGORY_POTHOLES = 2;
 
-    public Problem(Context context, String id, int status,
-                   double locX, double locY, String creator,
-                   int category, long sla, long timeCreated,
-                   String description, Bitmap mainImage, ArrayList<String> imageUrls){
-        this.context = context;
-        this.id = id;
-        this.status = status;
-        this.locationX = locX;
-        this.locationY = locY;
-        this.creator = creator;
-        this.category = category;
-        this.sla = sla;
-        this.timeCreated = timeCreated;
-        this.description = description;
-        this.mainImage = mainImage;
-        this.imageUrls = imageUrls;
+    public static final String
+            URL = "URL",
+            ID = "id",
+            STATUS = "status",
+            LOCATIONX = "locationX",
+            LOCATIONY = "locationY",
+            LOCATIONADDRESS = "location",
+            CREATOR = "creatorKey",
+            SLA     = "SLA",
+            TIMECREATED = "timeCreated",
+            DESCRIPTION = "description",
+            CATEGORY    = "category",
+            USER_URL    = "userUrl",
+            USER_NAME   = "userName";
+
+    public Problem(String url, String id, int status, double locationX, double locationY, String locationAddress,
+                   String creatorKey, long SLA, long timeCreated, String description, int category,
+                   String userURL, String userName){
+        this.url             = (url);
+        this.id              = id;
+        this.status          = status;
+        this.locationX       = locationX;
+        this.locationY       = locationY;
+        this.creatorKey      = creatorKey;
+        this.sla             = SLA;
+        this.timeCreated     = setPeriod(timeCreated);
+        this.description     = description;
+        this.category        = setCategory(category);
+        this.locationAddress = locationAddress;
+        this.userURL         = (userURL);
+        this.userName        = userName;
     }
 
-    public String getCreator() {
-        //TODO : Make sure creator is true name of user
-        return creator;
-    }
-
-    public String getRawLocation() {
-        return locationX + ", " + locationY;
-    }
-
-    public void setTVLocation(final TextView tv){
-        new AsyncTask<Void, Void, String>() {
-
-            @Override
-            protected String doInBackground(Void... voids) {
-                String location = getRawLocation();
-                try {
-                    Geocoder geocoder = new Geocoder(context, Locale.getDefault());
-                    List<Address> listAddresses = geocoder.getFromLocation(locationX, locationY, 1);
-                    if(listAddresses != null && listAddresses.size() > 0){
-                            location = listAddresses.get(0).getAddressLine(1);
-                    }
-                } catch (IOException e) {
-                    return location;
-                }
-                return location;
-            }
-
-            @Override
-            protected void onPostExecute(String result) {
-                tv.setText(result);
-            }
-        }.execute();
-    }
-
-    public String getCategory() {
+    private String setCategory(int category) {
         String result = null;
-        switch (this.category){
+        switch (category){
             case CATEGORY_TRAFFIC:
                 result =  "Traffic";
                 break;
@@ -106,31 +91,28 @@ public class Problem {
         return result;
     }
 
-    public String getPeriod(){
+    private String setPeriod(long timeCreated){
         SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yy", Locale.US);
         String fromDate = formatter.format(new Date(timeCreated));
         String toDate = formatter.format(new Date(timeCreated + sla));
         return fromDate + " - " + toDate;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public ArrayList<String> getImageUrls() {
-        return imageUrls;
-    }
-
-    public Bitmap getMainImage() {
-        return mainImage;
-    }
-
-    public int getNoOfImages(){
-        if(imageUrls == null) return 0;
-        return imageUrls.size();
-    }
-
-    public String getId(){
-        return id;
+    public HashMap<String, Object> getDetails(){
+        HashMap<String, Object> result = new HashMap<>();
+        result.put(URL, url);
+        result.put(ID, id);
+        result.put(STATUS, status);
+        result.put(LOCATIONADDRESS, locationAddress);
+        result.put(LOCATIONX, locationX);
+        result.put(LOCATIONY, locationY);
+        result.put(SLA, sla);
+        result.put(TIMECREATED, timeCreated);
+        result.put(DESCRIPTION, description);
+        result.put(CATEGORY, category);
+        result.put(CREATOR, creatorKey);
+        result.put(USER_URL, userURL);
+        result.put(USER_NAME, userName);
+        return  result;
     }
 }

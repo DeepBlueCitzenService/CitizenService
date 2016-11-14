@@ -29,7 +29,7 @@ public class CustomDatabase{
     }
 
     //Create a new problem
-    public void createProblem(String url, String id, int status, double locationX, double locationY, String location,
+    public void createProblem(String url, int status, double locationX, double locationY, String location,
                               String creatorKey, long SLA, long timeCreated, String description, int category){
 
         String key = db.child("problems").push().getKey();
@@ -59,5 +59,9 @@ public class CustomDatabase{
         db.child("users").child(uid).child(ProblemModel.OPEN_PROBLEM).removeValue();
         db.child("users").child(uid).child(ProblemModel.SOLVED_PROBLEM).setValue(problemId);
         db.child("problems").child(problemId).child("solutionUrl").setValue(SolutionURL);
+    }
+
+    public Problem getProblemWithOffsetByTime(int offset){
+        return null;
     }
 }
