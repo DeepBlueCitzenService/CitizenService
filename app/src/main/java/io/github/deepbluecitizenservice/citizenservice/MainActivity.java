@@ -24,6 +24,10 @@ import com.google.android.gms.common.api.Status;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.Stack;
+
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
         PhotoFragment.OnPhotoListener, SettingsFragment.OnSettingsFragmentInteraction {
 
@@ -37,6 +41,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private String lastFragment;
     private Toolbar toolbar;
 
+    private ArrayList<String> BackStack;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,18 +53,26 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         setSupportActionBar(toolbar);
 
         if(savedInstanceState==null){
-            homeFragment = new HomeFragment();
-            photosFragment = new PhotoFragment();
-            allviewFragment = new AllViewFragment();
-            settingsFragment = new SettingsFragment();
+            if(homeFragment==null)
+                homeFragment = new HomeFragment();
+            if(photosFragment==null)
+                photosFragment = new PhotoFragment();
+            if(allviewFragment==null)
+                allviewFragment = new AllViewFragment();
+            if(settingsFragment==null)
+                settingsFragment = new SettingsFragment();
 
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.fragment_container, homeFragment, HOME_TAG)
-                    .commit();
-            lastFragment = HOME_TAG;
+            if(!homeFragment.isAdded()) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.fragment_container, homeFragment, HOME_TAG)
+                        .commit();
+                lastFragment = HOME_TAG;
+            }
+
+            BackStack = new ArrayList<>();
+            createBottomBar(savedInstanceState==null);
         }
-        createBottomBar(savedInstanceState==null);
     }
 
     //Login check and handler
@@ -223,24 +237,30 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 if(!wasSelected  && !backPressed){
                     Fragment testFragment = fm.findFragmentByTag(lastFragment);
 
-                        if(fm.findFragmentByTag(fragmentTAG) == null){
+                        if(!genericFragment.isAdded()){
                             fragmentTransaction
                                     .add(R.id.fragment_container, genericFragment, fragmentTAG);
                         }
 
                         try {
-                            fragmentTransaction.detach(testFragment);
+                            Log.d(TAG, "Removing fragment: "+ lastFragment+" Answer: "+ (testFragment == null ? "Yes":"no"));
+                            fragmentTransaction.hide(testFragment);
                         }
                         catch(Exception e){
-                            e.printStackTrace();
+                            Log.d(TAG, "Exception Occurred "+ lastFragment+ " "+  e.getMessage());
                         }
 
-
                             fragmentTransaction
-                                    .attach(genericFragment);
+                                    .show(genericFragment);
 
 
-                        fragmentTransaction.addToBackStack(fragmentTAG).commit();
+                        fragmentTransaction.commit();
+
+                        BackStack.add(0, fragmentTAG);
+                        if(BackStack.size()==5)
+                            BackStack.remove(4);
+
+                        //Log.d(TAG, "Backstack size: "+BackStack.size());
 
                         lastFragment = fragmentTAG;
                 }
@@ -265,33 +285,83 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     //Handle the back stack navigation
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         backPressed = true;
-        FragmentManager fm = getSupportFragmentManager();
-        try {
-            String name = fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1).getName();
+        FragmentTransaction fm = getSupportFragmentManager().beginTransaction();
+
+        if(BackStack.size()>1){
+
+            String name = BackStack.get(1);
+            Log.d(TAG, "Back stack woo "+BackStack.size()+" "+name);
+
             switch(name){
                 case HOME_TAG:
                     bottomNavigation.setCurrentItem(0);
+                    if(homeFragment.isHidden()){
+                        fm.show(homeFragment);
+                    }
                     break;
                 case ALL_TAG:
                     bottomNavigation.setCurrentItem(1);
+                    if(allviewFragment.isHidden()){
+                        fm.show(allviewFragment);
+                    }
+
                     break;
+
                 case PHOTOS_TAG:
                     bottomNavigation.setCurrentItem(2);
+                    if(photosFragment.isHidden())
+                        fm.show(photosFragment);
                     break;
                 case SETTINGS_TAG:
                     bottomNavigation.setCurrentItem(3);
+                    if(settingsFragment.isHidden())
+                        fm.show(settingsFragment);
                     break;
             }
+
             lastFragment = name;
-            //fm.popBackStack();
+
+            name = BackStack.get(0);
+
+            Fragment generic = name.equals(HOME_TAG)? homeFragment:(name.equals(PHOTOS_TAG)? photosFragment: (name.equals(ALL_TAG)? allviewFragment: settingsFragment));
+            fm.hide(generic);
+            fm.commit();
+            BackStack.remove(0);
         }
 
-        catch(Exception e){
-            bottomNavigation.setCurrentItem(0);
-            lastFragment = HOME_TAG;
-            //fm.popBackStack();
+        else{
+            if(BackStack.size()==1){
+                BackStack.remove(0);
+            }
+            super.onBackPressed();
         }
+
+//        FragmentManager fm = getSupportFragmentManager();
+//        try {
+//            String name = fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1).getName();
+//            switch(name){
+//                case HOME_TAG:
+//                    bottomNavigation.setCurrentItem(0);
+//                    break;
+//                case ALL_TAG:
+//                    bottomNavigation.setCurrentItem(1);
+//                    break;
+//                case PHOTOS_TAG:
+//                    bottomNavigation.setCurrentItem(2);
+//                    break;
+//                case SETTINGS_TAG:
+//                    bottomNavigation.setCurrentItem(3);
+//                    break;
+//            }
+//            lastFragment = name;
+//            //fm.popBackStack();
+//        }
+//
+//        catch(Exception e){
+//            bottomNavigation.setCurrentItem(0);
+//            lastFragment = HOME_TAG;
+//            //fm.popBackStack();
+//        }
     }
 }

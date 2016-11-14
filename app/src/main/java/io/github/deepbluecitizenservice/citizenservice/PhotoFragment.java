@@ -444,6 +444,7 @@ public class PhotoFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        Log.d(TAG, "ONATTACH");
         if (context instanceof OnPhotoListener) {
             mListener = (OnPhotoListener) context;
         } else {
@@ -455,6 +456,7 @@ public class PhotoFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        Log.d(TAG, "ONDETACH");
         if(gpsService != null)
             gpsService.stopUsingGPS();
         mListener = null;
