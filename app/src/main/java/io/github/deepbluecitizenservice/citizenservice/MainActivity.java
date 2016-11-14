@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private Fragment homeFragment, allviewFragment, settingsFragment, photosFragment;
     private boolean backPressed = false;
     private String lastFragment;
-    public Toolbar toolbar;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -257,10 +257,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     public void changeView(int toWhere) {
         bottomNavigation.setCurrentItem(toWhere);
-    }
-
-    public Toolbar getToolbar(){
-        return toolbar;
     }
 
     //Handle the back stack navigation

@@ -1,19 +1,9 @@
 package io.github.deepbluecitizenservice.citizenservice.data;
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.location.Address;
-import android.location.Geocoder;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.widget.TextView;
-
-import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 
 public class Problem {
@@ -25,10 +15,11 @@ public class Problem {
     public double locationX;
     public double locationY;
     private String locationAddress;
-
     private String userName;
     private String creatorKey;
     private String category;
+    private String creator;
+
     private long sla; // Time in milli-seconds
     private String timeCreated; // Time in milli-seconds
     private String description;
@@ -69,13 +60,13 @@ public class Problem {
         this.sla             = SLA;
         this.timeCreated     = setPeriod(timeCreated);
         this.description     = description;
-        this.category        = setCategory(category);
+        this.category        = getCategory(category);
         this.locationAddress = locationAddress;
         this.userURL         = (userURL);
         this.userName        = userName;
     }
 
-    private String setCategory(int category) {
+    public static String getCategory(int category){
         String result = null;
         switch (category){
             case CATEGORY_TRAFFIC:
