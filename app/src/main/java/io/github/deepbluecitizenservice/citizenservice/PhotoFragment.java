@@ -63,7 +63,8 @@ public class PhotoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        Log.d(TAG, "ONCREATEVIEW"+ imagePath);
+        Log.d(TAG, "ONCREATEVIEW"+ imagePath +"Length: "+ imagePath.length());
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.activity_add, container, false);
 
@@ -91,6 +92,10 @@ public class PhotoFragment extends Fragment {
         ImageView locationButton = (ImageView) view.findViewById(R.id.problem_location_edit);
 
         mImageView = (ImageView) view.findViewById(R.id.problem_image);
+
+        if(imagePath.length()>0 && mImageView!=null){
+            mImageView.setImageBitmap(BitmapFactory.decodeFile(imagePath));
+        }
 
         //Handle button clicks
         cameraButton.setOnClickListener(new View.OnClickListener() {

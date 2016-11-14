@@ -32,8 +32,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private AHBottomNavigation bottomNavigation;
 
     private final String HOME_TAG="HOME", ALL_TAG="ALL", PHOTOS_TAG="PHOTOS", SETTINGS_TAG="SETTINGS";
+    private Fragment homeFragment, allviewFragment, settingsFragment, photosFragment;
     private boolean backPressed = false;
-
+    private String lastFragment;
     public Toolbar toolbar;
 
     @Override
@@ -45,7 +46,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        createBottomBar();
+        if(savedInstanceState==null){
+            homeFragment = new HomeFragment();
+            photosFragment = new PhotoFragment();
+            allviewFragment = new AllViewFragment();
+            settingsFragment = new SettingsFragment();
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.fragment_container, homeFragment, HOME_TAG)
+                    .commit();
+            lastFragment = HOME_TAG;
+        }
+        createBottomBar(savedInstanceState==null);
     }
 
     //Login check and handler
@@ -122,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     }
 
-    private void createBottomBar(){
+    private void createBottomBar(boolean isNotSaved){
         bottomNavigation = (AHBottomNavigation) findViewById(R.id.bottom_navigation);
 
         // Create items
@@ -154,12 +167,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         bottomNavigation.setTitleState(AHBottomNavigation.TitleState.ALWAYS_SHOW);
 
         // Set current item programmatically
-        bottomNavigation.setCurrentItem(0);
-        HomeFragment homeFragment = new HomeFragment();
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.fragment_container, homeFragment)
-                .commit();
+        if(isNotSaved)
+            bottomNavigation.setCurrentItem(0);
+
+//        HomeFragment homeFragment = new HomeFragment();
+//        getSupportFragmentManager()
+//                .beginTransaction()
+//                .add(R.id.fragment_container, homeFragment)
+//                .commit();
 
         // Set listeners
         bottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
@@ -174,21 +189,21 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 switch(position){
                     case 0:
                         if(!wasSelected) {
-                            genericFragment = new HomeFragment();
+                            genericFragment = homeFragment;
                             fragmentTAG = HOME_TAG;
                         }
                         break;
 
                     case 1:
                         if(!wasSelected) {
-                            genericFragment = new AllViewFragment();
+                            genericFragment = allviewFragment;
                             fragmentTAG = ALL_TAG;
                         }
                         break;
 
                     case 2:
                         if(!wasSelected) {
-                            genericFragment = new PhotoFragment();
+                            genericFragment = photosFragment;
                             fragmentTAG = PHOTOS_TAG;
                         }
 
@@ -196,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
                     case 3:
                         if(!wasSelected){
-                            genericFragment = new SettingsFragment();
+                            genericFragment = settingsFragment;
                             fragmentTAG = SETTINGS_TAG;
                         }
                         break;
@@ -206,11 +221,27 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 }
 
                 if(!wasSelected  && !backPressed){
-                    fragmentTransaction
-                            .replace(R.id.fragment_container, genericFragment)
-                            .addToBackStack(fragmentTAG)
-                            .commit();
+                    Fragment testFragment = fm.findFragmentByTag(lastFragment);
+
+                        if(fm.findFragmentByTag(fragmentTAG) == null){
+                            fragmentTransaction
+                                    .add(R.id.fragment_container, genericFragment, fragmentTAG);
+                        }
+
+                        if(testFragment!=null){
+                            fragmentTransaction.detach(testFragment);
+                        }
+
+
+                            fragmentTransaction
+                                    .attach(genericFragment);
+
+
+                        fragmentTransaction.addToBackStack(fragmentTAG).commit();
+
+                        lastFragment = fragmentTAG;
                 }
+
                 backPressed = false;
                 return true;
             }
@@ -254,11 +285,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     bottomNavigation.setCurrentItem(3);
                     break;
             }
+            lastFragment = name;
             //fm.popBackStack();
         }
 
         catch(Exception e){
             bottomNavigation.setCurrentItem(0);
+            lastFragment = HOME_TAG;
             //fm.popBackStack();
         }
     }
