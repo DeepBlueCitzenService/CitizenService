@@ -46,7 +46,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private boolean backPressed = false;
     private String lastFragment;
     private Toolbar toolbar;
-
+    private FragmentManager fragmentManager;
+    private FragmentTransaction fragmentTransaction;
     private ArrayList<String> BackStack;
 
     @Override
@@ -118,6 +119,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
                     BackStack = new ArrayList<>();
                 }
+
+                fragmentManager = getSupportFragmentManager();
+
                 if(bottomNavigation==null)
                     createBottomBar(savedInstanceState==null);
             }
@@ -238,8 +242,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         bottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
             @Override
             public boolean onTabSelected(int position, boolean wasSelected) {
-                FragmentManager fm = getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fm.beginTransaction();
+                fragmentTransaction = fragmentManager.beginTransaction();
 
                 Fragment genericFragment = null;
                 String fragmentTAG = "";
@@ -280,7 +283,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 }
 
                 if(!wasSelected  && !backPressed){
-                    Fragment testFragment = fm.findFragmentByTag(lastFragment);
+                    Fragment testFragment = fragmentManager.findFragmentByTag(lastFragment);
 
                         if(!genericFragment.isAdded()){
                             fragmentTransaction
@@ -298,9 +301,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                             fragmentTransaction
                                     .show(genericFragment);
 
-
-                        fragmentTransaction.commit();
-
                         BackStack.add(0, fragmentTAG);
                         if(BackStack.size()==5)
                             BackStack.remove(4);
@@ -310,6 +310,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         lastFragment = fragmentTAG;
                 }
 
+                fragmentTransaction.commit();
                 backPressed = false;
                 return true;
             }
@@ -325,6 +326,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     @Override
     public void changeView(int toWhere) {
+        if(photosFragment.isAdded()){
+            fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.remove(photosFragment);
+            fragmentTransaction.commit();
+        }
         bottomNavigation.setCurrentItem(toWhere);
     }
 
