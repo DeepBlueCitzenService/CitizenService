@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         bottomNavigation.setDefaultBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
 
         // Disable the translation inside the CoordinatorLayout
-        bottomNavigation.setBehaviorTranslationEnabled(false);
+        bottomNavigation.setBehaviorTranslationEnabled(true);
 
         // Change colors of icons, when active and inactive
         bottomNavigation.setAccentColor(ContextCompat.getColor(this, R.color.colorAccent));
@@ -315,13 +315,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 return true;
             }
         });
-
-        bottomNavigation.setOnNavigationPositionListener(new AHBottomNavigation.OnNavigationPositionListener() {
-            @Override public void onPositionChange(int y) {
-                Log.d(TAG, "The position is"+y);
-            }
-        });
-
     }
 
     @Override
