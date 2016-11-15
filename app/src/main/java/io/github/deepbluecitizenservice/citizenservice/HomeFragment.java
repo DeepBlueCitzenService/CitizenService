@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,7 @@ public class HomeFragment extends Fragment {
     private long lastSeen = -1;
     private long counter, size;
     private boolean allAdded = false;
-    private final static int QUERY_SIZE = 3;
+    private final static int QUERY_SIZE = 3, OFFSET_VIEW= 2;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -68,9 +69,10 @@ public class HomeFragment extends Fragment {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if(dy>0 && allAdded &&
+                if(allAdded &&
                         linearLayoutManager.getItemCount() <=
-                                linearLayoutManager.findLastVisibleItemPosition() + 2){
+                                linearLayoutManager.findLastVisibleItemPosition() + OFFSET_VIEW){
+                    Log.d("SCROLL", "MAKING A QUERY");
                     makeQuery(lastSeen, ref, adapter);
                 }
             }
@@ -103,6 +105,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onDataChange(final DataSnapshot dataSnapshot) {
                 size = dataSnapshot.getChildrenCount();
+                if(size==0) allAdded = true;
 
                 for(final DataSnapshot ds : dataSnapshot.getChildren()){
                     new AsyncTask<Void, Void, Boolean>() {

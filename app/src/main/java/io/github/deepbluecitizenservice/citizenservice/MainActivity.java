@@ -251,21 +251,21 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 switch(position){
                     case 0:
                         if(!wasSelected) {
-                            genericFragment = homeFragment;
+                            genericFragment = homeFragment==null? new HomeFragment(): homeFragment;
                             fragmentTAG = HOME_TAG;
                         }
                         break;
 
                     case 1:
                         if(!wasSelected) {
-                            genericFragment = allviewFragment;
+                            genericFragment = allviewFragment==null? new AllViewFragment(): allviewFragment;
                             fragmentTAG = ALL_TAG;
                         }
                         break;
 
                     case 2:
                         if(!wasSelected) {
-                            genericFragment = photosFragment;
+                            genericFragment = photosFragment==null? new PhotoFragment(): photosFragment;
                             fragmentTAG = PHOTOS_TAG;
                         }
 
@@ -273,7 +273,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
                     case 3:
                         if(!wasSelected){
-                            genericFragment = settingsFragment;
+                            genericFragment = settingsFragment==null? new SettingsFragment(): settingsFragment;
                             fragmentTAG = SETTINGS_TAG;
                         }
                         break;
@@ -300,6 +300,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
                             fragmentTransaction
                                     .show(genericFragment);
+
+                        if(BackStack==null){
+                            BackStack = new ArrayList<>();
+                        }
 
                         BackStack.add(0, fragmentTAG);
                         if(BackStack.size()==5)
