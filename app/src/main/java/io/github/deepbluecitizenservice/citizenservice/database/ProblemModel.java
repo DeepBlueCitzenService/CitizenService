@@ -75,4 +75,9 @@ public class ProblemModel{
 
         return "none";
     }
+
+    @Exclude
+    public String getCategory(){
+        return getCategory(category);
+    }
 }
