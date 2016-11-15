@@ -31,9 +31,9 @@ public class CustomDatabase{
                 SLA, timeCreated, description, category, creatorName, creatorUrl);
 
 
-        HashMap<String, Object> mp = new HashMap<>();
-
-        mp.put(key, false);
+//        HashMap<String, Object> mp = new HashMap<>();
+//
+//        mp.put(key, false);
 
         String place;
 
@@ -44,7 +44,7 @@ public class CustomDatabase{
             place=ProblemModel.OPEN_PROBLEM;
         }
 
-        db.child("users").child(creatorKey).child(place+"Problems").updateChildren(mp);
+        db.child("users").child(creatorKey).child(place+"Problems").child(key).setValue(problem);
         db.child("problems").child(key).setValue(problem);
     }
 

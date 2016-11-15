@@ -319,11 +319,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     @Override
     public void changeView(int toWhere) {
-//        if(photosFragment.isAdded()){
-//            fragmentTransaction = fragmentManager.beginTransaction();
-//            fragmentTransaction.remove(photosFragment);
-//            fragmentTransaction.commit();
-//        }
         bottomNavigation.setCurrentItem(toWhere);
     }
 
@@ -337,6 +332,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
                 String name = BackStack.get(1);
                 Log.d(TAG, "Back stack woo " + BackStack.size() + " " + name);
+
+                bottomNavigation.restoreBottomNavigation();
 
                 switch (name) {
                     case HOME_TAG:

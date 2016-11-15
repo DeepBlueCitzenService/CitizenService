@@ -25,9 +25,6 @@ import io.github.deepbluecitizenservice.citizenservice.adapter.CommonRecyclerVie
 import io.github.deepbluecitizenservice.citizenservice.database.ProblemModel;
 
 public class HomeFragment extends Fragment {
-
-    //private FirebaseRecyclerAdapter mAdapter;
-    //private OnFragmentInteractionListener mListener;
     private long lastSeen = -1;
     private long counter, size;
     private boolean allAdded = false;
@@ -56,9 +53,6 @@ public class HomeFragment extends Fragment {
         }
 
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("problems");
-        //final DatabaseReference keyref = FirebaseDatabase.getInstance().getReference().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("openProblems");
-        //final StorageReference storage = FirebaseStorage.getInstance().getReference();
-
         RecyclerView rv = (RecyclerView) v.findViewById(R.id.home_recycle_view);
 
         final CommonRecyclerViewAdapter adapter = new CommonRecyclerViewAdapter(getContext(), problemModelList);
@@ -85,40 +79,6 @@ public class HomeFragment extends Fragment {
         return v;
     }
 
-//
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
-//
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        //mListener = null;
-        //mAdapter.cleanup();
-    }
-//
-//    /**
-//     * This interface must be implemented by activities that contain this
-//     * fragment to allow an interaction in this fragment to be communicated
-//     * to the activity and potentially other fragments contained in that
-//     * activity.
-//     * <p>
-//     * See the Android Training lesson <a href=
-//     * "http://developer.android.com/training/basics/fragments/communicating.html"
-//     * >Communicating with Other Fragments</a> for more information.
-//     */
-//    public interface OnFragmentInteractionListener {
-//        // TODO: Update argument type and name
-//        void onFragmentInteraction(Uri uri);
-//    }
-
     private class SpacingDecoration extends RecyclerView.ItemDecoration {
         private int spacing;
 
@@ -134,8 +94,6 @@ public class HomeFragment extends Fragment {
 
         }
     }
-
-
 
     private void makeQuery(long startAt, final DatabaseReference ref, final CommonRecyclerViewAdapter adapter){
         allAdded = false;
@@ -155,12 +113,6 @@ public class HomeFragment extends Fragment {
                             if(!adapter.isAdded(ds.getKey())){
                                 user = ds.getValue(ProblemModel.class);
                                 if(lastSeen<user.timeCreated) lastSeen= user.timeCreated;
-//                                try {
-//                                    //TODO : make thread sleep until image is downloaded instead on 1.5 sec
-//                                    Thread.sleep(1500);
-//                                } catch (InterruptedException e) {
-//                                    e.printStackTrace();
-//                                }
                                 return true;
                             }
                             return false;
@@ -176,9 +128,8 @@ public class HomeFragment extends Fragment {
                         }
 
                     }.execute();
-
-                    ref.removeEventListener(this);
                 }
+                ref.removeEventListener(this);
             }
 
             @Override
