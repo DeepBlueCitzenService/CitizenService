@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "382495725967-b0tj8tf6oi8giuobobdkt4b09oku206b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.github.deepbluecitizenservice.citizenservice",
+            "certificate_hash": "0CA9ED0D3B0A5F410EB737E4755651748262335A"
+          }
+        },
+        {
           "client_id": "382495725967-0skp5m0gt5r5dupbh0qeaoc9k8jakn3e.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
