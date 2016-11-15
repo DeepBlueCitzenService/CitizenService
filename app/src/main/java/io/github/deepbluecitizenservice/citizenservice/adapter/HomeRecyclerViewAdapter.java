@@ -19,6 +19,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import io.github.deepbluecitizenservice.citizenservice.ExpImageActivity;
@@ -29,15 +30,22 @@ import io.github.deepbluecitizenservice.citizenservice.database.ProblemModel;
 public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerViewAdapter.ViewHolder> {
     private Context context;
     private List<ProblemModel> problemList;
+    private HashSet<String> problemIds;
 
     public HomeRecyclerViewAdapter(Context context, List<ProblemModel> problems){
         this.context = context;
         this.problemList = problems;
+        this.problemIds = new HashSet<>();
     }
 
-    public void addProblem(ProblemModel problemModel){
+    public void addProblem(ProblemModel problemModel, String id){
         problemList.add(problemModel);
         notifyDataSetChanged();
+        problemIds.add(id);
+    }
+
+    public boolean isAdded(String key){
+        return problemIds.contains(key);
     }
 
     @Override

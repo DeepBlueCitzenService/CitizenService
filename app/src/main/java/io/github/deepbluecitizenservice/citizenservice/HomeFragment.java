@@ -67,24 +67,29 @@ public class HomeFragment extends Fragment {
             @Override
             public void onDataChange(final DataSnapshot dataSnapshot) {
                 for(final DataSnapshot ds : dataSnapshot.getChildren()){
-                    new AsyncTask<Void, Void, Void>() {
+                    new AsyncTask<Void, Void, Boolean>() {
 
                         ProblemModel user;
                         @Override
-                        protected Void doInBackground(Void... voids) {
-                            user = ds.getValue(ProblemModel.class);
-                            try {
-                                //TODO : make thread sleep until image is downloaded instead on 1.5 sec
-                                Thread.sleep(1500);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
+                        protected Boolean doInBackground(Void... voids) {
+                            if(!adapter.isAdded(ds.getKey())){
+                                user = ds.getValue(ProblemModel.class);
+                                try {
+                                    //TODO : make thread sleep until image is downloaded instead on 1.5 sec
+                                    Thread.sleep(1500);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                return true;
                             }
-                            return null;
+                            return false;
                         }
 
                         @Override
-                        public void onPostExecute(Void result){
-                            adapter.addProblem(user);
+                        public void onPostExecute(Boolean result){
+                            if(result){
+                                adapter.addProblem(user, ds.getKey());
+                            }
                         }
 
                     }.execute();
