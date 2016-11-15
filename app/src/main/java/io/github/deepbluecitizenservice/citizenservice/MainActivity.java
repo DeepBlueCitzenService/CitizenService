@@ -1,9 +1,12 @@
 package io.github.deepbluecitizenservice.citizenservice;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,6 +15,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
@@ -34,6 +38,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private final String TAG = "Main Activity:";
     private GoogleApiClient mGAP;
     private AHBottomNavigation bottomNavigation;
+    private boolean isHidden = false;
+    private int TabPosition = 0;
 
     private final String HOME_TAG="HOME", ALL_TAG="ALL", PHOTOS_TAG="PHOTOS", SETTINGS_TAG="SETTINGS";
     private Fragment homeFragment, allviewFragment, settingsFragment, photosFragment;
@@ -44,58 +50,83 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private ArrayList<String> BackStack;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-        handleLogCheck();
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Logging in");
 
-        FragmentManager fm = getSupportFragmentManager();
 
-        if(savedInstanceState==null){
-            if(homeFragment==null ) {
-                if(fm.findFragmentByTag(HOME_TAG)==null)
-                    homeFragment = new HomeFragment();
-                else
-                    homeFragment = fm.findFragmentByTag(HOME_TAG);
-            }
-            if(photosFragment==null) {
-                if(fm.findFragmentByTag(HOME_TAG)==null)
-                    photosFragment = new PhotoFragment();
-                else
-                    photosFragment = fm.findFragmentByTag(PHOTOS_TAG);
-            }
-            if(allviewFragment==null) {
-                if(fm.findFragmentByTag(ALL_TAG)==null)
-                    allviewFragment = new AllViewFragment();
-                else
-                    allviewFragment = fm.findFragmentByTag(ALL_TAG);
-            }
-            if(settingsFragment==null) {
-                if(fm.findFragmentByTag(SETTINGS_TAG)==null)
-                    settingsFragment = new SettingsFragment();
-                else
-                    settingsFragment = fm.findFragmentByTag(SETTINGS_TAG);
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog.show();
             }
 
-            if(!homeFragment.isAdded()) {
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.fragment_container, homeFragment, HOME_TAG)
-                        .commit();
-                lastFragment = HOME_TAG;
+            @Override
+            protected Void doInBackground(Void... params) {
+                handleLogCheck();
+                return null;
             }
 
-            BackStack = new ArrayList<>();
-        }
-        if(bottomNavigation==null)
-            createBottomBar(savedInstanceState==null);
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                progressDialog.dismiss();
+
+                toolbar = (Toolbar) findViewById(R.id.toolbar);
+                setSupportActionBar(toolbar);
+
+                FragmentManager fm = getSupportFragmentManager();
+
+                if(savedInstanceState==null){
+                    if(homeFragment==null ) {
+                        if(fm.findFragmentByTag(HOME_TAG)==null)
+                            homeFragment = new HomeFragment();
+                        else
+                            homeFragment = fm.findFragmentByTag(HOME_TAG);
+                    }
+                    if(photosFragment==null) {
+                        if(fm.findFragmentByTag(HOME_TAG)==null)
+                            photosFragment = new PhotoFragment();
+                        else
+                            photosFragment = fm.findFragmentByTag(PHOTOS_TAG);
+                    }
+                    if(allviewFragment==null) {
+                        if(fm.findFragmentByTag(ALL_TAG)==null)
+                            allviewFragment = new AllViewFragment();
+                        else
+                            allviewFragment = fm.findFragmentByTag(ALL_TAG);
+                    }
+                    if(settingsFragment==null) {
+                        if(fm.findFragmentByTag(SETTINGS_TAG)==null)
+                            settingsFragment = new SettingsFragment();
+                        else
+                            settingsFragment = fm.findFragmentByTag(SETTINGS_TAG);
+                    }
+
+                    if(!homeFragment.isAdded()) {
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .add(R.id.fragment_container, homeFragment, HOME_TAG)
+                                .commit();
+                        lastFragment = HOME_TAG;
+                    }
+
+                    BackStack = new ArrayList<>();
+                }
+                if(bottomNavigation==null)
+                    createBottomBar(savedInstanceState==null);
+            }
+        }.execute();
     }
 
     //Login check and handler
     private void handleLogCheck(){
+        Log.d(TAG, "Logging in.....");
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.web_client_id))
                 .requestEmail()
@@ -212,6 +243,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
                 Fragment genericFragment = null;
                 String fragmentTAG = "";
+                TabPosition = position;
 
                 switch(position){
                     case 0:
@@ -285,9 +317,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         bottomNavigation.setOnNavigationPositionListener(new AHBottomNavigation.OnNavigationPositionListener() {
             @Override public void onPositionChange(int y) {
-                // Manage the new y position
+                Log.d(TAG, "The position is"+y);
             }
         });
+
     }
 
     @Override
@@ -300,53 +333,56 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     public void onBackPressed() {
         backPressed = true;
         FragmentTransaction fm = getSupportFragmentManager().beginTransaction();
+        try {
+            if (BackStack.size() > 1) {
 
-        if(BackStack.size()>1){
+                String name = BackStack.get(1);
+                Log.d(TAG, "Back stack woo " + BackStack.size() + " " + name);
 
-            String name = BackStack.get(1);
-            Log.d(TAG, "Back stack woo "+BackStack.size()+" "+name);
+                switch (name) {
+                    case HOME_TAG:
+                        bottomNavigation.setCurrentItem(0);
+                        if (homeFragment.isHidden()) {
+                            fm.show(homeFragment);
+                        }
+                        break;
+                    case ALL_TAG:
+                        bottomNavigation.setCurrentItem(1);
+                        if (allviewFragment.isHidden()) {
+                            fm.show(allviewFragment);
+                        }
 
-            switch(name){
-                case HOME_TAG:
-                    bottomNavigation.setCurrentItem(0);
-                    if(homeFragment.isHidden()){
-                        fm.show(homeFragment);
-                    }
-                    break;
-                case ALL_TAG:
-                    bottomNavigation.setCurrentItem(1);
-                    if(allviewFragment.isHidden()){
-                        fm.show(allviewFragment);
-                    }
+                        break;
 
-                    break;
+                    case PHOTOS_TAG:
+                        bottomNavigation.setCurrentItem(2);
+                        if (photosFragment.isHidden())
+                            fm.show(photosFragment);
+                        break;
+                    case SETTINGS_TAG:
+                        bottomNavigation.setCurrentItem(3);
+                        if (settingsFragment.isHidden())
+                            fm.show(settingsFragment);
+                        break;
+                }
 
-                case PHOTOS_TAG:
-                    bottomNavigation.setCurrentItem(2);
-                    if(photosFragment.isHidden())
-                        fm.show(photosFragment);
-                    break;
-                case SETTINGS_TAG:
-                    bottomNavigation.setCurrentItem(3);
-                    if(settingsFragment.isHidden())
-                        fm.show(settingsFragment);
-                    break;
+                lastFragment = name;
+
+                name = BackStack.get(0);
+
+                Fragment generic = name.equals(HOME_TAG) ? homeFragment : (name.equals(PHOTOS_TAG) ? photosFragment : (name.equals(ALL_TAG) ? allviewFragment : settingsFragment));
+                fm.hide(generic);
+                fm.commit();
+                BackStack.remove(0);
+            } else {
+                if (BackStack.size() == 1) {
+                    BackStack.remove(0);
+                }
+                super.onBackPressed();
             }
-
-            lastFragment = name;
-
-            name = BackStack.get(0);
-
-            Fragment generic = name.equals(HOME_TAG)? homeFragment:(name.equals(PHOTOS_TAG)? photosFragment: (name.equals(ALL_TAG)? allviewFragment: settingsFragment));
-            fm.hide(generic);
-            fm.commit();
-            BackStack.remove(0);
         }
 
-        else{
-            if(BackStack.size()==1){
-                BackStack.remove(0);
-            }
+        catch(Exception e){
             super.onBackPressed();
         }
     }

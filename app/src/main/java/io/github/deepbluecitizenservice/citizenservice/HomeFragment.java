@@ -17,6 +17,7 @@ import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -49,8 +50,14 @@ public class HomeFragment extends Fragment {
         RecyclerView rv = (RecyclerView) v.findViewById(R.id.home_recycle_view);
         rv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if(user == null){
+            return v;
+        }
+
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("problems");
-        final DatabaseReference keyref = FirebaseDatabase.getInstance().getReference().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("openProblems");
+        final DatabaseReference keyref = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("openProblems");
         final StorageReference storage = FirebaseStorage.getInstance().getReference();
 
         mAdapter = new FirebaseIndexRecyclerAdapter<ProblemModel, ProblemHolder>
