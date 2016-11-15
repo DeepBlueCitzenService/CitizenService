@@ -1,13 +1,10 @@
 package io.github.deepbluecitizenservice.citizenservice.database;
 
-import android.net.Uri;
-
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
 
 @IgnoreExtraProperties
@@ -27,22 +24,6 @@ public class ProblemModel{
 
     public static final int STATUS_UNSOLVED = 0;
     public static final int STATUS_SOLVED = 1;
-
-    public static final String
-            URL = "URL",
-            ID = "id",
-            STATUS = "status",
-            LOCATIONX = "locationX",
-            LOCATIONY = "locationY",
-            LOCATIONADDRESS = "location",
-            CREATOR = "creatorKey",
-            SLA     = "SLA",
-            TIMECREATED = "timeCreated",
-            TIMECREATEDLONG = "timeLong",
-            DESCRIPTION = "description",
-            CATEGORY    = "category",
-            USER_URL    = "userUrl",
-            USER_NAME   = "userName";
 
     ProblemModel(){
 
@@ -67,27 +48,8 @@ public class ProblemModel{
     }
 
     @Exclude
-    public HashMap<String, Object> getDetails(){
-        HashMap<String, Object> result = new HashMap<>();
-        result.put(URL, url);
-        //result.put(STATUS, status);
-        result.put(LOCATIONADDRESS, locationAddress);
-        result.put(LOCATIONX, locationX);
-        result.put(LOCATIONY, locationY);
-        //result.put(SLA, sla);
-        result.put(TIMECREATEDLONG, timeCreated*1000);
-        result.put(TIMECREATED, getPeriod(timeCreated));
-        result.put(DESCRIPTION, description);
-        result.put(CATEGORY, getCategory(category));
-        result.put(CREATOR, creatorKey);
-        result.put(USER_URL, creatorURL);
-        result.put(USER_NAME, creatorName);
-        return  result;
-    }
-
-    @Exclude
-    private String getPeriod(long time){
-        time = time*1000;
+    public String getPeriod(){
+        long time = timeCreated*1000;
         long after;
 
         after = sla * 24 * 60 * 60* 1000;
@@ -112,5 +74,10 @@ public class ProblemModel{
         }
 
         return "none";
+    }
+
+    @Exclude
+    public String getCategory(){
+        return getCategory(category);
     }
 }

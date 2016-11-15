@@ -1,36 +1,32 @@
 package io.github.deepbluecitizenservice.citizenservice;
 
-import android.content.Intent;
+import android.graphics.Rect;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.google.firebase.database.ValueEventListener;
 
-import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
-import io.github.deepbluecitizenservice.citizenservice.database.ProblemHolder;
+import io.github.deepbluecitizenservice.citizenservice.adapter.CommonRecyclerViewAdapter;
 import io.github.deepbluecitizenservice.citizenservice.database.ProblemModel;
 
 public class HomeFragment extends Fragment {
 
-    private FirebaseRecyclerAdapter mAdapter;
+    //private FirebaseRecyclerAdapter mAdapter;
     //private OnFragmentInteractionListener mListener;
 
     public HomeFragment() {
@@ -47,8 +43,7 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_home, container, false);
 
-        RecyclerView rv = (RecyclerView) v.findViewById(R.id.home_recycle_view);
-        rv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        List<ProblemModel> problemModelList = new LinkedList<>();
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -57,9 +52,57 @@ public class HomeFragment extends Fragment {
         }
 
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("problems");
-        final DatabaseReference keyref = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("openProblems");
-        final StorageReference storage = FirebaseStorage.getInstance().getReference();
+        //final DatabaseReference keyref = FirebaseDatabase.getInstance().getReference().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("openProblems");
+        //final StorageReference storage = FirebaseStorage.getInstance().getReference();
 
+        RecyclerView rv = (RecyclerView) v.findViewById(R.id.home_recycle_view);
+        final CommonRecyclerViewAdapter adapter = new CommonRecyclerViewAdapter(getContext(), problemModelList);
+
+        rv.setLayoutManager(new LinearLayoutManager(getContext()));
+        rv.addItemDecoration(new SpacingDecoration(8));
+        rv.setAdapter(adapter);
+
+        //TODO : is "timeCreated" correct? But it gives result in ascending order; Nevermind it's easy and we can do it later
+        ref.orderByChild("timeCreated").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(final DataSnapshot dataSnapshot) {
+                for(final DataSnapshot ds : dataSnapshot.getChildren()){
+                    new AsyncTask<Void, Void, Boolean>() {
+
+                        ProblemModel user;
+                        @Override
+                        protected Boolean doInBackground(Void... voids) {
+                            if(!adapter.isAdded(ds.getKey())){
+                                user = ds.getValue(ProblemModel.class);
+                                try {
+                                    //TODO : make thread sleep until image is downloaded instead on 1.5 sec
+                                    Thread.sleep(1500);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                return true;
+                            }
+                            return false;
+                        }
+
+                        @Override
+                        public void onPostExecute(Boolean result){
+                            if(result){
+                                adapter.addProblem(user, ds.getKey());
+                            }
+                        }
+
+                    }.execute();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        /*
         mAdapter = new FirebaseIndexRecyclerAdapter<ProblemModel, ProblemHolder>
                 (ProblemModel.class, R.layout.problem_card, ProblemHolder.class, keyref, ref) {
             @Override
@@ -124,6 +167,7 @@ public class HomeFragment extends Fragment {
             }
         };
         rv.setAdapter(mAdapter);
+        */
 
         return v;
     }
@@ -144,7 +188,7 @@ public class HomeFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         //mListener = null;
-        mAdapter.cleanup();
+        //mAdapter.cleanup();
     }
 //
 //    /**
@@ -161,4 +205,20 @@ public class HomeFragment extends Fragment {
 //        // TODO: Update argument type and name
 //        void onFragmentInteraction(Uri uri);
 //    }
+
+    private class SpacingDecoration extends RecyclerView.ItemDecoration {
+        private int spacing;
+
+        SpacingDecoration(int spacing) {
+            this.spacing = spacing;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
+                                   RecyclerView.State state) {
+            outRect.bottom = spacing;
+            outRect.top = spacing;
+
+        }
+    }
 }
