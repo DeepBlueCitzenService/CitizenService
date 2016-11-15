@@ -319,11 +319,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     @Override
     public void changeView(int toWhere) {
-        if(photosFragment.isAdded()){
-            fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.remove(photosFragment);
-            fragmentTransaction.commit();
-        }
+//        if(photosFragment.isAdded()){
+//            fragmentTransaction = fragmentManager.beginTransaction();
+//            fragmentTransaction.remove(photosFragment);
+//            fragmentTransaction.commit();
+//        }
         bottomNavigation.setCurrentItem(toWhere);
     }
 

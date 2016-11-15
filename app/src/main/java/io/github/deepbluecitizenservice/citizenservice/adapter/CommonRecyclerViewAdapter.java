@@ -71,7 +71,13 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
             holder.noOfImagesTV.setVisibility(View.GONE);
 
         StorageReference refProblem = FirebaseStorage.getInstance().getReference(problem.url);
-        Glide.with(context).using(new FirebaseImageLoader()).load(refProblem).into(holder.imageView);
+        Glide.with(context)
+                .using(new FirebaseImageLoader())
+                .load(refProblem)
+                .override(400, 300)
+                .crossFade()
+                .into(holder.imageView);
+
         Glide.with(context).load(problem.creatorURL).into(holder.userImage);
 
         setExpandButtonListener(holder.expandButton, holder.descriptionTV);

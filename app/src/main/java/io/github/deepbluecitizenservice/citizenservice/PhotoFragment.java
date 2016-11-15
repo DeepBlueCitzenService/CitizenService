@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
@@ -20,13 +21,17 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -198,10 +203,6 @@ public class PhotoFragment extends Fragment {
         });
 
         mImageView = (ImageView) view.findViewById(R.id.problem_image);
-
-//        if(imagePath.length()>0 && mImageView!=null){
-//            mImageView.setImageBitmap(BitmapFactory.decodeFile(imagePath));
-//        }
 
         return view;
     }
@@ -477,7 +478,6 @@ public class PhotoFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        Log.d(TAG, "ONDETACH");
         if(gpsService != null)
             gpsService.stopUsingGPS();
         mListener = null;
@@ -487,16 +487,6 @@ public class PhotoFragment extends Fragment {
         locationX = -1;
         locationAddress = "";
         hasLocation = false;
-
-        Log.d(TAG, "Detaching");
-//        if(mImageView.getDrawable()!=null) {
-//            Log.d(TAG, "Removing Bitmap");
-//            mImageView.setImageBitmap(null);
-//        }
-    }
-
-    public interface OnPhotoListener {
-        void changeView(int toWhere);
     }
 
     @Override
@@ -528,5 +518,10 @@ public class PhotoFragment extends Fragment {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public interface OnPhotoListener {
+        void changeView(int toWhere);
+        //void removeBottomBar(boolean choice);
     }
 }

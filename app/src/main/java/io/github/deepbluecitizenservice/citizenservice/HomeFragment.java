@@ -28,6 +28,10 @@ public class HomeFragment extends Fragment {
 
     //private FirebaseRecyclerAdapter mAdapter;
     //private OnFragmentInteractionListener mListener;
+    private long lastSeen = -1;
+    private long counter, size;
+    private boolean allAdded = false;
+    private final static int QUERY_SIZE = 3;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -56,118 +60,27 @@ public class HomeFragment extends Fragment {
         //final StorageReference storage = FirebaseStorage.getInstance().getReference();
 
         RecyclerView rv = (RecyclerView) v.findViewById(R.id.home_recycle_view);
-        final CommonRecyclerViewAdapter adapter = new CommonRecyclerViewAdapter(getContext(), problemModelList);
 
-        rv.setLayoutManager(new LinearLayoutManager(getContext()));
+        final CommonRecyclerViewAdapter adapter = new CommonRecyclerViewAdapter(getContext(), problemModelList);
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+
+        rv.setLayoutManager(linearLayoutManager);
         rv.addItemDecoration(new SpacingDecoration(8));
         rv.setAdapter(adapter);
 
-        //TODO : is "timeCreated" correct? But it gives result in ascending order; Nevermind it's easy and we can do it later
-        ref.orderByChild("timeCreated").addValueEventListener(new ValueEventListener() {
+        makeQuery(0- (System.currentTimeMillis()/1000), ref, adapter);
+
+        rv.addOnScrollListener(new RecyclerView.OnScrollListener(){
             @Override
-            public void onDataChange(final DataSnapshot dataSnapshot) {
-                for(final DataSnapshot ds : dataSnapshot.getChildren()){
-                    new AsyncTask<Void, Void, Boolean>() {
-
-                        ProblemModel user;
-                        @Override
-                        protected Boolean doInBackground(Void... voids) {
-                            if(!adapter.isAdded(ds.getKey())){
-                                user = ds.getValue(ProblemModel.class);
-                                try {
-                                    //TODO : make thread sleep until image is downloaded instead on 1.5 sec
-                                    Thread.sleep(1500);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                                return true;
-                            }
-                            return false;
-                        }
-
-                        @Override
-                        public void onPostExecute(Boolean result){
-                            if(result){
-                                adapter.addProblem(user, ds.getKey());
-                            }
-                        }
-
-                    }.execute();
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if(dy>0 && allAdded &&
+                        linearLayoutManager.getItemCount() <=
+                                linearLayoutManager.findLastVisibleItemPosition() + 2){
+                    makeQuery(lastSeen, ref, adapter);
                 }
             }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
         });
-
-        /*
-        mAdapter = new FirebaseIndexRecyclerAdapter<ProblemModel, ProblemHolder>
-                (ProblemModel.class, R.layout.problem_card, ProblemHolder.class, keyref, ref) {
-            @Override
-            protected void populateViewHolder(ProblemHolder viewHolder, ProblemModel model, int position) {
-
-                final HashMap<String, Object> mp = model.getDetails();
-
-                viewHolder.setFields((String) mp.get(ProblemModel.USER_NAME),
-                        (String)mp.get(ProblemModel.LOCATIONADDRESS),
-                        (String)mp.get(ProblemModel.CATEGORY),
-                        (String)mp.get(ProblemModel.TIMECREATED),
-                        (String)mp.get(ProblemModel.DESCRIPTION));
-
-                View v = viewHolder.getView();
-                Glide.with(getActivity())
-                        .using(new FirebaseImageLoader())
-                        .load(storage.child((String)mp.get(ProblemModel.URL)))
-                        .override(400, 300)
-                        .centerCrop()
-                        .crossFade()
-                        .into((ImageView)v.findViewById(R.id.image_view));
-
-                Glide.with(getActivity())
-                        .load((String)mp.get(ProblemModel.USER_URL))
-                        .into((ImageView)v.findViewById(R.id.user_image));
-
-                TextView locationTV = (TextView) v.findViewById(R.id.location_tv);
-
-                locationTV.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        String title = mp.get(ProblemModel.USER_NAME) + " (" + mp.get(ProblemModel.CATEGORY) + ")";
-
-                        Intent intent = new Intent(getActivity(), MapsActivity.class);
-                        intent.putExtra(MapsActivity.MAP_LOC_X, (double)mp.get(ProblemModel.LOCATIONX));
-                        intent.putExtra(MapsActivity.MAP_LOC_Y, (double) mp.get(ProblemModel.LOCATIONY));
-                        intent.putExtra(MapsActivity.MAP_SNIPPET, (long) mp.get(ProblemModel.TIMECREATEDLONG));
-                        intent.putExtra(MapsActivity.MAP_TITLE, title);
-
-                        startActivity(intent);
-                    }
-                });
-
-                final ImageView expandButton = (ImageView) v.findViewById(R.id.arrow_button);
-                final TextView descriptionTV = (TextView) v.findViewById(R.id.description_tv);
-
-                expandButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if(descriptionTV.getVisibility() == View.VISIBLE){
-                            descriptionTV.setVisibility(View.GONE);
-                            expandButton.setImageDrawable(ContextCompat
-                                    .getDrawable(getActivity(), R.drawable.ic_keyboard_arrow_down));
-                        }
-                        else {
-                            descriptionTV.setVisibility(View.VISIBLE);
-                            expandButton.setImageDrawable(ContextCompat
-                                    .getDrawable(getActivity(), R.drawable.ic_keyboard_arrow_up));
-                        }
-                    }
-                });
-            }
-        };
-        rv.setAdapter(mAdapter);
-        */
 
         return v;
     }
@@ -220,5 +133,59 @@ public class HomeFragment extends Fragment {
             outRect.top = spacing;
 
         }
+    }
+
+
+
+    private void makeQuery(long startAt, final DatabaseReference ref, final CommonRecyclerViewAdapter adapter){
+        allAdded = false;
+        counter = 0;
+        //TODO : is "timeCreated" correct? But it gives result in ascending order; Nevermind it's easy and we can do it later
+        ref.orderByChild("timeCreated").startAt(startAt+1).limitToFirst(QUERY_SIZE).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(final DataSnapshot dataSnapshot) {
+                size = dataSnapshot.getChildrenCount();
+
+                for(final DataSnapshot ds : dataSnapshot.getChildren()){
+                    new AsyncTask<Void, Void, Boolean>() {
+
+                        ProblemModel user;
+                        @Override
+                        protected Boolean doInBackground(Void... voids) {
+                            if(!adapter.isAdded(ds.getKey())){
+                                user = ds.getValue(ProblemModel.class);
+                                if(lastSeen<user.timeCreated) lastSeen= user.timeCreated;
+//                                try {
+//                                    //TODO : make thread sleep until image is downloaded instead on 1.5 sec
+//                                    Thread.sleep(1500);
+//                                } catch (InterruptedException e) {
+//                                    e.printStackTrace();
+//                                }
+                                return true;
+                            }
+                            return false;
+                        }
+
+                        @Override
+                        public void onPostExecute(Boolean result){
+                            if(result){
+                                adapter.addProblem(user, ds.getKey());
+                                counter+=1;
+                                allAdded = counter>=size;
+                            }
+                        }
+
+                    }.execute();
+
+                    ref.removeEventListener(this);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 }
