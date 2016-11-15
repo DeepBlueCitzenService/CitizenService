@@ -4,11 +4,15 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.view.ViewCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -30,6 +34,13 @@ import io.github.deepbluecitizenservice.citizenservice.database.CustomDatabase;
 
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+
+    public static final int STARTUP_DELAY = 300;
+    public static final int ANIM_ITEM_DURATION = 1000;
+    public static final int ITEM_DELAY = 300;
+
+    private boolean animationStarted = false;
+
     private GoogleApiClient mGAP;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -41,7 +52,22 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme(R.style.AppTheme_SplashScreen);
         setContentView(R.layout.activity_login);
+
+        //Attach intent for signing in to a button
+        SignInButton signInButton = (SignInButton) findViewById(R.id.login_sign_in);
+        signInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent SignInIntent = Auth.GoogleSignInApi.getSignInIntent(mGAP);
+                startActivityForResult(SignInIntent, RC_SIGN_IN);
+                progressDialog = new ProgressDialog(LoginActivity.this);
+                progressDialog.setIndeterminate(true);
+                progressDialog.setMessage("Authenticating");
+                progressDialog.show();
+            }
+        });
 
         //Enable the google sign in API
         //Request for email as well
@@ -74,6 +100,12 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         };
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        if (!hasFocus || animationStarted) return;
+        animate();
+        super.onWindowFocusChanged(hasFocus);
+    }
 
     //Connect to google api and start listening for firebase changes
     @Override
@@ -96,16 +128,28 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         }
     }
 
-    //Attach intent for signing in to a button
-    public void handleButtonClick(View view){
-        Intent SignInIntent = Auth.GoogleSignInApi.getSignInIntent(mGAP);
-        startActivityForResult(SignInIntent, RC_SIGN_IN);
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Authenticating");
-        progressDialog.show();
-    }
+    private void animate() {
+        ImageView logoIV = (ImageView) findViewById(R.id.login_logo);
+        TextView appNameTV = (TextView) findViewById(R.id.login_app_name);
+        SignInButton signInButton = (SignInButton) findViewById(R.id.login_sign_in);
 
+        ViewCompat.animate(logoIV)
+                .translationY(-250)
+                .setStartDelay(STARTUP_DELAY)
+                .setDuration(ANIM_ITEM_DURATION).setInterpolator(
+                new DecelerateInterpolator(1.2f)).start();
+
+        ViewCompat.animate(appNameTV)
+                .translationY(50).alpha(1)
+                .setStartDelay(STARTUP_DELAY + 200)
+                .setDuration(1000).setInterpolator(
+                new DecelerateInterpolator()).start();
+
+        ViewCompat.animate(signInButton)
+                .scaleY(1f).scaleX(1f).alpha(1)
+                .setStartDelay(STARTUP_DELAY + ITEM_DELAY + 200)
+                .setDuration(500);
+    }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
