@@ -21,7 +21,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.LinkedList;
 import java.util.List;
 
-import io.github.deepbluecitizenservice.citizenservice.adapter.HomeRecyclerViewAdapter;
+import io.github.deepbluecitizenservice.citizenservice.adapter.CommonRecyclerViewAdapter;
 import io.github.deepbluecitizenservice.citizenservice.database.ProblemModel;
 
 public class HomeFragment extends Fragment {
@@ -56,7 +56,7 @@ public class HomeFragment extends Fragment {
         //final StorageReference storage = FirebaseStorage.getInstance().getReference();
 
         RecyclerView rv = (RecyclerView) v.findViewById(R.id.home_recycle_view);
-        final HomeRecyclerViewAdapter adapter = new HomeRecyclerViewAdapter(getContext(), problemModelList);
+        final CommonRecyclerViewAdapter adapter = new CommonRecyclerViewAdapter(getContext(), problemModelList);
 
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.addItemDecoration(new SpacingDecoration(8));

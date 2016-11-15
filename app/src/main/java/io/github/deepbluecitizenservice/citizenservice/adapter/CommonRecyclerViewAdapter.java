@@ -27,12 +27,12 @@ import io.github.deepbluecitizenservice.citizenservice.MapsActivity;
 import io.github.deepbluecitizenservice.citizenservice.R;
 import io.github.deepbluecitizenservice.citizenservice.database.ProblemModel;
 
-public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerViewAdapter.ViewHolder> {
+public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecyclerViewAdapter.ViewHolder> {
     private Context context;
     private List<ProblemModel> problemList;
     private HashSet<String> problemIds;
 
-    public HomeRecyclerViewAdapter(Context context, List<ProblemModel> problems){
+    public CommonRecyclerViewAdapter(Context context, List<ProblemModel> problems){
         this.context = context;
         this.problemList = problems;
         this.problemIds = new HashSet<>();
