@@ -20,14 +20,14 @@ import java.util.List;
 
 import io.github.deepbluecitizenservice.citizenservice.MapsActivity;
 import io.github.deepbluecitizenservice.citizenservice.R;
-import io.github.deepbluecitizenservice.citizenservice.data.Problem;
+import io.github.deepbluecitizenservice.citizenservice.database.ProblemModel;
 
 public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerViewAdapter.ViewHolder>{
     private Context context;
-    private List<Problem> problemList;
+    private List<ProblemModel> problemList;
 
 
-    public HomeRecyclerViewAdapter(Context context, List <Problem> problemList){
+    public HomeRecyclerViewAdapter(Context context, List <ProblemModel> problemList){
         this.context = context;
         this.problemList = problemList;
     }
@@ -40,16 +40,16 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Problem problem = problemList.get(position);
+        ProblemModel problem = problemList.get(position);
         HashMap <String, Object> Getter = problem.getDetails();
 
-        holder.userNameTV.setText((String)Getter.get(Problem.USER_NAME));
-        holder.locationTV.setText((String)Getter.get(Problem.LOCATIONADDRESS));
-        holder.categoryTV.setText((String)Getter.get(Problem.CATEGORY));
-        holder.periodTV.setText((String) Getter.get(Problem.TIMECREATED));
-        holder.descriptionTV.setText((String)Getter.get(Problem.DESCRIPTION));
+        holder.userNameTV.setText((String)Getter.get(ProblemModel.USER_NAME));
+        holder.locationTV.setText((String)Getter.get(ProblemModel.LOCATIONADDRESS));
+        holder.categoryTV.setText((String)Getter.get(ProblemModel.CATEGORY));
+        holder.periodTV.setText((String) Getter.get(ProblemModel.TIMECREATED));
+        holder.descriptionTV.setText((String)Getter.get(ProblemModel.DESCRIPTION));
 
-        StorageReference ref = FirebaseStorage.getInstance().getReferenceFromUrl((String)Getter.get(Problem.URL));
+        StorageReference ref = FirebaseStorage.getInstance().getReferenceFromUrl((String)Getter.get(ProblemModel.URL));
         Glide.with(context)
                 .using(new FirebaseImageLoader())
                 .load(ref)
@@ -57,16 +57,16 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
                 .into(holder.imageView);
 
         Glide.with(context)
-                .load((String)Getter.get(Problem.USER_URL))
+                .load((String)Getter.get(ProblemModel.USER_URL))
                 .crossFade()
                 .into(holder.userImage);
 
         setExpandButtonListener(holder.expandButton, holder.descriptionTV);
 
         setLocationClickListener(holder.locationTV,
-                (String)Getter.get(Problem.USER_NAME), (String)Getter.get(Problem.CATEGORY),
-                (Double)Getter.get(Problem.LOCATIONX), (Double)Getter.get(Problem.LOCATIONY),
-                (String)Getter.get(Problem.TIMECREATED));
+                (String)Getter.get(ProblemModel.USER_NAME), (String)Getter.get(ProblemModel.CATEGORY),
+                (Double)Getter.get(ProblemModel.LOCATIONX), (Double)Getter.get(ProblemModel.LOCATIONY),
+                (String)Getter.get(ProblemModel.TIMECREATED));
 
         //setImageClickListener(holder.imageView, problem);
     }

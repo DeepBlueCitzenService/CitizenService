@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
@@ -33,7 +32,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
@@ -43,7 +41,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.vision.text.Text;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
@@ -59,8 +56,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-import io.github.deepbluecitizenservice.citizenservice.data.Problem;
 import io.github.deepbluecitizenservice.citizenservice.database.CustomDatabase;
+import io.github.deepbluecitizenservice.citizenservice.database.ProblemModel;
 import io.github.deepbluecitizenservice.citizenservice.permission.StoragePermission;
 import io.github.deepbluecitizenservice.citizenservice.service.GPSService;
 
@@ -176,13 +173,13 @@ public class PhotoFragment extends Fragment {
                         int idx = radioGroup.getCheckedRadioButtonId();
                         switch (idx){
                             case R.id.radio_traffic:
-                                setImageCategory(Problem.CATEGORY_TRAFFIC);
+                                setImageCategory(ProblemModel.CATEGORY_TRAFFIC);
                                 break;
                             case R.id.radio_garbage:
-                                setImageCategory(Problem.CATEGORY_GARBAGE);
+                                setImageCategory(ProblemModel.CATEGORY_GARBAGE);
                                 break;
                             case R.id.radio_potholes:
-                                setImageCategory(Problem.CATEGORY_POTHOLES);
+                                setImageCategory(ProblemModel.CATEGORY_POTHOLES);
                                 break;
                         }
                         categorySelectDialog.dismiss();
@@ -223,7 +220,7 @@ public class PhotoFragment extends Fragment {
             if(resultCode == Activity.RESULT_OK){
                 handleCameraUpload(data);
                 //TODO : TensorFlow Comes Here
-                setImageCategory(Problem.CATEGORY_GARBAGE);
+                setImageCategory(ProblemModel.CATEGORY_GARBAGE);
             }
         }
 
@@ -233,7 +230,7 @@ public class PhotoFragment extends Fragment {
              if(resultCode== Activity.RESULT_OK) {
                  handleGalleryUpload(data);
                  //TODO : TensorFlow Comes Here
-                 setImageCategory(Problem.CATEGORY_GARBAGE);
+                 setImageCategory(ProblemModel.CATEGORY_GARBAGE);
              }
         }
 
@@ -358,7 +355,7 @@ public class PhotoFragment extends Fragment {
     private void setImageCategory(int imageCategory){
         category = imageCategory;
         TextView categoryTV = (TextView) view.findViewById(R.id.problem_category_tv);
-        categoryTV.setText(Problem.getCategory(category));
+        categoryTV.setText(ProblemModel.getCategory(category));
     }
 
     //Handle uploads
@@ -404,8 +401,8 @@ public class PhotoFragment extends Fragment {
         hasLocation = false;
 
         mImageView.setImageBitmap(null);
-        TextView locationTV = (TextView) getActivity().findViewById(R.id.location_tv);
-        locationTV.setText("");
+//        TextView locationTV = (TextView) getActivity().findViewById(R.id.location_tv);
+//        locationTV.setText("");
 
         //Change to home view
         mListener.changeView(0);
@@ -445,10 +442,24 @@ public class PhotoFragment extends Fragment {
     //Update database with the current problem, attaching it to the user as well
     private void updateDatabase(String url, Long timeCreated){
         CustomDatabase db = new CustomDatabase(FirebaseDatabase.getInstance().getReference());
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        long SLA= 0;
 
-        db.createProblem(url, Problem.STATUS_UNSOLVED, locationX, locationY, locationAddress,
-                FirebaseAuth.getInstance().getCurrentUser().getUid(), 604800000L, timeCreated, description,
-                category);
+        switch(category){
+            case ProblemModel.CATEGORY_GARBAGE:
+                SLA= 7;
+                break;
+            case ProblemModel.CATEGORY_POTHOLES:
+                SLA = 15;
+                break;
+            case ProblemModel.CATEGORY_TRAFFIC:
+                SLA = 92;
+                break;
+        }
+
+        db.createProblem(url, ProblemModel.STATUS_UNSOLVED, locationX, locationY, locationAddress,
+                user.getUid(), SLA, timeCreated, description,
+                category, user.getDisplayName(), user.getPhotoUrl().toString());
     }
 
     @Override

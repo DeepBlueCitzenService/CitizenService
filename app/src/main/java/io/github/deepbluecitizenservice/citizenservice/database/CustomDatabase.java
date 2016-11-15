@@ -1,18 +1,10 @@
 package io.github.deepbluecitizenservice.citizenservice.database;
 
 import android.net.Uri;
-import android.util.Log;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Query;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-
-import io.github.deepbluecitizenservice.citizenservice.data.Problem;
 
 public class CustomDatabase{
     private DatabaseReference db;
@@ -30,12 +22,13 @@ public class CustomDatabase{
 
     //Create a new problem
     public void createProblem(String url, int status, double locationX, double locationY, String location,
-                              String creatorKey, long SLA, long timeCreated, String description, int category){
+                              String creatorKey, long SLA, long timeCreated, String description, int category,
+                              String creatorName, String creatorUrl){
 
         String key = db.child("problems").push().getKey();
 
-        ProblemModel problem = new ProblemModel(url, key, status, locationX, locationY, location, creatorKey,
-                SLA, timeCreated, description, category);
+        ProblemModel problem = new ProblemModel(url, status, locationX, locationY, location, creatorKey,
+                SLA, timeCreated, description, category, creatorName, creatorUrl);
 
 
         HashMap<String, Object> mp = new HashMap<>();
@@ -44,7 +37,7 @@ public class CustomDatabase{
 
         String place;
 
-        if(status==Problem.STATUS_SOLVED){
+        if(status==ProblemModel.STATUS_SOLVED){
             place=ProblemModel.SOLVED_PROBLEM;
         }
         else{
@@ -59,9 +52,5 @@ public class CustomDatabase{
         db.child("users").child(uid).child(ProblemModel.OPEN_PROBLEM).removeValue();
         db.child("users").child(uid).child(ProblemModel.SOLVED_PROBLEM).setValue(problemId);
         db.child("problems").child(problemId).child("solutionUrl").setValue(SolutionURL);
-    }
-
-    public Problem getProblemWithOffsetByTime(int offset){
-        return null;
     }
 }
