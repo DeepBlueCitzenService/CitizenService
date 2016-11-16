@@ -2,45 +2,42 @@ package io.github.deepbluecitizenservice.citizenservice;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.IBinder;
-import android.support.annotation.Nullable;
+import android.os.Bundle;
 import android.support.v7.app.NotificationCompat;
 
-public class SLANotification extends Service{
-    private String category, location;
-    private Class activityToCall;
+public class SLANotification extends BroadcastReceiver{
+    public final static String CATEGORY = "CATEGORY", LOCATION = "LOCATION", PROBLEM_KEY="PROBLEM_KEY";
+    public SLANotification(){
 
-
-    public SLANotification(Class activityToCall, String category, String location){
-        this.activityToCall = activityToCall;
-        this.category = category;
-        this.location = location;
-    }
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
     }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-        int requestCode = 30;
-        Intent intent = new Intent(this, activityToCall);
+    public void onReceive(Context context, Intent intent) {
+        Bundle extras = intent.getExtras();
 
-        PendingIntent pi = PendingIntent.getActivity(this, requestCode, intent, 0);
-        NotificationCompat.Builder mBuilder = (android.support.v7.app.NotificationCompat.Builder) new NotificationCompat.Builder(this)
+        Intent startActivityIntent = new Intent(context, MainActivity.class);
+        startActivityIntent.putExtra(SLANotification.PROBLEM_KEY, (String)extras.get(SLANotification.PROBLEM_KEY));
+
+        //Start main activity if notification is clicked
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        //Change to solution intent
+        //Open solution intent on clicking button
+        PendingIntent actionPendingIntent = PendingIntent.getActivity(context, 2, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder mBuilder = (android.support.v7.app.NotificationCompat.Builder) new NotificationCompat.Builder(context)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("Update problem")
-                .setContentText("Update problem: "+ this.category+" in "+ this.location)
+                .setContentText("Update problem: " + extras.get(CATEGORY) + " in " + extras.get(LOCATION))
+                .addAction(R.drawable.ic_camera, "Add solution", actionPendingIntent)
+                .setVibrate(new long[]{0, 300, 0})
                 .setAutoCancel(true)
-                .setContentIntent(pi);
+                .setContentIntent(pendingIntent);
 
-        NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(requestCode, mBuilder.build());
+        NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify((int)System.currentTimeMillis(), mBuilder.build());
     }
 }

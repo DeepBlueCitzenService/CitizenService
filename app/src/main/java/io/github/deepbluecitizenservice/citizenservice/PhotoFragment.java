@@ -1,8 +1,10 @@
 package io.github.deepbluecitizenservice.citizenservice;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +17,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -44,6 +47,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -54,6 +58,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -66,7 +71,7 @@ import io.github.deepbluecitizenservice.citizenservice.tensorflow.ImageClassifie
 import io.github.deepbluecitizenservice.citizenservice.tensorflow.TensorFlow;
 
 public class PhotoFragment extends Fragment {
-    private final String TAG = "PhotoFragment";
+    private final static String TAG = "PhotoFragment";
     private final static int GALLERY_CALL = 200;
     private final static int CAMERA_CALL = 100;
     private final static int PICKER_CALL = 400;
@@ -228,8 +233,10 @@ public class PhotoFragment extends Fragment {
 
         //Get image from Gallery
         if(requestCode== GALLERY_CALL){
-            Log.d(TAG, "Gallery activity "+"Result code "+ resultCode);
              if(resultCode== Activity.RESULT_OK) {
+                 //For debugging:
+                 //setSLANotification(System.currentTimeMillis() + 2*1000, "Garbage", "Bandra");
+                 Log.d(TAG, "Gallery activity "+"Result code "+ resultCode);
                  Bitmap bitmap = handleGalleryUpload(data);
                  setImageCategory(bitmap);
              }
@@ -389,6 +396,10 @@ public class PhotoFragment extends Fragment {
                 category = result;
                 categoryTV.setText(success ? ProblemModel.getCategory(result) : "Identification failed");
                 hasCategory = success;
+
+                //TODO: REMOVE WHEN NOT DEBUGGING!
+                //hasCategory = true;
+
                 progressDialog.dismiss();
             }
         }.execute();
@@ -404,19 +415,13 @@ public class PhotoFragment extends Fragment {
                 .setContentText("Upload in Progress")
                 .setSmallIcon(R.drawable.ic_file_upload);
 
-        //Get the username to ensure saving to correct folder
-        String userName = "";
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         //Time stamps are unique
-        Long tsLong = System.currentTimeMillis()/1000;
+        final Long tsLong = System.currentTimeMillis()/1000;
         final String ts = tsLong.toString();
         final int tsInt = Integer.parseInt(ts);
-
-        //Emails are unique
-        if(user!=null){
-            userName = user.getEmail();
-        }
+        final String userName = user==null? "guest": user.getEmail();
 
         //Create a unique file reference in FireBase
         StorageReference storageRef = FirebaseStorage.getInstance()
@@ -425,7 +430,13 @@ public class PhotoFragment extends Fragment {
 
         Uri file = Uri.fromFile(new File(imagePath));
 
-        updateDatabase(userName+"/openProblems/problem-"+ts+".jpg", tsLong);
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                updateDatabase(userName +"/openProblems/problem-"+ts+".jpg", tsLong);
+                return null;
+            }
+        }.execute();
 
         //Start uploading in the background
         UploadTask uploadTask = storageRef.putFile(file);
@@ -438,8 +449,6 @@ public class PhotoFragment extends Fragment {
         hasCategory = false;
 
         mImageView.setImageBitmap(null);
-//        TextView locationTV = (TextView) getActivity().findViewById(R.id.location_tv);
-//        locationTV.setText("");
 
         //Change to home view
         mListener.changeView(0);
@@ -478,25 +487,38 @@ public class PhotoFragment extends Fragment {
 
     //Update database with the current problem, attaching it to the user as well
     private void updateDatabase(String url, Long timeCreated){
-        CustomDatabase db = new CustomDatabase(FirebaseDatabase.getInstance().getReference());
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+
+        CustomDatabase db = new CustomDatabase(ref);
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         long SLA= 0;
+        String categoryString= "none";
 
         switch(category){
             case ProblemModel.CATEGORY_GARBAGE:
                 SLA= 7;
+                categoryString = "Garbage";
                 break;
             case ProblemModel.CATEGORY_POTHOLES:
                 SLA = 15;
+                categoryString = "Potholes";
                 break;
             case ProblemModel.CATEGORY_TRAFFIC:
                 SLA = 92;
+                categoryString = "Traffic";
                 break;
         }
 
-        db.createProblem(url, ProblemModel.STATUS_UNSOLVED, locationX, locationY, locationAddress,
+        String key = ref.child("problems").push().getKey();
+        db.createProblem(key, url, ProblemModel.STATUS_UNSOLVED, locationX, locationY, locationAddress,
                 user.getUid(), SLA, timeCreated, description,
                 category, user.getDisplayName(), user.getPhotoUrl().toString());
+
+        //FOR DEBUGGING: 2 SECOND DELAY FOR NOTIFICATION
+        //setSLANotification(( 2 + (timeCreated))*1000, "Potholes", locationAddress, key);
+
+        setSLANotification(((SLA * 24 * 60 * 60) + (timeCreated))*1000, categoryString, locationAddress, key);
     }
 
     @Override
@@ -539,7 +561,6 @@ public class PhotoFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.toolbar_upload) {
-            Log.d(TAG, "Upload button clicked");
             TextView descriptionTV = (TextView) view.findViewById(R.id.problem_description);
             description = String.valueOf(descriptionTV.getText());
             if(imagePath.length() <= 0){
@@ -559,8 +580,20 @@ public class PhotoFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    private void setSLANotification(long time, String category, String location, String problemKey){
+        Intent setNotificationIntent = new Intent(getActivity(), SLANotification.class);
+        setNotificationIntent.putExtra(SLANotification.CATEGORY, category);
+        setNotificationIntent.putExtra(SLANotification.LOCATION, location);
+        setNotificationIntent.putExtra(SLANotification.PROBLEM_KEY, problemKey);
+
+        PendingIntent notifyIntent = PendingIntent
+                .getBroadcast(getActivity(), (int)System.currentTimeMillis() , setNotificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager am = (AlarmManager) getActivity().getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        am.set(AlarmManager.RTC_WAKEUP, time , notifyIntent);
+    }
+
     public interface OnPhotoListener {
         void changeView(int toWhere);
-        //void removeBottomBar(boolean choice);
     }
 }
