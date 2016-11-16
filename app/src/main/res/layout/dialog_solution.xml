@@ -23,13 +23,6 @@
 
     </LinearLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/fab_problem_dialog"
-        android:layout_centerInParent="true"
-        app:fabSize="normal"
-        android:src = "@drawable/ic_cloud_upload"/>
 
     <LinearLayout
         android:layout_marginTop="10dp"
@@ -79,4 +72,20 @@
             />
 
     </LinearLayout>
+
+    <com.github.jorgecastilloprz.FABProgressCircle
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_centerInParent="true"
+        android:id = "@+id/solution_dialog_progress_fab"
+        >
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/fab_problem_dialog"
+            app:fabSize="normal"
+            android:src = "@drawable/ic_cloud_upload"/>
+
+    </com.github.jorgecastilloprz.FABProgressCircle>
 </RelativeLayout>

@@ -12,13 +12,13 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.github.jorgecastilloprz.FABProgressCircle;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,9 +36,13 @@ import io.github.deepbluecitizenservice.citizenservice.database.CustomDatabase;
 
 public class SolutionDialogActivity extends AppCompatActivity {
     private String imageKey, mSolutionImagePath="";
+
     private ImageView mSolutionImageView;
-    private FloatingActionButton mFab;
     private LinearLayout mButtons, mImageLayout;
+
+    private FABProgressCircle fabCircle;
+    private FloatingActionButton mFab;
+    private  boolean isClicked;
 
     private final static int CAMERA_CALL = 100, GALLERY_CALL=200;
 
@@ -66,7 +70,6 @@ public class SolutionDialogActivity extends AppCompatActivity {
         String imageUrl = (String) params.get(SLANotification.URL_KEY);
         imageKey        = (String) params.get(SLANotification.PROBLEM_KEY);
 
-        Log.d("Solution Dialog", "imageKey "+imageKey+ imageUrl+ " "+imageUrl);
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,11 +86,24 @@ public class SolutionDialogActivity extends AppCompatActivity {
             }
         });
 
+        fabCircle = (FABProgressCircle) findViewById(R.id.solution_dialog_progress_fab);
+
         mFab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                if(mSolutionImagePath.length()>0)
-                    handleSolutionUpload(imageKey);
+                if(mSolutionImagePath.length()>0 && !isClicked) {
+                    isClicked = true;
+                    fabCircle.show();
+                    mFab.setOnClickListener(null);
+
+                    new AsyncTask<Void, Void, Void>(){
+                        @Override
+                        protected Void doInBackground(Void... params) {
+                            handleSolutionUpload(imageKey);
+                            return null;
+                        }
+                    }.execute();
+                }
             }
         });
 
@@ -213,6 +229,15 @@ public class SolutionDialogActivity extends AppCompatActivity {
         uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                fabCircle.beginFinalAnimation();
+
+                try {
+                    Thread.sleep(500);
+                }
+                catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+
                 finish();
             }
         });
