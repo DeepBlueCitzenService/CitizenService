@@ -41,6 +41,7 @@ dependencies {
     compile 'com.firebaseui:firebase-ui-database:1.0.0'
     compile 'com.aurelhubert:ahbottomnavigation:2.0.1'
     compile 'com.android.support:support-v4:24.2.1'
+    compile 'com.github.jorgecastilloprz:fabprogresscircle:1.01@aar'
     testCompile 'junit:junit:4.12'
 }
 
