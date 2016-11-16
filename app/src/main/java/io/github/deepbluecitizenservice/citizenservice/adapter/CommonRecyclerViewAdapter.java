@@ -23,22 +23,28 @@ import java.util.HashSet;
 import java.util.List;
 
 import io.github.deepbluecitizenservice.citizenservice.ExpImageActivity;
+import io.github.deepbluecitizenservice.citizenservice.MainActivity;
 import io.github.deepbluecitizenservice.citizenservice.MapsActivity;
 import io.github.deepbluecitizenservice.citizenservice.R;
+import io.github.deepbluecitizenservice.citizenservice.SLANotification;
+import io.github.deepbluecitizenservice.citizenservice.SolutionDialogActivity;
 import io.github.deepbluecitizenservice.citizenservice.database.ProblemModel;
 
 public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecyclerViewAdapter.ViewHolder> {
     private Context context;
     private List<ProblemModel> problemList;
     private HashSet<String> problemIds;
+    private String FragmentTAG;
 
-    public CommonRecyclerViewAdapter(Context context, List<ProblemModel> problems){
+    public CommonRecyclerViewAdapter(Context context, List<ProblemModel> problems, String FragmentTAG){
         this.context = context;
         this.problemList = problems;
         this.problemIds = new HashSet<>();
+        this.FragmentTAG = FragmentTAG;
     }
 
     public void addProblem(ProblemModel problemModel, String id){
+        problemModel.setKey(id);
         problemList.add(problemModel);
         notifyDataSetChanged();
         problemIds.add(id);
@@ -83,6 +89,12 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
         setExpandButtonListener(holder.expandButton, holder.descriptionTV);
         setLocationClickListener(holder.locationTV, problem);
         setImageClickListener(holder.imageView, problem);
+
+        if(FragmentTAG.equals(MainActivity.HOME_TAG)) {
+            setSolutionButtonListener(holder.addSolutionButton, problem);
+        } else{
+            holder.addSolutionButton.setVisibility(View.GONE);
+        }
     }
 
     private String getNoOfImagesText(ProblemModel p){
@@ -145,6 +157,19 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
         });
     }
 
+    private void setSolutionButtonListener(final ImageView v, final ProblemModel problem){
+        v.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent startSolutionDialog = new Intent(context, SolutionDialogActivity.class)
+                        .putExtra(SLANotification.PROBLEM_KEY, problem.getKey())
+                        .putExtra(SLANotification.URL_KEY, problem.url);
+
+                context.startActivity(startSolutionDialog);
+            }
+        });
+    }
+
     @Override
     public int getItemCount() {
         return problemList.size();
@@ -162,6 +187,7 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
         ImageView userImage;
         ImageView imageView;
         ImageView expandButton;
+        ImageView addSolutionButton;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -178,6 +204,7 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
             imageView = (ImageView) itemView.findViewById(R.id.image_view);
 
             expandButton = (ImageView) itemView.findViewById(R.id.arrow_button);
+            addSolutionButton = (ImageView) itemView.findViewById(R.id.add_solution_button);
         }
     }
 }

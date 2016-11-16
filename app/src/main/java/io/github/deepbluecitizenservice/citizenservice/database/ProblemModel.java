@@ -9,11 +9,13 @@ import java.util.Locale;
 
 @IgnoreExtraProperties
 public class ProblemModel{
-    public String url, creatorKey, description, locationAddress, solutionUrl,
-            creatorName, creatorURL;
+    public String url, creatorKey, description, locationAddress,
+            creatorName, creatorURL, solutionUrl;
     public double locationX, locationY;
     public long sla, timeCreated, negTimeCreated;
     public int status, category;
+
+    private String key;
 
     static final String  SOLVED_PROBLEM = "solved";
     static final String OPEN_PROBLEM = "open";
@@ -31,7 +33,7 @@ public class ProblemModel{
 
     ProblemModel(String url, int status, double locationX, double locationY, String locationAddress,
                  String creatorKey, long SLA, long timeCreated, String description, int category,
-                 String creatorName, String creatorURL){
+                 String creatorName, String creatorURL, String solutionUrl){
 
         this.url             = url;
         this.status          = status;
@@ -46,6 +48,7 @@ public class ProblemModel{
         this.locationAddress = locationAddress;
         this.creatorName     = creatorName;
         this.creatorURL      = creatorURL;
+        this.solutionUrl     = solutionUrl;
     }
 
     @Exclude
@@ -80,5 +83,15 @@ public class ProblemModel{
     @Exclude
     public String getCategory(){
         return getCategory(category);
+    }
+
+    @Exclude
+    public String getKey(){
+        return this.key;
+    }
+
+    @Exclude
+    public void setKey(String key){
+        this.key = key;
     }
 }

@@ -23,7 +23,7 @@ public class QueryModel {
     public void makeQuery(long startAt, final DatabaseReference ref, final CommonRecyclerViewAdapter adapter){
         allAdded = false;
         counter = 0;
-        //TODO : is "timeCreated" correct? But it gives result in ascending order; Nevermind it's easy and we can do it later
+
         ref.orderByChild("negTimeCreated").startAt(startAt+1).limitToFirst(QUERY_SIZE).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(final DataSnapshot dataSnapshot) {

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp"
+    android:layout_marginTop="15dp"
+    android:layout_marginBottom="15dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id = "@+id/problem_image_container"
+        android:layout_marginBottom="10dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:id= "@+id/dialog_problem_image_view"
+            />
+
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/fab_problem_dialog"
+        android:layout_centerInParent="true"
+        app:fabSize="normal"
+        android:src = "@drawable/ic_cloud_upload"/>
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/solution_image_container"
+        android:layout_below="@+id/problem_image_container"
+        android:visibility="gone">
+
+
+        <ImageView
+            android:id="@+id/dialog_solution_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:scaleType="centerCrop"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id = "@+id/solution_dialog_button_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2"
+        android:layout_below="@+id/problem_image_container">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="150dp"
+            android:paddingTop="30dp"
+            android:paddingBottom="30dp"
+            android:layout_weight="1"
+            android:src = "@drawable/ic_image_black"
+            android:background="@drawable/black_border"
+            android:id = "@+id/solution_dialog_gallery"
+            />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="150dp"
+            android:layout_weight="1"
+            android:paddingTop="30dp"
+            android:paddingBottom="30dp"
+            android:src="@drawable/ic_camera"
+            android:id = "@+id/solution_dialog_camera"
+            />
+
+    </LinearLayout>
+</RelativeLayout>

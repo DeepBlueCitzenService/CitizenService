@@ -8,6 +8,7 @@
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <uses-permission-sdk-23 android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission-sdk-23 android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission-sdk-23 android:name="android.permission.MANAGE_DOCUMENTS" />
@@ -16,7 +17,8 @@
     <uses-permission-sdk-23 android:name="android.permission.READ_CONTACTS" />
     <uses-permission-sdk-23 android:name="android.permission.INTERNET" />
     <uses-permission-sdk-23 android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission-sdk-23 android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission-sdk-23 android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -34,23 +36,28 @@
 
         <activity
             android:name=".MainActivity"
-            android:theme="@style/AppTheme.SplashScreen"
-            android:launchMode = "singleInstance">
+            android:launchMode="singleInstance"
+            android:theme="@style/AppTheme.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <activity
             android:name=".LoginActivity"
-            android:theme="@style/AppTheme.LoginActivity"/>
+            android:theme="@style/AppTheme.LoginActivity" />
         <activity
             android:name=".ExpImageActivity"
             android:theme="@style/Theme.Transparent" />
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
+        <activity android:name=".SolutionDialogActivity"
+            android:theme="@style/Theme.AppCompat.Light.Dialog"
+            android:label="Add Solution Proof">
+        </activity>
     </application>
 
 </manifest>
