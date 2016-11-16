@@ -12,7 +12,7 @@ public class ProblemModel{
     public String url, creatorKey, description, locationAddress, solutionUrl,
             creatorName, creatorURL;
     public double locationX, locationY;
-    public long sla, timeCreated;
+    public long sla, timeCreated, negTimeCreated;
     public int status, category;
 
     static final String  SOLVED_PROBLEM = "solved";
@@ -40,6 +40,7 @@ public class ProblemModel{
         this.creatorKey      = creatorKey;
         this.sla             = SLA;
         this.timeCreated     = timeCreated;
+        this.negTimeCreated  = 0-timeCreated;
         this.description     = description;
         this.category        = category;
         this.locationAddress = locationAddress;

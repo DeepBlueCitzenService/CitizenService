@@ -2,7 +2,9 @@ package io.github.deepbluecitizenservice.citizenservice.database;
 
 import android.graphics.Rect;
 import android.os.AsyncTask;
+import android.provider.Settings;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import com.google.firebase.database.DataSnapshot;
@@ -13,7 +15,7 @@ import com.google.firebase.database.ValueEventListener;
 import io.github.deepbluecitizenservice.citizenservice.adapter.CommonRecyclerViewAdapter;
 
 public class QueryModel {
-    public long lastSeen = -1;
+    public long lastSeen = 0-System.currentTimeMillis()/1000;
     public long counter, size;
     public boolean allAdded = false;
     public final static int QUERY_SIZE = 3, OFFSET_VIEW= 2;
@@ -22,7 +24,7 @@ public class QueryModel {
         allAdded = false;
         counter = 0;
         //TODO : is "timeCreated" correct? But it gives result in ascending order; Nevermind it's easy and we can do it later
-        ref.orderByChild("timeCreated").startAt(startAt+1).limitToFirst(QUERY_SIZE).addValueEventListener(new ValueEventListener() {
+        ref.orderByChild("negTimeCreated").startAt(startAt+1).limitToFirst(QUERY_SIZE).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(final DataSnapshot dataSnapshot) {
                 size = dataSnapshot.getChildrenCount();
@@ -36,7 +38,7 @@ public class QueryModel {
                         protected Boolean doInBackground(Void... voids) {
                             if(!adapter.isAdded(ds.getKey())){
                                 user = ds.getValue(ProblemModel.class);
-                                if(lastSeen<user.timeCreated) lastSeen= user.timeCreated;
+                                if(lastSeen<user.negTimeCreated) lastSeen= user.negTimeCreated;
                                 return true;
                             }
                             return false;

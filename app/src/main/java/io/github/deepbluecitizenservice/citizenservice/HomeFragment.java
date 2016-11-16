@@ -34,9 +34,9 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        queryModel = new QueryModel();
-
         View v = inflater.inflate(R.layout.fragment_home, container, false);
+
+        queryModel = new QueryModel();
 
         List<ProblemModel> problemModelList = new LinkedList<>();
 
@@ -59,7 +59,7 @@ public class HomeFragment extends Fragment {
         rv.addItemDecoration(new QueryModel.SpacingDecoration(8));
         rv.setAdapter(adapter);
 
-        queryModel.makeQuery(0- (System.currentTimeMillis()/1000), ref, adapter);
+        queryModel.makeQuery(0-(System.currentTimeMillis()/1000), ref, adapter);
 
         rv.addOnScrollListener(new RecyclerView.OnScrollListener(){
             @Override

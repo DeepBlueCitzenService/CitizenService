@@ -30,9 +30,8 @@ public class AllViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        queryModel = new QueryModel();
-
         View v = inflater.inflate(R.layout.fragment_all_view, container, false);
+        queryModel = new QueryModel();
 
         List<ProblemModel> problemModelList = new LinkedList<>();
 
