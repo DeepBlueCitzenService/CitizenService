@@ -27,7 +27,7 @@ import java.util.Locale;
 /**
  * Generic interface for interacting with different recognition engines.
  */
-interface Classifier {
+public interface Classifier {
     /**
      * An immutable result returned by a Classifier describing what was recognized.
      */

@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 public class TensorFlow {
@@ -26,15 +27,37 @@ public class TensorFlow {
     private AssetManager assetManager;
     private ImageClassifier tfClassifier;
 
-    public TensorFlow(AssetManager assetManager, ImageClassifier classifier) {
+    private boolean initialized = false;
+
+    private TensorFlow(AssetManager assetManager, ImageClassifier classifier) {
         this.assetManager = assetManager;
         this.tfClassifier = classifier;
     }
 
+    public static TensorFlow getInstance(AssetManager assetManager, ImageClassifier classifier){
+        return new TensorFlow(assetManager, classifier);
+    }
+
     //Must be called before classifying a Image
     public void initialize() throws IOException {
-        tfClassifier.initializeTensorFlow(assetManager, MODEL_FILE, LABEL_FILE,
-                NUM_CLASSES, INPUT_SIZE, IMAGE_MEAN, IMAGE_STD, INPUT_NAME, OUTPUT_NAME);
+        if(ImageClassifier.isLibraryPresent() && checkAssets()){
+            tfClassifier.initializeTensorFlow(assetManager, MODEL_FILE, LABEL_FILE,
+                    NUM_CLASSES, INPUT_SIZE, IMAGE_MEAN, IMAGE_STD, INPUT_NAME, OUTPUT_NAME);
+            this.initialized = true;
+        }
+    }
+
+    private boolean checkAssets(){
+        try {
+            List<String> assetList = Arrays.asList(assetManager.list(""));
+            boolean isGraph = assetList.contains(MODEL_FILE
+                    .substring(MODEL_FILE.lastIndexOf("/") + 1, MODEL_FILE.lastIndexOf(".")));
+            boolean isLabels = assetList.contains(LABEL_FILE.
+                    substring(LABEL_FILE.lastIndexOf("/") + 1, LABEL_FILE.lastIndexOf(".")));
+            return isGraph && isLabels;
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     //A private function to resize src Bitmap as per size
@@ -54,14 +77,18 @@ public class TensorFlow {
         canvas.drawBitmap(src, matrix, null);
     }
 
-    //Classifies the input images and provides result
-    //Result is in form of priority queue with greater confidence at the front
     public List<Classifier.Recognition> classify(Bitmap rgbBitmap) {
-        Bitmap croppedBitmap = Bitmap.createBitmap(INPUT_SIZE, INPUT_SIZE, Bitmap.Config.ARGB_8888);
-        drawResizedBitmap(rgbBitmap, croppedBitmap);
+        if(initialized){
+            Bitmap croppedBitmap = Bitmap.createBitmap(INPUT_SIZE, INPUT_SIZE, Bitmap.Config.ARGB_8888);
+            drawResizedBitmap(rgbBitmap, croppedBitmap);
 
-        return tfClassifier.recognizeImage(croppedBitmap);
+            return tfClassifier.recognizeImage(croppedBitmap);
+        }
+        return null;
     }
 
 
+    public boolean isInitialized() {
+        return initialized;
+    }
 }
