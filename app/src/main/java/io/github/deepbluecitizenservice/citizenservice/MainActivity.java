@@ -31,13 +31,11 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
         PhotoFragment.OnPhotoListener, SettingsFragment.OnSettingsFragmentInteraction {
 
-    private final String TAG = "Main Activity:";
+    private final static String TAG = "Main Activity:";
     private GoogleApiClient mGAP;
     private AHBottomNavigation bottomNavigation;
-    private boolean isHidden = false;
-    private int TabPosition = 0;
 
-    private final String HOME_TAG="HOME", ALL_TAG="ALL", PHOTOS_TAG="PHOTOS", SETTINGS_TAG="SETTINGS";
+    public final static String HOME_TAG="HOME", ALL_TAG="ALL", PHOTOS_TAG="PHOTOS", SETTINGS_TAG="SETTINGS";
     private Fragment homeFragment, allviewFragment, settingsFragment, photosFragment;
     private boolean backPressed = false;
     private String lastFragment;
@@ -242,7 +240,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
                 Fragment genericFragment = null;
                 String fragmentTAG = "";
-                TabPosition = position;
 
                 switch(position){
                     case 0:

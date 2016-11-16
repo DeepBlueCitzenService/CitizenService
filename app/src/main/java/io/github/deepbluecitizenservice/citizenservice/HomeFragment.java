@@ -52,7 +52,11 @@ public class HomeFragment extends Fragment {
                 .child("users/"+ user.getUid() +"/openProblems");
         RecyclerView rv = (RecyclerView) v.findViewById(R.id.home_recycle_view);
 
-        final CommonRecyclerViewAdapter adapter = new CommonRecyclerViewAdapter(getContext(), problemModelList);
+        final CommonRecyclerViewAdapter adapter = new CommonRecyclerViewAdapter(
+                getContext(),
+                problemModelList,
+                MainActivity.HOME_TAG);
+
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
 
         rv.setLayoutManager(linearLayoutManager);

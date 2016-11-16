@@ -48,7 +48,7 @@ public class AllViewFragment extends Fragment {
 
         RecyclerView rv = (RecyclerView) v.findViewById(R.id.all_recycle_view);
 
-        final CommonRecyclerViewAdapter adapter = new CommonRecyclerViewAdapter(getContext(), problemModelList);
+        final CommonRecyclerViewAdapter adapter = new CommonRecyclerViewAdapter(getContext(), problemModelList, MainActivity.ALL_TAG);
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
 
         rv.setLayoutManager(linearLayoutManager);

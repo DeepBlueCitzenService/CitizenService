@@ -17,7 +17,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -58,7 +57,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -224,7 +222,6 @@ public class PhotoFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode== CAMERA_CALL){
-            Log.d(TAG, "Camera activity Result code "+ resultCode);
             if(resultCode == Activity.RESULT_OK){
                 Bitmap bitmap = handleCameraUpload(data);
                 setImageCategory(bitmap);
@@ -234,9 +231,6 @@ public class PhotoFragment extends Fragment {
         //Get image from Gallery
         if(requestCode== GALLERY_CALL){
              if(resultCode== Activity.RESULT_OK) {
-                 //For debugging:
-                 //setSLANotification(System.currentTimeMillis() + 2*1000, "Garbage", "Bandra");
-                 Log.d(TAG, "Gallery activity "+"Result code "+ resultCode);
                  Bitmap bitmap = handleGalleryUpload(data);
                  setImageCategory(bitmap);
              }
@@ -397,7 +391,7 @@ public class PhotoFragment extends Fragment {
                 categoryTV.setText(success ? ProblemModel.getCategory(result) : "Identification failed");
                 hasCategory = success;
 
-                //TODO: REMOVE WHEN NOT DEBUGGING!
+                //REMOVE WHEN NOT DEBUGGING!
                 //hasCategory = true;
 
                 progressDialog.dismiss();
@@ -513,12 +507,12 @@ public class PhotoFragment extends Fragment {
         String key = ref.child("problems").push().getKey();
         db.createProblem(key, url, ProblemModel.STATUS_UNSOLVED, locationX, locationY, locationAddress,
                 user.getUid(), SLA, timeCreated, description,
-                category, user.getDisplayName(), user.getPhotoUrl().toString());
+                category, user.getDisplayName(), user.getPhotoUrl().toString(), "");
 
         //FOR DEBUGGING: 2 SECOND DELAY FOR NOTIFICATION
-        //setSLANotification(( 2 + (timeCreated))*1000, "Potholes", locationAddress, key);
+        //setSLANotification(( 2 + (timeCreated))*1000, "Potholes", locationAddress, key, url);
 
-        setSLANotification(((SLA * 24 * 60 * 60) + (timeCreated))*1000, categoryString, locationAddress, key);
+        setSLANotification(((SLA * 24 * 60 * 60) + (timeCreated))*1000, categoryString, locationAddress, key, url);
     }
 
     @Override
@@ -580,11 +574,12 @@ public class PhotoFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    private void setSLANotification(long time, String category, String location, String problemKey){
+    private void setSLANotification(long time, String category, String location, String problemKey, String url){
         Intent setNotificationIntent = new Intent(getActivity(), SLANotification.class);
         setNotificationIntent.putExtra(SLANotification.CATEGORY, category);
         setNotificationIntent.putExtra(SLANotification.LOCATION, location);
         setNotificationIntent.putExtra(SLANotification.PROBLEM_KEY, problemKey);
+        setNotificationIntent.putExtra(SLANotification.URL_KEY, url);
 
         PendingIntent notifyIntent = PendingIntent
                 .getBroadcast(getActivity(), (int)System.currentTimeMillis() , setNotificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
