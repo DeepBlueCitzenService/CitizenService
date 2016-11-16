@@ -31,6 +31,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.FirebaseDatabase;
 
 import io.github.deepbluecitizenservice.citizenservice.database.CustomDatabase;
+import io.github.deepbluecitizenservice.citizenservice.permission.ContactsPermission;
 
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
@@ -60,12 +61,14 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent SignInIntent = Auth.GoogleSignInApi.getSignInIntent(mGAP);
-                startActivityForResult(SignInIntent, RC_SIGN_IN);
-                progressDialog = new ProgressDialog(LoginActivity.this);
-                progressDialog.setIndeterminate(true);
-                progressDialog.setMessage("Authenticating");
-                progressDialog.show();
+                if(checkContactsPermission()){
+                    Intent SignInIntent = Auth.GoogleSignInApi.getSignInIntent(mGAP);
+                    startActivityForResult(SignInIntent, RC_SIGN_IN);
+                    progressDialog = new ProgressDialog(LoginActivity.this);
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setMessage("Authenticating");
+                    progressDialog.show();
+                }
             }
         });
 
@@ -98,6 +101,13 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 }
             }
         };
+    }
+
+    private boolean checkContactsPermission(){
+        View baseView = findViewById(R.id.login_base_view);
+        ContactsPermission permission = new ContactsPermission(this);
+        permission.askPermissions(baseView);
+        return  permission.isGranted();
     }
 
     @Override
