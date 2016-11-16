@@ -3,11 +3,12 @@ package io.github.deepbluecitizenservice.citizenservice;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Rect;
+import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
@@ -21,22 +22,17 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
@@ -65,6 +61,9 @@ import io.github.deepbluecitizenservice.citizenservice.database.CustomDatabase;
 import io.github.deepbluecitizenservice.citizenservice.database.ProblemModel;
 import io.github.deepbluecitizenservice.citizenservice.permission.StoragePermission;
 import io.github.deepbluecitizenservice.citizenservice.service.GPSService;
+import io.github.deepbluecitizenservice.citizenservice.tensorflow.Classifier;
+import io.github.deepbluecitizenservice.citizenservice.tensorflow.ImageClassifier;
+import io.github.deepbluecitizenservice.citizenservice.tensorflow.TensorFlow;
 
 public class PhotoFragment extends Fragment {
     private final String TAG = "PhotoFragment";
@@ -80,11 +79,14 @@ public class PhotoFragment extends Fragment {
     //Set these values before upload is available
     private String imagePath ="", locationAddress = "";
     private boolean hasLocation = false;
+    private boolean hasCategory = false;
     private double locationX = 0, locationY = 0;
     private int category = 0;
     private String description = "";
 
     private GPSService gpsService;
+
+    private TensorFlow tensorFlow;
 
     public PhotoFragment() {
         // Required empty public constructor
@@ -219,9 +221,8 @@ public class PhotoFragment extends Fragment {
         if(requestCode== CAMERA_CALL){
             Log.d(TAG, "Camera activity Result code "+ resultCode);
             if(resultCode == Activity.RESULT_OK){
-                handleCameraUpload(data);
-                //TODO : TensorFlow Comes Here
-                setImageCategory(ProblemModel.CATEGORY_GARBAGE);
+                Bitmap bitmap = handleCameraUpload(data);
+                setImageCategory(bitmap);
             }
         }
 
@@ -229,9 +230,8 @@ public class PhotoFragment extends Fragment {
         if(requestCode== GALLERY_CALL){
             Log.d(TAG, "Gallery activity "+"Result code "+ resultCode);
              if(resultCode== Activity.RESULT_OK) {
-                 handleGalleryUpload(data);
-                 //TODO : TensorFlow Comes Here
-                 setImageCategory(ProblemModel.CATEGORY_GARBAGE);
+                 Bitmap bitmap = handleGalleryUpload(data);
+                 setImageCategory(bitmap);
              }
         }
 
@@ -244,7 +244,7 @@ public class PhotoFragment extends Fragment {
         }
     }
 
-    private void handleCameraUpload(Intent data) {
+    private Bitmap handleCameraUpload(Intent data) {
         Bitmap bitmap = (Bitmap) data.getExtras().get("data");
         Log.d(TAG, (bitmap==null? "Bitmap not loaded":"Bitmap loaded"));
         mImageView.setImageBitmap(bitmap);
@@ -257,34 +257,20 @@ public class PhotoFragment extends Fragment {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        return bitmap;
     }
 
-    private void handleGalleryUpload(Intent data){
+    private Bitmap handleGalleryUpload(Intent data){
         imagePath = getFilePathFromGallery(data);
 
         //Get data URI
         Log.d(TAG, "Picture path: "+imagePath);
 
         //Change image using setImageBitmap
-        if(mImageView!=null) {
-            try{
-                Glide.with(getActivity())
-                        .load(new File(imagePath))
-                        .override(450, 300)
-                        .centerCrop()
-                        .crossFade()
-                        .into(mImageView);
-            }
+        Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+        mImageView.setImageBitmap(bitmap);
 
-            catch(OutOfMemoryError e){
-                Log.d(TAG, "Image too large");
-            }
-
-            catch (Exception e){
-                Log.d(TAG, "Other error");
-                e.printStackTrace();
-            }
-        }
+        return bitmap;
     }
 
     private String getFilePathFromGallery(Intent data){
@@ -359,6 +345,55 @@ public class PhotoFragment extends Fragment {
         categoryTV.setText(ProblemModel.getCategory(category));
     }
 
+    private void setImageCategory(final Bitmap image){
+        final TextView categoryTV = (TextView) view.findViewById(R.id.problem_category_tv);
+
+        final ProgressDialog progressDialog = new ProgressDialog(getContext());
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Identifying Image");
+
+        new AsyncTask<Void, Void, Boolean>() {
+
+            private int result = 0;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog.show();
+                if(tensorFlow == null){
+                    tensorFlow = TensorFlow.getInstance(getContext().getAssets(), new ImageClassifier());
+                }
+            }
+            @Override
+            protected Boolean doInBackground(Void... voids) {
+                if(tensorFlow != null && !tensorFlow.isInitialized()){
+                    try {
+                        tensorFlow.initialize();
+                    } catch (IOException e) {
+                        return false;
+                    }
+                }
+
+                if(tensorFlow != null && tensorFlow.isInitialized()){
+                    List<Classifier.Recognition> classifiesList = tensorFlow.classify(image);
+                    result = Integer.parseInt(classifiesList.get(0).getId());
+                    return true;
+                }
+
+                return false;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean success) {
+                super.onPostExecute(success);
+                category = result;
+                categoryTV.setText(success ? ProblemModel.getCategory(result) : "Identification failed");
+                hasCategory = success;
+                progressDialog.dismiss();
+            }
+        }.execute();
+    }
+
     //Handle uploads
     private void handleImageUpload(){
         //Create notifications for file uploads
@@ -400,6 +435,7 @@ public class PhotoFragment extends Fragment {
         locationX = -1;
         locationAddress = "";
         hasLocation = false;
+        hasCategory = false;
 
         mImageView.setImageBitmap(null);
 //        TextView locationTV = (TextView) getActivity().findViewById(R.id.location_tv);
@@ -508,6 +544,9 @@ public class PhotoFragment extends Fragment {
             description = String.valueOf(descriptionTV.getText());
             if(imagePath.length() <= 0){
                 Snackbar.make(view, "Please Load Image", Snackbar.LENGTH_LONG).show();
+            }
+            else if(!hasCategory){
+                Snackbar.make(view, "Please Select Category", Snackbar.LENGTH_LONG).show();
             }
             else if(!hasLocation){
                 Snackbar.make(view, "Please Select Location", Snackbar.LENGTH_LONG).show();
