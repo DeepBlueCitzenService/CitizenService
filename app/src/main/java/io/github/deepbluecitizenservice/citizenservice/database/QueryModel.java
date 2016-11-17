@@ -2,9 +2,7 @@ package io.github.deepbluecitizenservice.citizenservice.database;
 
 import android.graphics.Rect;
 import android.os.AsyncTask;
-import android.provider.Settings;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 
 import com.google.firebase.database.DataSnapshot;

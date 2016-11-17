@@ -1,6 +1,7 @@
 package io.github.deepbluecitizenservice.citizenservice.database;
 
 import android.net.Uri;
+import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -51,6 +52,8 @@ public class CustomDatabase{
     }
 
     public void updateProblemToSolved(final String uid, final String problemId, final String SolutionURL, final long timeCreated){
+        Log.d("CUSTOM", "CALLED DELETE");
+
         db.child("problems").orderByKey().startAt(problemId).endAt(problemId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

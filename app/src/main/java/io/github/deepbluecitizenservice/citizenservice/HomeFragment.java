@@ -1,5 +1,6 @@
 package io.github.deepbluecitizenservice.citizenservice;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -38,6 +39,8 @@ public class HomeFragment extends Fragment {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if(user == null){
+            Intent startLoginActivity = new Intent(getActivity(), LoginActivity.class);
+            getActivity().startActivity(startLoginActivity);
             return v;
         }
 
