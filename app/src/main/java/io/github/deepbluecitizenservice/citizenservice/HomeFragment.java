@@ -26,11 +26,6 @@ public class HomeFragment extends Fragment {
         // Required empty public constructor
     }
 
-
-    public static HomeFragment newInstance() {
-        return new HomeFragment();
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -49,7 +44,10 @@ public class HomeFragment extends Fragment {
         final DatabaseReference ref = FirebaseDatabase
                 .getInstance()
                 .getReference()
-                .child("users/"+ user.getUid() +"/openProblems");
+                .child("users")
+                .child(user.getUid())
+                .child("openProblems");
+
         RecyclerView rv = (RecyclerView) v.findViewById(R.id.home_recycle_view);
 
         final CommonRecyclerViewAdapter adapter = new CommonRecyclerViewAdapter(
