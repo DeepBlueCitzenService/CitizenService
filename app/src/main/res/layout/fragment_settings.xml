@@ -1,13 +1,385 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginBottom="48dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="io.github.deepbluecitizenservice.citizenservice.SettingsFragment">
 
-    <Button
-        android:id = "@+id/google_logout_button"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/google_logout"/>
+        android:layout_marginTop="8dp"
+        android:orientation="vertical">
 
-</RelativeLayout>
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="0dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:paddingBottom="4dp"
+                    android:gravity="bottom"
+                    android:text="Profile Info"
+                    android:id="@+id/settings_label1"/>
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    app:cardCornerRadius="30dp"
+                    android:layout_marginTop="8dp"
+                    android:innerRadius="0dp"
+                    android:shape="ring"
+                    android:layout_below="@id/settings_label1"
+                    android:id="@+id/settings_user_image_frame"
+                    android:thicknessRatio="1.4">
+
+                    <ImageView
+                        android:layout_height="60dp"
+                        android:layout_width="match_parent"
+                        android:id="@+id/settings_user_image"
+                        android:src="@drawable/ic_person"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true">
+                    </ImageView>
+
+                </android.support.v7.widget.CardView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/settings_user_image_frame"
+                    android:layout_below="@id/settings_label1"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="16dp"
+                    android:textStyle="bold"
+                    android:id="@+id/settings_user_name"
+                    android:text="UserName"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/settings_user_image_frame"
+                    android:layout_below="@id/settings_user_name"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginStart="16dp"
+                    android:id="@+id/settings_user_email"
+                    android:text="UserEmail"/>
+
+
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="0dp"
+            android:layout_marginTop="2dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:gravity="bottom"
+                    android:paddingBottom="4dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="Accessibility"
+                    android:id="@+id/settings_label2"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_below="@id/settings_label2"
+                    android:id="@+id/settings_notifications"
+                    android:clickable="true"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_notifications"
+                        android:layout_marginStart="8dp"
+                        android:scaleX="0.5"
+                        android:scaleY="0.5"
+                        android:id="@+id/settings_icon1"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_toEndOf="@id/settings_icon1"
+                        android:layout_centerVertical="true"
+                        android:text="Notifications"/>
+
+
+                </RelativeLayout>
+
+                <View android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="56dp"
+                    android:layout_below="@id/settings_notifications"
+                    android:background="#1F000000"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_below="@id/settings_notifications"
+                    android:id="@+id/settings_language"
+                    android:clickable="true"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_translate"
+                        android:layout_marginStart="8dp"
+                        android:scaleX="0.5"
+                        android:scaleY="0.5"
+                        android:id="@+id/settings_icon2"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_toEndOf="@id/settings_icon2"
+                        android:layout_centerVertical="true"
+                        android:text="Language"/>
+
+
+                </RelativeLayout>
+
+                <View android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="56dp"
+                    android:layout_below="@id/settings_language"
+                    android:background="#1F000000"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_below="@id/settings_language"
+                    android:id="@+id/settings_theme"
+                    android:clickable="true"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_brush"
+                        android:layout_marginStart="8dp"
+                        android:scaleX="0.5"
+                        android:scaleY="0.5"
+                        android:id="@+id/settings_icon3"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_toEndOf="@id/settings_icon3"
+                        android:layout_centerVertical="true"
+                        android:text="Theme"/>
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="0dp"
+            android:layout_marginTop="2dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:paddingBottom="4dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:gravity="bottom"
+                    android:text="About"
+                    android:id="@+id/settings_label3"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_below="@id/settings_label3"
+                    android:id="@+id/settings_libraries"
+                    android:clickable="true"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_extension"
+                        android:layout_marginStart="8dp"
+                        android:scaleX="0.5"
+                        android:scaleY="0.5"
+                        android:id="@+id/settings_icon4"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_toEndOf="@id/settings_icon4"
+                        android:layout_centerVertical="true"
+                        android:text="Libraries"/>
+
+
+                </RelativeLayout>
+
+                <View android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="56dp"
+                    android:layout_below="@id/settings_libraries"
+                    android:background="#1F000000"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_below="@id/settings_libraries"
+                    android:id="@+id/settings_licences"
+                    android:clickable="true"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_copyright"
+                        android:layout_marginStart="8dp"
+                        android:scaleX="0.5"
+                        android:scaleY="0.5"
+                        android:id="@+id/settings_icon5"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_toEndOf="@id/settings_icon5"
+                        android:layout_centerVertical="true"
+                        android:text="Licences"/>
+
+
+                </RelativeLayout>
+
+                <View android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="56dp"
+                    android:layout_below="@id/settings_licences"
+                    android:background="#1F000000"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_below="@id/settings_licences"
+                    android:id="@+id/settings_about"
+                    android:clickable="true"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_info"
+                        android:layout_marginStart="8dp"
+                        android:scaleX="0.5"
+                        android:scaleY="0.5"
+                        android:id="@+id/settings_icon6"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_toEndOf="@id/settings_icon6"
+                        android:layout_centerVertical="true"
+                        android:text="About"/>
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="0dp"
+            android:layout_marginTop="2dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:paddingBottom="4dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:gravity="bottom"
+                    android:text="Log Out"
+                    android:id="@+id/settings_label4"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:layout_below="@id/settings_label4"
+                    android:id="@+id/settings_log_out"
+                    android:clickable="true"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_exit"
+                        android:layout_marginStart="8dp"
+                        android:scaleX="0.5"
+                        android:scaleY="0.5"
+                        android:id="@+id/settings_icon7"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_toEndOf="@id/settings_icon7"
+                        android:layout_centerVertical="true"
+                        android:text="Log Out"/>
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
+
+</ScrollView>
