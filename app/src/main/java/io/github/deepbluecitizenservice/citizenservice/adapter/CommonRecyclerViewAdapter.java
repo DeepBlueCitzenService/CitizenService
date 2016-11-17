@@ -46,7 +46,7 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
     public void addProblem(ProblemModel problemModel, String id){
         problemModel.setKey(id);
         problemList.add(problemModel);
-        notifyDataSetChanged();
+        notifyItemInserted(problemList.size() - 1);
         problemIds.add(id);
     }
 
@@ -70,9 +70,9 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
         holder.periodTV.setText(problem.getPeriod());
         holder.descriptionTV.setText(problem.description);
 
-        String noOfImagesString = getNoOfImagesText(problem);
-        if(noOfImagesString != null)
-            holder.noOfImagesTV.setText(noOfImagesString);
+        String status = checkIfProblemIsSolved(problem);
+        if(status != null)
+            holder.noOfImagesTV.setText(status);
         else
             holder.noOfImagesTV.setVisibility(View.GONE);
 
@@ -97,12 +97,13 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
         }
     }
 
-    private String getNoOfImagesText(ProblemModel p){
-        //TODO: Needed if we have multiple images
-        int no = 0;
-        if(no == 0) return null;
-        else if(no == 1) return "+1 Image";
-        else return "+" + no + " Images";
+    private String checkIfProblemIsSolved(ProblemModel p){
+        if(p.status == ProblemModel.STATUS_SOLVED){
+            return "Solved";
+        }
+        else{
+            return null;
+        }
     }
 
     private void setImageClickListener(final ImageView img, final ProblemModel p){
@@ -114,8 +115,14 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                 byte[] imageBytes = stream.toByteArray();
 
+                ArrayList<String> imageUrls = new ArrayList<String>();
+                if(p.status == ProblemModel.STATUS_SOLVED){
+                    imageUrls.add(p.url);
+                    imageUrls.add(p.solutionUrl);
+                }
+
                 Intent intent = new Intent(context, ExpImageActivity.class);
-                intent.putStringArrayListExtra(ExpImageActivity.URL_LIST, new ArrayList<String>());
+                intent.putStringArrayListExtra(ExpImageActivity.URL_LIST, imageUrls);
                 intent.putExtra(ExpImageActivity.IMAGE_PARCEL, imageBytes);
                 context.startActivity(intent);
             }

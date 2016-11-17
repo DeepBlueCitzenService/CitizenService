@@ -2,19 +2,20 @@ package io.github.deepbluecitizenservice.citizenservice.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import java.util.List;
+
+import io.github.deepbluecitizenservice.citizenservice.R;
 
 public class ExpImageRVAdapter extends RecyclerView.Adapter<ExpImageRVAdapter.ViewHolder> {
 
@@ -39,40 +40,17 @@ public class ExpImageRVAdapter extends RecyclerView.Adapter<ExpImageRVAdapter.Vi
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        new AsyncTask<String, Void, Bitmap>() {
+        StorageReference imageRef = FirebaseStorage.getInstance()
+                .getReference(imageUrlList.get(position));
 
-            @Override
-            protected Bitmap doInBackground(String... strings) {
-                try {
-                    return bitmapFromUrl(strings[0]);
-                } catch (IOException e) {
-                    return null;
-                }
-            }
+        Glide.with(context)
+                .using(new FirebaseImageLoader())
+                .load(imageRef)
+                .asBitmap()
+                .placeholder(R.drawable.image_placeholder_white)
+                .into(holder.imageView);
 
-            @Override
-            protected void onPostExecute(Bitmap result){
-                if(result == null)
-                    holder.imageView.setVisibility(View.GONE);
-                else {
-                    holder.imageView.setImageBitmap(result);
-                    setImageClickListener(holder.imageView);
-                }
-            }
-
-        }.execute(imageUrlList.get(position));
-    }
-
-    private Bitmap bitmapFromUrl(String url) throws IOException {
-        Bitmap bitmap;
-
-        HttpURLConnection connection =
-                (HttpURLConnection) new URL(url).openConnection();
-        connection.connect();
-        InputStream input = connection.getInputStream();
-
-        bitmap = BitmapFactory.decodeStream(input);
-        return bitmap;
+        setImageClickListener(holder.imageView);
     }
 
     private void setImageClickListener(final ImageView imageView){
