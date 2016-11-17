@@ -4,7 +4,9 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -14,6 +16,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
@@ -43,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
     private ArrayList<String> BackStack;
+
+    public ModifiedResources modifiedResources;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -74,6 +80,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
                 toolbar = (Toolbar) findViewById(R.id.toolbar);
                 setSupportActionBar(toolbar);
+                toolbar.setBackgroundColor(modifiedResources.getColor(R.color.colorPrimary));
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    Window window = getWindow();
+                    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                    window.setStatusBarColor(modifiedResources.getColor(R.color.colorPrimaryDark));
+                }
+
 
                 FragmentManager fm = getSupportFragmentManager();
 
@@ -120,6 +135,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     createBottomBar(savedInstanceState==null);
             }
         }.execute();
+    }
+
+    @Override
+    public Resources getResources() {
+        if (modifiedResources == null) {
+            modifiedResources = new ModifiedResources(this, super.getResources());
+        }
+        return modifiedResources;
     }
 
     //Login check and handler

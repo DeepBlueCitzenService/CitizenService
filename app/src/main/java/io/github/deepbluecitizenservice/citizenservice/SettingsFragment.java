@@ -3,6 +3,7 @@ package io.github.deepbluecitizenservice.citizenservice;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,7 +33,8 @@ public class SettingsFragment extends Fragment {
 
     private String[] notificationGroup = {"on","off"};
     private String[] languageGroup = {"English", "हिंदी"};
-    private String[] themeGroup = {"Blue-Magenta", "LightBlue-Yellow"};
+    private String[] themeGroup = {"Indigo-Pink", "MightNightBlue-yello",
+            "WetAsphalt-Turquoise", "Grey-Emerald", "Teal-Orange", "Brown-Blue"};
 
     private OnSettingsFragmentInteraction mListener;
 
@@ -154,6 +157,7 @@ public class SettingsFragment extends Fragment {
                 notificationStatus = selection;
                 sharedPreferences.edit().putInt(SP_NOTIFICATION, selection).apply();
                 //TODO : Handle selection
+                Toast.makeText(getContext(), "WIP Feature; Will be added soon", Toast.LENGTH_LONG).show();
                 dialog.dismiss();
             }
         };
@@ -165,6 +169,7 @@ public class SettingsFragment extends Fragment {
             public void onClick(DialogInterface dialog, int selection) {
                 languageStatus = selection;
                 sharedPreferences.edit().putInt(SP_LANGUAGE, selection).apply();
+                Toast.makeText(getContext(), "WIP Feature; Will be added soon", Toast.LENGTH_LONG).show();
                 //TODO : Handle selection
                 dialog.dismiss();
             }
@@ -177,8 +182,10 @@ public class SettingsFragment extends Fragment {
             public void onClick(DialogInterface dialog, int selection) {
                 themeStatus = selection;
                 sharedPreferences.edit().putInt(SP_THEME, selection).apply();
-                //TODO : Handle selection
                 dialog.dismiss();
+                getActivity().finish();
+                startActivity(new Intent(getContext(), MainActivity.class));
+
             }
         };
     }
