@@ -190,12 +190,15 @@ public class PhotoFragment extends Fragment {
                         switch (idx){
                             case R.id.radio_traffic:
                                 setImageCategory(ProblemModel.CATEGORY_TRAFFIC);
+                                hasCategory = true;
                                 break;
                             case R.id.radio_garbage:
                                 setImageCategory(ProblemModel.CATEGORY_GARBAGE);
+                                hasCategory = true;
                                 break;
                             case R.id.radio_potholes:
                                 setImageCategory(ProblemModel.CATEGORY_POTHOLES);
+                                hasCategory = true;
                                 break;
                         }
                         categorySelectDialog.dismiss();
