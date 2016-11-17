@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +16,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -113,6 +115,10 @@ public class PhotoFragment extends Fragment {
         final Dialog categorySelectDialog = new Dialog(getContext());
 
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.problem_fab);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            fab.setBackgroundTintList(ColorStateList.valueOf(getActivity().getColor(R.color.colorAccent)));
+        }
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
