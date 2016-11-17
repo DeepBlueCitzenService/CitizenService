@@ -3,21 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="10dp"
-    android:layout_marginEnd="10dp"
-    android:layout_marginTop="15dp"
-    android:layout_marginBottom="15dp">
+    android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:id = "@+id/problem_image_container"
-        android:layout_marginBottom="10dp">
+        android:layout_marginBottom="8dp">
 
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="160dp"
             android:id= "@+id/dialog_problem_image_view"
             />
 
@@ -25,7 +22,7 @@
 
 
     <LinearLayout
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -37,7 +34,7 @@
         <ImageView
             android:id="@+id/dialog_solution_image_view"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="160dp"
             android:scaleType="centerCrop"
             />
 
@@ -52,23 +49,29 @@
 
         <ImageView
             android:layout_width="0dp"
-            android:layout_height="150dp"
-            android:paddingTop="30dp"
-            android:paddingBottom="30dp"
+            android:layout_height="160dp"
+            android:padding="40dp"
             android:layout_weight="1"
             android:src = "@drawable/ic_image_black"
-            android:background="@drawable/black_border"
             android:id = "@+id/solution_dialog_gallery"
+            android:clickable="true"
+            android:background="?attr/selectableItemBackground"
             />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/black_overlay"/>
 
         <ImageView
             android:layout_width="0dp"
-            android:layout_height="150dp"
+            android:layout_height="160dp"
+            android:padding="40dp"
             android:layout_weight="1"
-            android:paddingTop="30dp"
-            android:paddingBottom="30dp"
             android:src="@drawable/ic_camera"
             android:id = "@+id/solution_dialog_camera"
+            android:clickable="true"
+            android:background="?attr/selectableItemBackground"
             />
 
     </LinearLayout>
