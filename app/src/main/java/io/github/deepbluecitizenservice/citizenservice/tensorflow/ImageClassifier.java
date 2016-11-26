@@ -36,14 +36,15 @@ import java.util.Vector;
 
 /** A classifier specialized to label images using TensorFlow. */
 public class ImageClassifier implements Classifier {
-
-    private static boolean libraryPresent = true;
+    static {
+        System.loadLibrary("tensorflow");
+    }
 
     private static final String TAG = "TensorFlowImageClassify";
 
     // Only return this many results with at least this confidence.
     private static final int MAX_RESULTS = 3;
-    private static final float THRESHOLD = 0.0f;
+    private static final float THRESHOLD = 0.1f;
 
     // Config values.
     private String inputName;
@@ -60,18 +61,6 @@ public class ImageClassifier implements Classifier {
     private String[] outputNames;
 
     private InferenceInterface inferenceInterface;
-
-    static {
-        try {
-            System.loadLibrary("tensorflow");
-        } catch (UnsatisfiedLinkError e){
-            libraryPresent = false;
-        }
-    }
-
-    public static boolean isLibraryPresent() {
-        return libraryPresent;
-    }
 
     /**
      * Initializes a native TensorFlow session for classifying images.
