@@ -10,8 +10,6 @@ import java.util.List;
 
 public class TensorFlow {
 
-    //The Parameter we used to train the classifier
-    //No of classes = 3 -> garbage, potholes, traffic
     private static final int NUM_CLASSES = 3;
     private static final int INPUT_SIZE = 299;
     private static final int IMAGE_MEAN = 128;
@@ -19,7 +17,6 @@ public class TensorFlow {
     private static final String INPUT_NAME = "Mul:0";
     private static final String OUTPUT_NAME = "final_result:0";
 
-    //For now the model and labels should be in assets folder
     private static final String MODEL_FILE = "file:///android_asset/graph.pb";
     private static final String LABEL_FILE = "file:///android_asset/labels.txt";
 
@@ -31,14 +28,11 @@ public class TensorFlow {
         this.tfClassifier = classifier;
     }
 
-    //Must be called before classifying a Image
     public void initialize() throws IOException {
         tfClassifier.initializeTensorFlow(assetManager, MODEL_FILE, LABEL_FILE,
                 NUM_CLASSES, INPUT_SIZE, IMAGE_MEAN, IMAGE_STD, INPUT_NAME, OUTPUT_NAME);
     }
 
-    //A private function to resize src Bitmap as per size
-    // of dst Bitmap and copies pixel to dst Bitmap
     private void drawResizedBitmap(Bitmap src, Bitmap dst) {
         Canvas canvas = new Canvas(dst);
         Matrix matrix = new Matrix();
@@ -54,8 +48,6 @@ public class TensorFlow {
         canvas.drawBitmap(src, matrix, null);
     }
 
-    //Classifies the input images and provides result
-    //Result is in form of priority queue with greater confidence at the front
     public List<Classifier.Recognition> classify(Bitmap rgbBitmap) {
         Bitmap croppedBitmap = Bitmap.createBitmap(INPUT_SIZE, INPUT_SIZE, Bitmap.Config.ARGB_8888);
         drawResizedBitmap(rgbBitmap, croppedBitmap);
