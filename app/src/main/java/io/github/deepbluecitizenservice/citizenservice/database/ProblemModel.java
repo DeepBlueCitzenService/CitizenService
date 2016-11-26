@@ -69,15 +69,29 @@ public class ProblemModel{
     public static String getCategory(int category){
 
         switch(category){
-            case ProblemModel.CATEGORY_POTHOLES:
+            case CATEGORY_POTHOLES:
                 return "Potholes";
-            case ProblemModel.CATEGORY_GARBAGE:
+            case CATEGORY_GARBAGE:
                 return "Garbage";
-            case ProblemModel.CATEGORY_TRAFFIC:
+            case CATEGORY_TRAFFIC:
                 return "Traffic";
         }
 
         return "none";
+    }
+
+    @Exclude
+    public static int getCategory(String category){
+        if(category.equalsIgnoreCase("Potholes")){
+            return CATEGORY_POTHOLES;
+        }
+        else if(category.equalsIgnoreCase("Garbage")){
+            return  CATEGORY_GARBAGE;
+        }
+        else if(category.equalsIgnoreCase("Traffic")){
+            return CATEGORY_TRAFFIC;
+        }
+        else return -1;
     }
 
     @Exclude

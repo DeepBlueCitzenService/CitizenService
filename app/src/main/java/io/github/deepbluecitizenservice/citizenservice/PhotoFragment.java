@@ -26,6 +26,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -66,9 +67,6 @@ import io.github.deepbluecitizenservice.citizenservice.database.CustomDatabase;
 import io.github.deepbluecitizenservice.citizenservice.database.ProblemModel;
 import io.github.deepbluecitizenservice.citizenservice.permission.StoragePermission;
 import io.github.deepbluecitizenservice.citizenservice.service.GPSService;
-import io.github.deepbluecitizenservice.citizenservice.tensorflow.Classifier;
-import io.github.deepbluecitizenservice.citizenservice.tensorflow.ImageClassifier;
-import io.github.deepbluecitizenservice.citizenservice.tensorflow.TensorFlow;
 
 public class PhotoFragment extends Fragment {
     private final static String TAG = "PhotoFragment";
@@ -81,7 +79,7 @@ public class PhotoFragment extends Fragment {
 
     private View view;
 
-    //Set these values before upload is available
+    //Set hese values before upload is available
     private String imagePath ="", locationAddress = "";
     private boolean hasLocation = false;
     private boolean hasCategory = false;
@@ -90,8 +88,6 @@ public class PhotoFragment extends Fragment {
     private String description = "";
 
     private GPSService gpsService;
-
-    private TensorFlow tensorFlow;
 
     public PhotoFragment() {
         // Required empty public constructor
@@ -232,16 +228,16 @@ public class PhotoFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode== CAMERA_CALL){
             if(resultCode == Activity.RESULT_OK){
-                Bitmap bitmap = handleCameraUpload(data);
-                setImageCategory(bitmap);
+                String path = handleCameraUpload(data);
+                setImageCategory(path);
             }
         }
 
         //Get image from Gallery
         if(requestCode== GALLERY_CALL){
              if(resultCode== Activity.RESULT_OK) {
-                 Bitmap bitmap = handleGalleryUpload(data);
-                 setImageCategory(bitmap);
+                 String path = handleGalleryUpload(data);
+                 setImageCategory(path);
              }
         }
 
@@ -254,7 +250,7 @@ public class PhotoFragment extends Fragment {
         }
     }
 
-    private Bitmap handleCameraUpload(Intent data) {
+    private String handleCameraUpload(Intent data) {
         Bitmap bitmap = (Bitmap) data.getExtras().get("data");
         Log.d(TAG, (bitmap==null? "Bitmap not loaded":"Bitmap loaded"));
         mImageView.setImageBitmap(bitmap);
@@ -267,10 +263,10 @@ public class PhotoFragment extends Fragment {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        return bitmap;
+        return imagePath;
     }
 
-    private Bitmap handleGalleryUpload(Intent data){
+    private String handleGalleryUpload(Intent data){
         imagePath = getFilePathFromGallery(data);
 
         //Get data URI
@@ -280,7 +276,7 @@ public class PhotoFragment extends Fragment {
         Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
         mImageView.setImageBitmap(bitmap);
 
-        return bitmap;
+        return imagePath;
     }
 
     private String getFilePathFromGallery(Intent data){
@@ -355,57 +351,8 @@ public class PhotoFragment extends Fragment {
         categoryTV.setText(ProblemModel.getCategory(category));
     }
 
-    private void setImageCategory(final Bitmap image){
-        final TextView categoryTV = (TextView) view.findViewById(R.id.problem_category_tv);
-
-        final ProgressDialog progressDialog = new ProgressDialog(getContext());
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Identifying Image");
-
-        new AsyncTask<Void, Void, Boolean>() {
-
-            private int result = 0;
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                progressDialog.show();
-                if(tensorFlow == null){
-                    tensorFlow = TensorFlow.getInstance(getContext().getAssets(), new ImageClassifier());
-                }
-            }
-            @Override
-            protected Boolean doInBackground(Void... voids) {
-                if(tensorFlow != null && !tensorFlow.isInitialized()){
-                    try {
-                        tensorFlow.initialize();
-                    } catch (IOException e) {
-                        return false;
-                    }
-                }
-
-                if(tensorFlow != null && tensorFlow.isInitialized()){
-                    List<Classifier.Recognition> classifiesList = tensorFlow.classify(image);
-                    result = Integer.parseInt(classifiesList.get(0).getId());
-                    return true;
-                }
-
-                return false;
-            }
-
-            @Override
-            protected void onPostExecute(Boolean success) {
-                super.onPostExecute(success);
-                category = result;
-                categoryTV.setText(success ? ProblemModel.getCategory(result) : "Identification failed");
-                hasCategory = success;
-
-                //REMOVE WHEN NOT DEBUGGING!
-                //hasCategory = true;
-
-                progressDialog.dismiss();
-            }
-        }.execute();
+    private void setImageCategory(String imagePath){
+        new ImageClassifyTask().execute(imagePath);
     }
 
     //Handle uploads
@@ -599,5 +546,42 @@ public class PhotoFragment extends Fragment {
 
     public interface OnPhotoListener {
         void changeView(int toWhere);
+    }
+
+    private class ImageClassifyTask extends AsyncTask<String, Void, Boolean>{
+
+        private TextView categoryTV = (TextView) view.findViewById(R.id.problem_category_tv);
+        private ProgressDialog progressDialog = new ProgressDialog(getContext());
+        private int result = 0;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage("Identifying Image");
+            progressDialog.show();
+        }
+        @Override
+        protected Boolean doInBackground(String... imgPaths) {
+            try {
+                ImageClassifier tfImageClassifier = new ImageClassifier(imgPaths[0]);
+                List<Pair<String, Float>> classifyResult = tfImageClassifier.uploadAndClassify();
+                if(classifyResult == null) return false;
+                result = ImageClassifier.getBestCategory(classifyResult);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            super.onPostExecute(success);
+            category = result;
+            categoryTV.setText(success ? ProblemModel.getCategory(result) : "Identification failed");
+            hasCategory = success;
+            progressDialog.dismiss();
+        }
     }
 }
