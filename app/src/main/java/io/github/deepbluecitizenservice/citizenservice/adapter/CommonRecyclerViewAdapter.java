@@ -28,7 +28,7 @@ import io.github.deepbluecitizenservice.citizenservice.MainActivity;
 import io.github.deepbluecitizenservice.citizenservice.MapsActivity;
 import io.github.deepbluecitizenservice.citizenservice.R;
 import io.github.deepbluecitizenservice.citizenservice.SLANotification;
-import io.github.deepbluecitizenservice.citizenservice.SettingsFragment;
+import io.github.deepbluecitizenservice.citizenservice.fragments.SettingsFragment;
 import io.github.deepbluecitizenservice.citizenservice.SolutionDialogActivity;
 import io.github.deepbluecitizenservice.citizenservice.database.ProblemModel;
 

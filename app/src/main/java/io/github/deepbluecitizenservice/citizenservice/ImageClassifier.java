@@ -22,7 +22,7 @@ import java.util.Objects;
 
 import io.github.deepbluecitizenservice.citizenservice.database.ProblemModel;
 
-class ImageClassifier {
+public class ImageClassifier {
 
     private static final String serverURL =
             "https://deepblue-tensorflow.herokuapp.com/classify_image/classify/";
@@ -31,13 +31,13 @@ class ImageClassifier {
     private String imagePath;
     private FileInputStream fileInputStream;
 
-    ImageClassifier(String imgPath) throws MalformedURLException, FileNotFoundException {
+    public ImageClassifier(String imgPath) throws MalformedURLException, FileNotFoundException {
         this.fileInputStream = new FileInputStream(imgPath);
         this.imagePath = imgPath;
         connectURL = new URL(serverURL);
     }
 
-    List<Pair<String, Float>> uploadAndClassify() throws IOException, JSONException {
+    public List<Pair<String, Float>> uploadAndClassify() throws IOException, JSONException {
         String lineEnd = "\r\n";
         String twoHyphens = "--";
         String boundary = "*****";
@@ -115,7 +115,7 @@ class ImageClassifier {
 
     }
 
-    static int getBestCategory(List<Pair<String, Float>> result){
+    public static int getBestCategory(List<Pair<String, Float>> result){
         return ProblemModel.getCategory(result.get(0).first);
     }
 }

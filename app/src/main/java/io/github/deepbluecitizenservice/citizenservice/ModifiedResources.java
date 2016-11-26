@@ -9,6 +9,8 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 
+import io.github.deepbluecitizenservice.citizenservice.fragments.SettingsFragment;
+
 public class ModifiedResources extends Resources {
 
     SharedPreferences preferences;
