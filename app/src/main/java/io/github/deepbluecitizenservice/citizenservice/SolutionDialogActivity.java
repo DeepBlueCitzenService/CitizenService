@@ -35,6 +35,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 import io.github.deepbluecitizenservice.citizenservice.database.CustomDatabase;
+import io.github.deepbluecitizenservice.citizenservice.fragments.SettingsFragment;
 
 public class SolutionDialogActivity extends AppCompatActivity {
     private String imageKey, mSolutionImagePath="";

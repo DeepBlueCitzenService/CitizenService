@@ -1,4 +1,4 @@
-package io.github.deepbluecitizenservice.citizenservice;
+package io.github.deepbluecitizenservice.citizenservice.fragments;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -19,6 +19,9 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import io.github.deepbluecitizenservice.citizenservice.MainActivity;
+import io.github.deepbluecitizenservice.citizenservice.R;
 
 public class SettingsFragment extends Fragment {
     private final String TAG = "SettingsFragment";

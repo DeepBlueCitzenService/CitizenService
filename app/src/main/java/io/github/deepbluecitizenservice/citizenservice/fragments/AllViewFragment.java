@@ -1,6 +1,5 @@
-package io.github.deepbluecitizenservice.citizenservice;
+package io.github.deepbluecitizenservice.citizenservice.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,21 +16,23 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.LinkedList;
 import java.util.List;
 
+import io.github.deepbluecitizenservice.citizenservice.MainActivity;
+import io.github.deepbluecitizenservice.citizenservice.R;
 import io.github.deepbluecitizenservice.citizenservice.adapter.CommonRecyclerViewAdapter;
 import io.github.deepbluecitizenservice.citizenservice.database.ProblemModel;
 import io.github.deepbluecitizenservice.citizenservice.database.QueryModel;
 
-public class HomeFragment extends Fragment {
+public class AllViewFragment extends Fragment {
     private QueryModel queryModel;
-    public HomeFragment() {
+
+    public AllViewFragment() {
         // Required empty public constructor
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_home, container, false);
-
+        View v = inflater.inflate(R.layout.fragment_all_view, container, false);
         queryModel = new QueryModel();
 
         List<ProblemModel> problemModelList = new LinkedList<>();
@@ -39,32 +40,24 @@ public class HomeFragment extends Fragment {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if(user == null){
-            Intent startLoginActivity = new Intent(getActivity(), LoginActivity.class);
-            getActivity().startActivity(startLoginActivity);
             return v;
         }
 
         final DatabaseReference ref = FirebaseDatabase
                 .getInstance()
                 .getReference()
-                .child("users")
-                .child(user.getUid())
-                .child("openProblems");
+                .child("problems");
 
-        RecyclerView rv = (RecyclerView) v.findViewById(R.id.home_recycle_view);
+        RecyclerView rv = (RecyclerView) v.findViewById(R.id.all_recycle_view);
 
-        final CommonRecyclerViewAdapter adapter = new CommonRecyclerViewAdapter(
-                getContext(),
-                problemModelList,
-                MainActivity.HOME_TAG);
-
+        final CommonRecyclerViewAdapter adapter = new CommonRecyclerViewAdapter(getContext(), problemModelList, MainActivity.ALL_TAG);
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
 
         rv.setLayoutManager(linearLayoutManager);
         rv.addItemDecoration(new QueryModel.SpacingDecoration(8));
         rv.setAdapter(adapter);
 
-        queryModel.makeQuery(0-(System.currentTimeMillis()/1000), ref, adapter);
+        queryModel.makeQuery(0- (System.currentTimeMillis()/1000), ref, adapter);
 
         rv.addOnScrollListener(new RecyclerView.OnScrollListener(){
             @Override

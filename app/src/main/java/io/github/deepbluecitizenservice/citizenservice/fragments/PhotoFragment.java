@@ -1,4 +1,4 @@
-package io.github.deepbluecitizenservice.citizenservice;
+package io.github.deepbluecitizenservice.citizenservice.fragments;
 
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -62,6 +62,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import io.github.deepbluecitizenservice.citizenservice.R;
+import io.github.deepbluecitizenservice.citizenservice.SLANotification;
 import io.github.deepbluecitizenservice.citizenservice.database.CustomDatabase;
 import io.github.deepbluecitizenservice.citizenservice.database.ProblemModel;
 import io.github.deepbluecitizenservice.citizenservice.permission.StoragePermission;

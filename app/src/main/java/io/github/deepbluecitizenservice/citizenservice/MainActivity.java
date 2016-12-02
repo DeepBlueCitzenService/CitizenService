@@ -32,6 +32,11 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
+import io.github.deepbluecitizenservice.citizenservice.fragments.AllViewFragment;
+import io.github.deepbluecitizenservice.citizenservice.fragments.HomeFragment;
+import io.github.deepbluecitizenservice.citizenservice.fragments.PhotoFragment;
+import io.github.deepbluecitizenservice.citizenservice.fragments.SettingsFragment;
+
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
         PhotoFragment.OnPhotoListener, SettingsFragment.OnSettingsFragmentInteraction {
 
