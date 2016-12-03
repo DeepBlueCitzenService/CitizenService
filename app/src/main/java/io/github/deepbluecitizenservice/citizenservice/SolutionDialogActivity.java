@@ -2,15 +2,18 @@ package io.github.deepbluecitizenservice.citizenservice;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
@@ -33,6 +36,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 import io.github.deepbluecitizenservice.citizenservice.database.CustomDatabase;
+import io.github.deepbluecitizenservice.citizenservice.fragments.SettingsFragment;
 
 public class SolutionDialogActivity extends AppCompatActivity {
     private String imageKey, mSolutionImagePath="";
@@ -59,7 +63,7 @@ public class SolutionDialogActivity extends AppCompatActivity {
         mFab = (FloatingActionButton) findViewById(R.id.fab_problem_dialog);
         mFab.setVisibility(View.GONE);
 
-        //TODO: Set theme for fab
+        mFab.setBackgroundTintList(ContextCompat.getColorStateList(this, getThemeColorID()));
 
         mButtons     = (LinearLayout) findViewById(R.id.solution_dialog_button_container);
         mImageLayout = (LinearLayout) findViewById(R.id.solution_image_container);
@@ -117,6 +121,26 @@ public class SolutionDialogActivity extends AppCompatActivity {
                 .centerCrop()
                 .crossFade()
                 .into(problemImage);
+    }
+
+    //HACK
+    private int getThemeColorID(){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        switch (preferences.getInt(SettingsFragment.SP_THEME, 0)){
+            default:
+            case SettingsFragment.INDIGO_PINK:
+                return R.color.pink_a200;
+            case SettingsFragment.MIDNIGHT_BLUE_YELLOW:
+                return R.color.might_night_blue_700;
+            case SettingsFragment.WET_ASPHALT_TURQUOISE:
+                return R.color.turquoise_500;
+            case SettingsFragment.GREY_EMERALD:
+                return R.color.emerald_500;
+            case SettingsFragment.TEAL_ORANGE:
+                return R.color.deep_orange_500;
+            case SettingsFragment.BROWN_BLUE:
+                return R.color.blue_500;
+        }
     }
 
     @Override
