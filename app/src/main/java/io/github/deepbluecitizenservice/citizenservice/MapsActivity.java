@@ -19,8 +19,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import io.github.deepbluecitizenservice.citizenservice.adapter.MapInfoAdapter;
 import io.github.deepbluecitizenservice.citizenservice.database.ProblemModel;
-
-import static io.github.deepbluecitizenservice.citizenservice.R.id.map;
+import io.github.deepbluecitizenservice.citizenservice.service.GPSService;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -38,7 +37,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         singleProblem = intent.getParcelableExtra(MAP_PROBLEM);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(map);
+                .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
 
@@ -53,8 +52,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 15));
         }
         else {
-            //TODO: Fix set-my-location
-            googleMap.setMyLocationEnabled(true);
+            GPSService gpsService = new GPSService(this, findViewById(R.id.map), googleMap);
+            if(gpsService.isGPSPermissionGranted() && gpsService.isGPSEnabled()) {
+                //noinspection MissingPermission
+                googleMap.setMyLocationEnabled(true);
+            }
             loadAllProblems();
         }
     }

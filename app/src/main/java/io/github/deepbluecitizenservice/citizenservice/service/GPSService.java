@@ -14,6 +14,11 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
+
 import io.github.deepbluecitizenservice.citizenservice.permission.LocationPermission;
 
 public class GPSService extends Service implements LocationListener {
@@ -32,6 +37,7 @@ public class GPSService extends Service implements LocationListener {
     private Context context;
     private LocationPermission permission;
     private View baseView;
+    private GoogleMap googleMap = null;
 
 
     public GPSService(Context context, View baseView) {
@@ -39,6 +45,11 @@ public class GPSService extends Service implements LocationListener {
         this.permission = new LocationPermission(context);
         this.baseView = baseView;
         getLocation();
+    }
+
+    public GPSService(Context context, View baseView, GoogleMap map) {
+        this(context, baseView);
+        this.googleMap = map;
     }
 
     @Nullable
@@ -159,6 +170,13 @@ public class GPSService extends Service implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
+        if(googleMap != null && isGPSEnabled() && isGPSPermissionGranted()){
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 10);
+            googleMap.animateCamera(cameraUpdate);
+            //noinspection MissingPermission
+            manager.removeUpdates(this);
+        }
     }
 
     @Override
