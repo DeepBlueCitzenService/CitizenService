@@ -56,9 +56,6 @@
         <activity android:name=".SolutionDialogActivity"
             android:theme="@style/Theme.AppCompat.Light.Dialog"
             android:label="Add Solution Proof"/>
-        <activity
-            android:name=".AllMapView"
-            android:label="@string/title_activity_maps"/>
     </application>
 
 </manifest>
