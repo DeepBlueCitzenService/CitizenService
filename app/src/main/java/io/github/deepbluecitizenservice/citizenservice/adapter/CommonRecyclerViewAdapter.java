@@ -22,9 +22,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import io.github.deepbluecitizenservice.citizenservice.MapsActivity;
 import io.github.deepbluecitizenservice.citizenservice.ExpImageActivity;
 import io.github.deepbluecitizenservice.citizenservice.MainActivity;
-import io.github.deepbluecitizenservice.citizenservice.MapsActivity;
 import io.github.deepbluecitizenservice.citizenservice.R;
 import io.github.deepbluecitizenservice.citizenservice.SLANotification;
 import io.github.deepbluecitizenservice.citizenservice.SolutionDialogActivity;
@@ -133,14 +133,8 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
         locationTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String title = problem.creatorName + " (" + problem.getCategory() + ")";
-
                 Intent intent = new Intent(context, MapsActivity.class);
-                intent.putExtra(MapsActivity.MAP_LOC_X, problem.locationX);
-                intent.putExtra(MapsActivity.MAP_LOC_Y, problem.locationY);
-                intent.putExtra(MapsActivity.MAP_SNIPPET, problem.getPeriod());
-                intent.putExtra(MapsActivity.MAP_TITLE, title);
-
+                intent.putExtra(MapsActivity.MAP_PROBLEM, problem);
                 context.startActivity(intent);
             }
         });

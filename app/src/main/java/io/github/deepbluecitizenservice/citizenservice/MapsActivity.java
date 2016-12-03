@@ -9,20 +9,25 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import io.github.deepbluecitizenservice.citizenservice.adapter.MapInfoAdapter;
+import io.github.deepbluecitizenservice.citizenservice.database.ProblemModel;
+
+import static io.github.deepbluecitizenservice.citizenservice.R.id.map;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    public static final String MAP_LOC_X = "MapLocX";
-    public static final String MAP_LOC_Y = "MapLocY";
-    public static final String MAP_TITLE = "MapTitle";
-    public static final String MAP_SNIPPET = "MapSnippet";
+    public static final String MAP_PROBLEM = "MapProblem";
 
-    private double locationX = 0;
-    private double locationY = 0;
-
-    private String markerTitle = "Location";
-    private String markerSnippet = "Location";
+    private GoogleMap googleMap;
+    private ProblemModel singleProblem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,22 +35,58 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
 
         Intent intent = getIntent();
-        this.locationX = intent.getDoubleExtra(MAP_LOC_X,0);
-        this.locationY = intent.getDoubleExtra(MAP_LOC_Y,0);
-        this.markerTitle = intent.getStringExtra(MAP_TITLE);
-        this.markerSnippet = intent.getStringExtra(MAP_SNIPPET);
+        singleProblem = intent.getParcelableExtra(MAP_PROBLEM);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(map);
         mapFragment.getMapAsync(this);
     }
 
+
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-        LatLng markerPosition = new LatLng(locationX, locationY);
-        MarkerOptions markerOpt = new MarkerOptions().position(markerPosition)
-                .title(markerTitle).snippet(markerSnippet);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerPosition, 15));
-        googleMap.addMarker(markerOpt);
+    public void onMapReady(GoogleMap map) {
+        googleMap = map;
+        googleMap.setInfoWindowAdapter(new MapInfoAdapter(this));
+
+        if(singleProblem != null){
+            Marker marker = addMarker(singleProblem);
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 15));
+        }
+        else {
+            //TODO: Fix set-my-location
+            googleMap.setMyLocationEnabled(true);
+            loadAllProblems();
+        }
+    }
+
+    private void loadAllProblems(){
+        final DatabaseReference ref = FirebaseDatabase
+                .getInstance()
+                .getReference()
+                .child("problems");
+
+        ref.addValueEventListener(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(final DataSnapshot dataSnapshot) {
+                        for (final DataSnapshot ds : dataSnapshot.getChildren()) {
+                            ProblemModel problem = ds.getValue(ProblemModel.class);
+                            addMarker(problem);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                }
+        );
+    }
+
+    private Marker addMarker(ProblemModel problem){
+        LatLng problemLatLng = new LatLng(problem.locationX, problem.locationY);
+        Marker marker = googleMap.addMarker(new MarkerOptions().position(problemLatLng));
+        marker.setTag(problem);
+        return marker;
     }
 }
