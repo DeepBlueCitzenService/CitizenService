@@ -4,10 +4,9 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,8 +15,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Window;
-import android.view.WindowManager;
+import android.util.TypedValue;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
@@ -48,18 +46,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private Fragment homeFragment, allviewFragment, settingsFragment, photosFragment;
     private boolean backPressed = false;
     private String lastFragment;
-    private Toolbar toolbar;
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
     private ArrayList<String> BackStack;
 
-    public ModifiedResources modifiedResources;
-
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTheme(R.style.AppTheme_NoActionBar);
+        setThemeFromPreferences();
         setContentView(R.layout.activity_main);
+
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Logging in");
@@ -83,17 +79,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 super.onPostExecute(aVoid);
                 progressDialog.dismiss();
 
-                toolbar = (Toolbar) findViewById(R.id.toolbar);
+                Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
                 setSupportActionBar(toolbar);
-                toolbar.setBackgroundColor(modifiedResources.getColor(R.color.colorPrimary));
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    Window window = getWindow();
-                    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                    window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-                    window.setStatusBarColor(modifiedResources.getColor(R.color.colorPrimaryDark));
-                }
-
 
                 FragmentManager fm = getSupportFragmentManager();
 
@@ -142,12 +129,28 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }.execute();
     }
 
-    @Override
-    public Resources getResources() {
-        if (modifiedResources == null) {
-            modifiedResources = new ModifiedResources(this, super.getResources());
+    private void setThemeFromPreferences() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        switch (preferences.getInt(SettingsFragment.SP_THEME, 0)){
+            default:
+            case SettingsFragment.INDIGO_PINK:
+                setTheme(R.style.AppTheme_IndigoPink);
+                break;
+            case SettingsFragment.MIDNIGHT_BLUE_YELLOW:
+                setTheme(R.style.AppTheme_MidNightBlueYellow);
+                break;
+            case SettingsFragment.WET_ASPHALT_TURQUOISE:
+                setTheme(R.style.AppTheme_WetAsphaltTurquoise);
+                break;
+            case SettingsFragment.GREY_EMERALD:
+                setTheme(R.style.AppTheme_GreyEmerald);
+                break;
+            case SettingsFragment.TEAL_ORANGE:
+                setTheme(R.style.AppTheme_TealOrange);
+                break;
+            case SettingsFragment.BROWN_BLUE:
+                setTheme(R.style.AppTheme_BlueBrown);
         }
-        return modifiedResources;
     }
 
     //Login check and handler
@@ -228,11 +231,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private void createBottomBar(boolean isNotSaved){
         bottomNavigation = (AHBottomNavigation) findViewById(R.id.bottom_navigation);
 
+        TypedValue primaryColor = new TypedValue();
+        TypedValue accentColor = new TypedValue();
+        getTheme().resolveAttribute(R.attr.colorPrimary, primaryColor, true);
+        getTheme().resolveAttribute(R.attr.colorAccent, accentColor, true);
+
         // Create items
-        AHBottomNavigationItem item1 = new AHBottomNavigationItem(R.string.bottom_bar_tab1, R.drawable.ic_home, R.color.colorPrimary);
-        AHBottomNavigationItem item2 = new AHBottomNavigationItem(R.string.bottom_bar_tab2, R.drawable.ic_world, R.color.colorPrimary);
-        AHBottomNavigationItem item3 = new AHBottomNavigationItem(R.string.bottom_bar_tab3, R.drawable.ic_camera, R.color.colorPrimary);
-        AHBottomNavigationItem item4 = new AHBottomNavigationItem(R.string.bottom_bar_tab4, R.drawable.ic_settings, R.color.colorPrimary);
+        AHBottomNavigationItem item1 = new AHBottomNavigationItem(R.string.bottom_bar_tab1, R.drawable.ic_home, primaryColor.resourceId);
+        AHBottomNavigationItem item2 = new AHBottomNavigationItem(R.string.bottom_bar_tab2, R.drawable.ic_world, primaryColor.resourceId);
+        AHBottomNavigationItem item3 = new AHBottomNavigationItem(R.string.bottom_bar_tab3, R.drawable.ic_camera, primaryColor.resourceId);
+        AHBottomNavigationItem item4 = new AHBottomNavigationItem(R.string.bottom_bar_tab4, R.drawable.ic_settings, primaryColor.resourceId);
 
         // Add items
         bottomNavigation.addItem(item1);
@@ -241,14 +249,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         bottomNavigation.addItem(item4);
 
         // Set background color
-        bottomNavigation.setDefaultBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        bottomNavigation.setDefaultBackgroundColor(primaryColor.data);
 
         // Disable the translation inside the CoordinatorLayout
         bottomNavigation.setBehaviorTranslationEnabled(true);
 
         // Change colors of icons, when active and inactive
-        bottomNavigation.setAccentColor(ContextCompat.getColor(this, R.color.colorAccent));
-        bottomNavigation.setInactiveColor(ContextCompat.getColor(this, R.color.inactiveBottomBar));
+        bottomNavigation.setAccentColor(accentColor.data);
+        bottomNavigation.setInactiveColor(ContextCompat.getColor(this, R.color.white));
 
         // Force to tint the drawable (useful for font with icon for example)
         bottomNavigation.setForceTint(true);
