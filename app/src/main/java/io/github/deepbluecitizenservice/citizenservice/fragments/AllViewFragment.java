@@ -1,10 +1,14 @@
 package io.github.deepbluecitizenservice.citizenservice.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -17,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import io.github.deepbluecitizenservice.citizenservice.MainActivity;
+import io.github.deepbluecitizenservice.citizenservice.MapsActivity;
 import io.github.deepbluecitizenservice.citizenservice.R;
 import io.github.deepbluecitizenservice.citizenservice.adapter.CommonRecyclerViewAdapter;
 import io.github.deepbluecitizenservice.citizenservice.database.ProblemModel;
@@ -72,5 +77,24 @@ public class AllViewFragment extends Fragment {
         });
 
         return v;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+        inflater.inflate(R.menu.all_view_toolbar_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.toolbar_all_view_map) {
+            startActivity(new Intent(getContext(), MapsActivity.class));
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
