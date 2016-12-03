@@ -1,5 +1,8 @@
 package io.github.deepbluecitizenservice.citizenservice.database;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
@@ -8,7 +11,7 @@ import java.util.Date;
 import java.util.Locale;
 
 @IgnoreExtraProperties
-public class ProblemModel{
+public class ProblemModel implements Parcelable{
     public String url, creatorKey, description, locationAddress,
             creatorName, creatorURL, solutionUrl;
     public double locationX, locationY;
@@ -50,6 +53,63 @@ public class ProblemModel{
         this.creatorURL      = creatorURL;
         this.solutionUrl     = solutionUrl;
     }
+
+    protected ProblemModel(Parcel in) {
+        url = in.readString();
+        creatorKey = in.readString();
+        description = in.readString();
+        locationAddress = in.readString();
+        creatorName = in.readString();
+        creatorURL = in.readString();
+        solutionUrl = in.readString();
+        locationX = in.readDouble();
+        locationY = in.readDouble();
+        sla = in.readLong();
+        timeCreated = in.readLong();
+        negTimeCreated = in.readLong();
+        status = in.readInt();
+        category = in.readInt();
+        key = in.readString();
+    }
+
+    @Exclude
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(url);
+        dest.writeString(creatorKey);
+        dest.writeString(description);
+        dest.writeString(locationAddress);
+        dest.writeString(creatorName);
+        dest.writeString(creatorURL);
+        dest.writeString(solutionUrl);
+        dest.writeDouble(locationX);
+        dest.writeDouble(locationY);
+        dest.writeLong(sla);
+        dest.writeLong(timeCreated);
+        dest.writeLong(negTimeCreated);
+        dest.writeInt(status);
+        dest.writeInt(category);
+        dest.writeString(key);
+    }
+
+    @Exclude
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Exclude
+    public static final Creator<ProblemModel> CREATOR = new Creator<ProblemModel>() {
+        @Override
+        public ProblemModel createFromParcel(Parcel in) {
+            return new ProblemModel(in);
+        }
+
+        @Override
+        public ProblemModel[] newArray(int size) {
+            return new ProblemModel[size];
+        }
+    };
 
     @Exclude
     public String getPeriod(){
