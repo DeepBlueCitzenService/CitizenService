@@ -44,7 +44,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".LoginActivity"
             android:theme="@style/AppTheme.LoginActivity" />
@@ -56,8 +55,10 @@
             android:label="@string/title_activity_maps" />
         <activity android:name=".SolutionDialogActivity"
             android:theme="@style/Theme.AppCompat.Light.Dialog"
-            android:label="Add Solution Proof">
-        </activity>
+            android:label="Add Solution Proof"/>
+        <activity
+            android:name=".AllMapView"
+            android:label="@string/title_activity_maps"/>
     </application>
 
 </manifest>
