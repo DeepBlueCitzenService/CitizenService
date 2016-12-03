@@ -3,7 +3,6 @@ package io.github.deepbluecitizenservice.citizenservice.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -28,7 +27,6 @@ import io.github.deepbluecitizenservice.citizenservice.MainActivity;
 import io.github.deepbluecitizenservice.citizenservice.MapsActivity;
 import io.github.deepbluecitizenservice.citizenservice.R;
 import io.github.deepbluecitizenservice.citizenservice.SLANotification;
-import io.github.deepbluecitizenservice.citizenservice.fragments.SettingsFragment;
 import io.github.deepbluecitizenservice.citizenservice.SolutionDialogActivity;
 import io.github.deepbluecitizenservice.citizenservice.database.ProblemModel;
 
@@ -173,10 +171,6 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
                 Intent startSolutionDialog = new Intent(context, SolutionDialogActivity.class)
                         .putExtra(SLANotification.PROBLEM_KEY, problem.getKey())
                         .putExtra(SLANotification.URL_KEY, problem.url);
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    startSolutionDialog.putExtra(SettingsFragment.SP_THEME, context.getColor(R.color.colorAccent));
-                }
 
                 context.startActivity(startSolutionDialog);
             }

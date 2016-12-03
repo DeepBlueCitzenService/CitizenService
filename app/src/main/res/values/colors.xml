@@ -1,11 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <!-- Indigo-Pink(Base/Default) Theme -->
+    <color name="indigo_500">#FF3F51B5</color>
+    <color name="indigo_700">#FF303F9F</color>
+    <color name="pink_a200">#FFFF4081</color>
 
-    <color name="inactiveBottomBar">#FFFFFF</color>
+    <!-- MidNightBlue-Yellow Theme -->
+    <color name="might_night_blue_500">#FF2C3E50</color>
+    <color name="might_night_blue_700">#FF1B2732</color>
+    <color name="yellow_500">#FFFFEB3B</color>
 
+    <!-- WetAsphalt-Turquoise Theme -->
+    <color name="wet_asphalt_500">#FF34495E</color>
+    <color name="wet_asphalt_700">#FF212E3B</color>
+    <color name="turquoise_500">#FF1ABC9C</color>
+
+    <!-- Grey-Emerald Theme -->
+    <color name="grey_600">#FF757575</color>
+    <color name="grey_700">#FF616161</color>
+    <color name="emerald_500">#FF2ECC71</color>
+
+    <!-- Teal-Orange Theme -->
+    <color name="teal_500">#FF009688</color>
+    <color name="teal_700">#FF00796B</color>
+    <color name="deep_orange_500">#FFFF5722</color>
+
+    <!-- Brown-Blue Theme -->
+    <color name="brown_500">#FF795548</color>
+    <color name="brown_700">#FF5D4037</color>
+    <color name="blue_500">#FF2196F3</color>
+
+    <!-- Overlays -->
     <color name="black_overlay">#66000000</color>
 
 </resources>

@@ -36,8 +36,15 @@ public class SettingsFragment extends Fragment {
 
     private String[] notificationGroup = {"on","off"};
     private String[] languageGroup = {"English", "हिंदी"};
-    private String[] themeGroup = {"Indigo-Pink", "MightNightBlue-yello",
+    private String[] themeGroup = {"Indigo-Pink", "MidNightBlue-Yellow",
             "WetAsphalt-Turquoise", "Grey-Emerald", "Teal-Orange", "Brown-Blue"};
+
+    public static final int INDIGO_PINK = 0;
+    public static final int MIDNIGHT_BLUE_YELLOW = 1;
+    public static final int WET_ASPHALT_TURQUOISE = 2;
+    public static final int GREY_EMERALD = 3;
+    public static final int TEAL_ORANGE = 4;
+    public static final int BROWN_BLUE = 5;
 
     private OnSettingsFragmentInteraction mListener;
 
