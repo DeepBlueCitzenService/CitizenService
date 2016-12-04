@@ -32,5 +32,10 @@
 
     <!-- Overlays -->
     <color name="black_overlay">#66000000</color>
+    
+    <!-- Map Legends Color -->
+    <color name="purple_a200">#E040FB</color>
+    <color name="orange_a400">#FF9100</color>
+    <color name="blue_a400">#2979FF</color>
 
 </resources>

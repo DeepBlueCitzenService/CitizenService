@@ -8,6 +8,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -87,7 +89,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private Marker addMarker(ProblemModel problem){
         LatLng problemLatLng = new LatLng(problem.locationX, problem.locationY);
-        Marker marker = googleMap.addMarker(new MarkerOptions().position(problemLatLng));
+        BitmapDescriptor markerIcon = BitmapDescriptorFactory.defaultMarker();
+
+        switch (problem.category){
+            case ProblemModel.CATEGORY_TRAFFIC:
+                markerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA);
+                break;
+            case ProblemModel.CATEGORY_GARBAGE:
+                markerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
+                break;
+            case ProblemModel.CATEGORY_POTHOLES:
+                markerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+                break;
+        }
+
+        Marker marker = googleMap.addMarker(new MarkerOptions().position(problemLatLng).icon(markerIcon));
         marker.setTag(problem);
         return marker;
     }
