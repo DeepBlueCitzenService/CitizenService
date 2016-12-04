@@ -1,0 +1,35 @@
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load("current", {packages:["corechart"]});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+      
+        var rows = []
+        var noOfRows = Android.getNoOfRows();
+        for(var i = 0; i < noOfRows; i++){
+        	rows.push([Android.getItem(i), Android.getValue(i)]);
+        }
+        
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'ITEM');
+        data.addColumn('number', 'VALUE');
+        data.addRows(rows);
+      
+        var options = {
+          legend: { position: 'bottom', alignment: 'center' },
+          chartArea: { left: '15%', top: '5%', width: "70%", height: "70%" },
+          pieHole: 0.4
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+        chart.draw(data, options);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="donutchart" style="width: 100%; height: 100%;"></div>
+  </body>
+</html>
+
