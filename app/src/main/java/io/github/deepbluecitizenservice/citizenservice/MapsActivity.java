@@ -1,5 +1,7 @@
 package io.github.deepbluecitizenservice.citizenservice;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -43,11 +45,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
     }
 
-
     @Override
     public void onMapReady(GoogleMap map) {
         googleMap = map;
         googleMap.setInfoWindowAdapter(new MapInfoAdapter(this));
+        googleMap.getUiSettings().setCompassEnabled(false);
 
         if(singleProblem != null){
             Marker marker = addMarker(singleProblem);
@@ -61,6 +63,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             loadAllProblems();
         }
+
+        googleMap.setOnInfoWindowLongClickListener(getLongClickListener());
     }
 
     private void loadAllProblems(){
@@ -106,5 +110,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Marker marker = googleMap.addMarker(new MarkerOptions().position(problemLatLng).icon(markerIcon));
         marker.setTag(problem);
         return marker;
+    }
+
+    private GoogleMap.OnInfoWindowLongClickListener getLongClickListener(){
+        return new GoogleMap.OnInfoWindowLongClickListener() {
+            @Override
+            public void onInfoWindowLongClick(final Marker marker) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                builder.setTitle("Add Solution").setMessage("Do you want to add solution?");
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ProblemModel problem = (ProblemModel) marker.getTag();
+                        Intent startSolutionDialog = new Intent(MapsActivity.this, SolutionDialogActivity.class)
+                                .putExtra(SLANotification.PROBLEM_KEY, problem.getKey())
+                                .putExtra(SLANotification.URL_KEY, problem.url);
+
+                        startActivity(startSolutionDialog);
+                        dialog.dismiss();
+                    }
+                });
+                builder.create().show();
+            }
+        };
     }
 }

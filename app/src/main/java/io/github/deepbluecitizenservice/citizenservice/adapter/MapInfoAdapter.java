@@ -82,8 +82,6 @@ public class MapInfoAdapter implements GoogleMap.InfoWindowAdapter {
             userIV.setImageBitmap(userImage);
         }
 
-        //TODO : Add listener to add button
-
         return view;
     }
 
