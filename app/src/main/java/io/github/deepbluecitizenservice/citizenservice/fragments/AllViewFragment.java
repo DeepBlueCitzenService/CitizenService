@@ -20,6 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.LinkedList;
 import java.util.List;
 
+import io.github.deepbluecitizenservice.citizenservice.GraphDialog;
 import io.github.deepbluecitizenservice.citizenservice.MainActivity;
 import io.github.deepbluecitizenservice.citizenservice.MapsActivity;
 import io.github.deepbluecitizenservice.citizenservice.R;
@@ -92,8 +93,14 @@ public class AllViewFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.toolbar_all_view_map) {
-            startActivity(new Intent(getContext(), MapsActivity.class));
+        switch (item.getItemId()){
+            case R.id.toolbar_all_view_map:
+                startActivity(new Intent(getContext(), MapsActivity.class));
+                break;
+            case R.id.toolbar_all_view_chart:
+                GraphDialog dialog = new GraphDialog(getContext(), "Problem Statistics", GraphDialog.ALL_PROBLEMS);
+                dialog.show();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
