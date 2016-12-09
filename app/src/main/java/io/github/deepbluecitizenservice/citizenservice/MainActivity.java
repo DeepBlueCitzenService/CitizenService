@@ -8,10 +8,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -30,8 +28,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
-import io.github.deepbluecitizenservice.citizenservice.fragments.AllViewFragment;
-import io.github.deepbluecitizenservice.citizenservice.fragments.HomeFragment;
+import io.github.deepbluecitizenservice.citizenservice.adapter.ViewPagerAdapter;
 import io.github.deepbluecitizenservice.citizenservice.fragments.PhotoFragment;
 import io.github.deepbluecitizenservice.citizenservice.fragments.SettingsFragment;
 
@@ -42,19 +39,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private GoogleApiClient mGAP;
     private AHBottomNavigation bottomNavigation;
 
-    public final static String HOME_TAG="HOME", ALL_TAG="ALL", PHOTOS_TAG="PHOTOS", SETTINGS_TAG="SETTINGS";
-    private Fragment homeFragment, allviewFragment, settingsFragment, photosFragment;
+    public final static String HOME_TAG="HOME", ALL_TAG="ALL";
     private boolean backPressed = false;
-    private String lastFragment;
-    private FragmentManager fragmentManager;
-    private FragmentTransaction fragmentTransaction;
-    private ArrayList<String> BackStack;
+    private ArrayList<Integer> backStack;
+
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setThemeFromPreferences();
         setContentView(R.layout.activity_main);
+
+        viewPager = (ViewPager) findViewById(R.id.view_pager);
 
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setIndeterminate(true);
@@ -82,46 +79,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
                 setSupportActionBar(toolbar);
 
-                FragmentManager fm = getSupportFragmentManager();
-
-                if(savedInstanceState==null){
-                    if(homeFragment==null ) {
-                        if(fm.findFragmentByTag(HOME_TAG)==null)
-                            homeFragment = new HomeFragment();
-                        else
-                            homeFragment = fm.findFragmentByTag(HOME_TAG);
-                    }
-                    if(photosFragment==null) {
-                        if(fm.findFragmentByTag(HOME_TAG)==null)
-                            photosFragment = new PhotoFragment();
-                        else
-                            photosFragment = fm.findFragmentByTag(PHOTOS_TAG);
-                    }
-                    if(allviewFragment==null) {
-                        if(fm.findFragmentByTag(ALL_TAG)==null)
-                            allviewFragment = new AllViewFragment();
-                        else
-                            allviewFragment = fm.findFragmentByTag(ALL_TAG);
-                    }
-                    if(settingsFragment==null) {
-                        if(fm.findFragmentByTag(SETTINGS_TAG)==null)
-                            settingsFragment = new SettingsFragment();
-                        else
-                            settingsFragment = fm.findFragmentByTag(SETTINGS_TAG);
-                    }
-
-                    if(!homeFragment.isAdded()) {
-                        getSupportFragmentManager()
-                                .beginTransaction()
-                                .add(R.id.fragment_container, homeFragment, HOME_TAG)
-                                .commit();
-                        lastFragment = HOME_TAG;
-                    }
-
-                    BackStack = new ArrayList<>();
-                }
-
-                fragmentManager = getSupportFragmentManager();
+                viewPager.setCurrentItem(0, true);
+                backStack = new ArrayList<>();
+                backStack.add(0);
 
                 if(bottomNavigation==null)
                     createBottomBar(savedInstanceState==null);
@@ -272,82 +232,24 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         bottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
             @Override
             public boolean onTabSelected(int position, boolean wasSelected) {
-                fragmentTransaction = fragmentManager.beginTransaction();
-
-                Fragment genericFragment = null;
-                String fragmentTAG = "";
-
-                switch(position){
-                    case 0:
-                        if(!wasSelected) {
-                            genericFragment = homeFragment==null? new HomeFragment(): homeFragment;
-                            fragmentTAG = HOME_TAG;
-                        }
-                        break;
-
-                    case 1:
-                        if(!wasSelected) {
-                            genericFragment = allviewFragment==null? new AllViewFragment(): allviewFragment;
-                            fragmentTAG = ALL_TAG;
-                        }
-                        break;
-
-                    case 2:
-                        if(!wasSelected) {
-                            genericFragment = photosFragment==null? new PhotoFragment(): photosFragment;
-                            fragmentTAG = PHOTOS_TAG;
-                        }
-
-                        break;
-
-                    case 3:
-                        if(!wasSelected){
-                            genericFragment = settingsFragment==null? new SettingsFragment(): settingsFragment;
-                            fragmentTAG = SETTINGS_TAG;
-                        }
-                        break;
-
-                    default:
-                        return true;
-                }
+                viewPager.setCurrentItem(position, true);
 
                 if(!wasSelected  && !backPressed){
-                    Fragment testFragment = fragmentManager.findFragmentByTag(lastFragment);
-
-                        if(!genericFragment.isAdded()){
-                            fragmentTransaction
-                                    .add(R.id.fragment_container, genericFragment, fragmentTAG);
-                        }
-
-                        try {
-                            Log.d(TAG, "Removing fragment: "+ lastFragment+" Answer: "+ (testFragment == null ? "Yes":"no"));
-                            fragmentTransaction.hide(testFragment);
-                        }
-                        catch(Exception e){
-                            Log.d(TAG, "Exception Occurred "+ lastFragment+ " "+  e.getMessage());
-                        }
-
-                            fragmentTransaction
-                                    .show(genericFragment);
-
-                        if(BackStack==null){
-                            BackStack = new ArrayList<>();
-                        }
-
-                        BackStack.add(0, fragmentTAG);
-                        if(BackStack.size()==5)
-                            BackStack.remove(4);
-
-                        //Log.d(TAG, "Backstack size: "+BackStack.size());
-
-                        lastFragment = fragmentTAG;
+                    if(backStack ==null)
+                        backStack = new ArrayList<>();
+                    if(backStack.isEmpty() || backStack.get(0) != position)
+                        backStack.add(0, position);
+                    if(backStack.size()==5)
+                        backStack.remove(4);
                 }
 
-                fragmentTransaction.commit();
                 backPressed = false;
                 return true;
             }
         });
+
+        viewPager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager(), bottomNavigation));
+        viewPager.setOffscreenPageLimit(4);
     }
 
     @Override
@@ -359,59 +261,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     public void onBackPressed() {
         backPressed = true;
-        FragmentTransaction fm = getSupportFragmentManager().beginTransaction();
-        try {
-            if (BackStack.size() > 1) {
 
-                String name = BackStack.get(1);
-                Log.d(TAG, "Back stack woo " + BackStack.size() + " " + name);
+        if (backStack.size() > 1) {
+            int position = backStack.get(1);
+            Log.e(TAG, "Back stack woo " + backStack.size() + " " + backStack);
 
-                bottomNavigation.restoreBottomNavigation();
+            bottomNavigation.restoreBottomNavigation();
+            viewPager.setCurrentItem(position, true);
 
-                switch (name) {
-                    case HOME_TAG:
-                        bottomNavigation.setCurrentItem(0);
-                        if (homeFragment.isHidden()) {
-                            fm.show(homeFragment);
-                        }
-                        break;
-                    case ALL_TAG:
-                        bottomNavigation.setCurrentItem(1);
-                        if (allviewFragment.isHidden()) {
-                            fm.show(allviewFragment);
-                        }
-
-                        break;
-
-                    case PHOTOS_TAG:
-                        bottomNavigation.setCurrentItem(2);
-                        if (photosFragment.isHidden())
-                            fm.show(photosFragment);
-                        break;
-                    case SETTINGS_TAG:
-                        bottomNavigation.setCurrentItem(3);
-                        if (settingsFragment.isHidden())
-                            fm.show(settingsFragment);
-                        break;
-                }
-
-                lastFragment = name;
-
-                name = BackStack.get(0);
-
-                Fragment generic = name.equals(HOME_TAG) ? homeFragment : (name.equals(PHOTOS_TAG) ? photosFragment : (name.equals(ALL_TAG) ? allviewFragment : settingsFragment));
-                fm.hide(generic);
-                fm.commit();
-                BackStack.remove(0);
-            } else {
-                if (BackStack.size() == 1) {
-                    BackStack.remove(0);
-                }
-                super.onBackPressed();
+            backStack.remove(0);
+        } else {
+            if (backStack.size() == 1) {
+                backStack.remove(0);
             }
-        }
-
-        catch(Exception e){
             super.onBackPressed();
         }
     }
