@@ -4,14 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="48dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="io.github.deepbluecitizenservice.citizenservice.fragments.SettingsFragment">
+    tools:context="io.github.deepbluecitizenservice.citizenservice.fragments.SettingsFragment"
+    android:id="@+id/setting_fragment_base_view">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:orientation="vertical">
 
         <android.support.v7.widget.CardView
@@ -358,7 +357,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:layout_marginBottom="16dp"
                     android:layout_below="@id/settings_label4"
                     android:id="@+id/settings_log_out"
                     android:clickable="true"

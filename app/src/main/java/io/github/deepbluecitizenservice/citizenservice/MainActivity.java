@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
+import android.widget.ScrollView;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
@@ -85,6 +86,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
                 if(bottomNavigation==null)
                     createBottomBar(savedInstanceState==null);
+
+                adjustFragmentWithBottomBar();
             }
         }.execute();
     }
@@ -92,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     public void onResume(){
         SettingsFragment.setLocaleFromSharedPreferences(this);
+        adjustFragmentWithBottomBar();
         super.onResume();
     }
 
@@ -256,6 +260,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         viewPager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager(), bottomNavigation));
         viewPager.setOffscreenPageLimit(4);
+    }
+
+    public void adjustFragmentWithBottomBar(){
+        if(bottomNavigation != null){
+            int height = bottomNavigation.getHeight();
+            ScrollView settingsBaseView = (ScrollView) findViewById(R.id.setting_fragment_base_view);
+            ScrollView photoFragmentBaseView = (ScrollView) findViewById(R.id.photo_fragment_base_view);
+            settingsBaseView.setPadding(0, 0, 0, height);
+            photoFragmentBaseView.setPadding(0, 0, 0, height);
+        }
     }
 
     @Override
