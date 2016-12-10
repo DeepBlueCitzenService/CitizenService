@@ -1,12 +1,14 @@
 package io.github.deepbluecitizenservice.citizenservice.database;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.awt.font.NumericShaper;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -115,17 +117,45 @@ public class ProblemModel implements Parcelable{
     };
 
     @Exclude
-    public String getPeriod(){
+    public String getPeriod(Context context){
         long time = timeCreated*1000;
         long after;
 
+        Locale locale;
+        String format = "dd MMM yy";
+
         after = sla * 24 * 60 * 60* 1000;
 
-        SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yy", Locale.US);
-        String fromDate = formatter.format(new Date(time));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            locale =  context.getResources().getConfiguration().getLocales().get(0);
+        else
+            //noinspection deprecation
+            locale = context.getResources().getConfiguration().locale;
 
+        //HACK
+        if(locale.getLanguage().equals("hi")){
+            format = "dd MMMM yy";
+        }
+
+        SimpleDateFormat formatter = new SimpleDateFormat(format, locale);
+        String fromDate = formatter.format(new Date(time));
         String toDate = formatter.format(new Date(time + after));
+
+        //HACK
+        if(locale.getLanguage().equals("hi")){
+            fromDate = replaceNumbersToDevanagari(fromDate);
+            toDate = replaceNumbersToDevanagari(toDate);
+        }
+
         return fromDate + " - " + toDate;
+    }
+
+    @Exclude
+    private static String replaceNumbersToDevanagari(String date) {
+        NumericShaper numericShaper = NumericShaper.getShaper(NumericShaper.DEVANAGARI);
+        char[] dateArray = date.toCharArray();
+        numericShaper.shape(dateArray, 0, dateArray.length);
+        return String.valueOf(dateArray);
     }
 
     @Exclude
