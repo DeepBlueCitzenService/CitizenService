@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setThemeFromPreferences();
+        SettingsFragment.setLocaleFromSharedPreferences(this);
         setContentView(R.layout.activity_main);
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
@@ -94,7 +95,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     @Override
     public void onResume(){
-        SettingsFragment.setLocaleFromSharedPreferences(this);
         adjustFragmentWithBottomBar();
         super.onResume();
     }
