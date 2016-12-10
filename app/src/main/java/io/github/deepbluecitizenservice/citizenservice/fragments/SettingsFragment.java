@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -20,6 +22,8 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Locale;
+
 import io.github.deepbluecitizenservice.citizenservice.MainActivity;
 import io.github.deepbluecitizenservice.citizenservice.R;
 
@@ -29,9 +33,9 @@ public class SettingsFragment extends Fragment {
     public static String SP_LANGUAGE = "SettingsLanguage";
     public static String SP_THEME = "SettingsTheme";
 
-    private int notificationStatus = -1;
-    private int languageStatus = -1;
-    private int themeStatus = -1;
+    private int notificationStatus = 0;
+    private int languageStatus = 0;
+    private int themeStatus = 0;
 
     private String[] notificationGroup;
     private String[] themeGroup;
@@ -75,9 +79,9 @@ public class SettingsFragment extends Fragment {
         };
         
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        notificationStatus = sharedPreferences.getInt(SP_NOTIFICATION, -1);
-        languageStatus = sharedPreferences.getInt(SP_LANGUAGE, -1);
-        themeStatus = sharedPreferences.getInt(SP_THEME, -1);
+        notificationStatus = sharedPreferences.getInt(SP_NOTIFICATION, 0);
+        languageStatus = getLocaleInt(sharedPreferences.getString(SP_LANGUAGE, "en"));
+        themeStatus = sharedPreferences.getInt(SP_THEME, 0);
     }
 
 
@@ -195,10 +199,11 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int selection) {
                 languageStatus = selection;
-                sharedPreferences.edit().putInt(SP_LANGUAGE, selection).apply();
-                Toast.makeText(getContext(), "WIP Feature; Will be added soon", Toast.LENGTH_LONG).show();
-                //TODO : Handle selection
+                String localeString = getLocaleString(languageStatus);
+                sharedPreferences.edit().putString(SP_LANGUAGE, localeString).apply();
                 dialog.dismiss();
+                getActivity().finish();
+                startActivity(new Intent(getContext(), MainActivity.class));
             }
         };
     }
@@ -238,5 +243,37 @@ public class SettingsFragment extends Fragment {
 
     public interface OnSettingsFragmentInteraction {
         void onLogoutClick();
+    }
+
+    private String getLocaleString(int idx){
+        switch (idx){
+            default:
+            case 0:
+                return "en";
+            case 1:
+                return  "hi";
+        }
+    }
+
+    private int getLocaleInt(String locale){
+        switch (locale){
+            default:
+            case "en":
+                return 0;
+            case "hi":
+                return 1;
+        }
+    }
+
+    public static void setLocaleFromSharedPreferences(Context context){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String localeString = preferences.getString(SettingsFragment.SP_LANGUAGE, "en");
+
+        Locale locale = new Locale(localeString);
+        Locale.setDefault(locale);
+        Resources resources = context.getResources();
+        Configuration configuration = resources.getConfiguration();
+        configuration.setLocale(locale);
+        resources.updateConfiguration(configuration, resources.getDisplayMetrics());
     }
 }
