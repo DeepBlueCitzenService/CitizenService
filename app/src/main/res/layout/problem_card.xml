@@ -106,6 +106,7 @@
                 android:layout_alignParentEnd="true"
                 android:textSize="12sp"
                 android:padding="8dp"
+                android:textStyle="bold"
                 android:background="#66000000"
                 android:textColor="@android:color/white"
                 android:id="@+id/no_of_images_tv"/>

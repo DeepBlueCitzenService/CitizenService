@@ -1,5 +1,6 @@
 package io.github.deepbluecitizenservice.citizenservice.database;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -9,6 +10,8 @@ import com.google.firebase.database.IgnoreExtraProperties;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import io.github.deepbluecitizenservice.citizenservice.R;
 
 @IgnoreExtraProperties
 public class ProblemModel implements Parcelable{
@@ -126,18 +129,17 @@ public class ProblemModel implements Parcelable{
     }
 
     @Exclude
-    public static String getCategory(int category){
-
+    public static String getCategory(Context context, int category){
         switch(category){
             case CATEGORY_POTHOLES:
-                return "Potholes";
+                return context.getString(R.string.category_potholes);
             case CATEGORY_GARBAGE:
-                return "Garbage";
+                return context.getString(R.string.category_garbage);
             case CATEGORY_TRAFFIC:
-                return "Traffic";
+                return context.getString(R.string.category_traffic);
+            default:
+                return context.getString(R.string.category_none);
         }
-
-        return "none";
     }
 
     @Exclude
@@ -155,8 +157,8 @@ public class ProblemModel implements Parcelable{
     }
 
     @Exclude
-    public String getCategory(){
-        return getCategory(category);
+    public String getCategory(Context context){
+        return getCategory(context, this.category);
     }
 
     @Exclude

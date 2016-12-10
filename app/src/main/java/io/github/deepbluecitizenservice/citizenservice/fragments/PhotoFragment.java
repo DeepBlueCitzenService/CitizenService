@@ -349,7 +349,7 @@ public class PhotoFragment extends Fragment {
     private void setImageCategory(int imageCategory){
         category = imageCategory;
         TextView categoryTV = (TextView) view.findViewById(R.id.problem_category_tv);
-        categoryTV.setText(ProblemModel.getCategory(category));
+        categoryTV.setText(ProblemModel.getCategory(getContext(), category));
     }
 
     private void setImageCategory(String imagePath){
@@ -580,7 +580,7 @@ public class PhotoFragment extends Fragment {
         protected void onPostExecute(Boolean success) {
             super.onPostExecute(success);
             category = result;
-            categoryTV.setText(success ? ProblemModel.getCategory(result) : getString(R.string.identification_failed));
+            categoryTV.setText(success ? ProblemModel.getCategory(getContext(), result) : getString(R.string.identification_failed));
             hasCategory = success;
             progressDialog.dismiss();
         }
