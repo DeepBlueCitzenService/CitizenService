@@ -36,6 +36,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 import io.github.deepbluecitizenservice.citizenservice.database.CustomDatabase;
+import io.github.deepbluecitizenservice.citizenservice.fragments.PhotoFragment;
 import io.github.deepbluecitizenservice.citizenservice.fragments.SettingsFragment;
 
 public class SolutionDialogActivity extends AppCompatActivity {
@@ -54,6 +55,7 @@ public class SolutionDialogActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(getString(R.string.solution_dialog_title));
         setContentView(R.layout.dialog_solution);
 
         Bundle params = getIntent().getExtras();
@@ -183,11 +185,11 @@ public class SolutionDialogActivity extends AppCompatActivity {
     }
 
     private Bitmap handleCameraUpload(Intent data) {
-        Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+        Bitmap bitmap = (Bitmap) data.getExtras().get(PhotoFragment.INTENT_BITMAP_DATA);
         mSolutionImageView.setImageBitmap(bitmap);
         try {
             File outputDir = getCacheDir();
-            File outFile = new File(outputDir,"tmpfile.jpg");
+            File outFile = new File(outputDir, PhotoFragment.TEMP_CAMERA_FILE);
             FileOutputStream fos = new FileOutputStream(outFile);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             mSolutionImagePath = outFile.getPath();

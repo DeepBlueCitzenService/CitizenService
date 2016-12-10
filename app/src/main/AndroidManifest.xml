@@ -51,11 +51,9 @@
             android:name=".ExpImageActivity"
             android:theme="@style/Theme.Transparent" />
         <activity
-            android:name=".MapsActivity"
-            android:label="@string/title_activity_maps" />
+            android:name=".MapsActivity"/>
         <activity android:name=".SolutionDialogActivity"
-            android:theme="@style/Theme.AppCompat.Light.Dialog"
-            android:label="Add Solution Proof"/>
+            android:theme="@style/Theme.AppCompat.Light.Dialog"/>
     </application>
 
 </manifest>

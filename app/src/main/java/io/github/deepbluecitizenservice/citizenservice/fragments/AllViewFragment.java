@@ -98,7 +98,7 @@ public class AllViewFragment extends Fragment {
                 startActivity(new Intent(getContext(), MapsActivity.class));
                 break;
             case R.id.toolbar_all_view_chart:
-                GraphDialog dialog = new GraphDialog(getContext(), "Problem Statistics", GraphDialog.ALL_PROBLEMS);
+                GraphDialog dialog = new GraphDialog(getContext(), getString(R.string.graph_all_stats_title), GraphDialog.ALL_PROBLEMS);
                 dialog.show();
                 break;
         }

@@ -36,6 +36,12 @@ import io.github.deepbluecitizenservice.citizenservice.permission.ContactsPermis
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
+    public static final String SP_ID = "UserPreferences";
+    public static final String SP_LOGGED_IN_STATE = "LoggedInState";
+    public static final String SP_USER_NAME = "UserName";
+    public static final String SP_USER_EMAIL = "UserEmail";
+    public static final String SP_USER_EXISTS_IN_FIREBASE = "UserExistsInFirebase";
+
     public static final int STARTUP_DELAY = 300;
     public static final int ANIM_ITEM_DURATION = 1000;
     public static final int ITEM_DELAY = 300;
@@ -66,7 +72,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     startActivityForResult(SignInIntent, RC_SIGN_IN);
                     progressDialog = new ProgressDialog(LoginActivity.this);
                     progressDialog.setIndeterminate(true);
-                    progressDialog.setMessage("Authenticating");
+                    progressDialog.setMessage(getString(R.string.progress_dialog_authenticating));
                     progressDialog.show();
                 }
             }
@@ -217,19 +223,19 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
                         //In shared preferences, store some user data and the log in state
                         //This is to let the app work when offline and faster access
-                        SharedPreferences prefs = getSharedPreferences(getString(R.string.user_preferences_id), Context.MODE_PRIVATE);
+                        SharedPreferences prefs = getSharedPreferences(SP_ID, Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = prefs.edit();
 
-                        editor.putBoolean(getString(R.string.logged_in_state), true);
-                        editor.putString(getString(R.string.user_name), act.getDisplayName());
-                        editor.putString(getString(R.string.user_email), act.getEmail());
+                        editor.putBoolean(SP_LOGGED_IN_STATE, true);
+                        editor.putString(SP_USER_NAME, act.getDisplayName());
+                        editor.putString(SP_USER_EMAIL, act.getEmail());
 
                         //Create a new user if logging in for the first time
-                        if(!prefs.getBoolean(getString(R.string.user_exists_in_firebase), false)) {
+                        if(!prefs.getBoolean(SP_USER_EXISTS_IN_FIREBASE, false)) {
                             CustomDatabase db = new CustomDatabase(FirebaseDatabase.getInstance().getReference());
                             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                             db.createUser(user.getDisplayName(), user.getEmail(), user.getUid(), user.getPhotoUrl());
-                            editor.putBoolean(getString(R.string.user_exists_in_firebase), true);
+                            editor.putBoolean(SP_USER_EXISTS_IN_FIREBASE, true);
                         }
 
                         editor.apply();

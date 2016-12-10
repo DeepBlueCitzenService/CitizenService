@@ -1,33 +1,92 @@
 <resources>
-    <string name="app_name">CitizenService</string>
+    <!-- non-translatable strings -->
+    <string name="app_name" translatable="false">CitizenService</string>
+    <string name="web_client_id" translatable="false">
+        382495725967-imhqnsm4rfn0kr2fuq08ibcgdbn0to7t.apps.googleusercontent.com
+    </string>
 
-    <string name="logged_in_state">LoggedInState</string>
-    <string name="user_name">UserName</string>
-    <string name="user_email">UserEmail</string>
-    <string name="user_exists_in_firebase">UserExistsInFirebase</string>
+    <!-- Bottom NavigationBar Strings-->
+    <string name="bottom_bar_home_tab">Home</string>
+    <string name="bottom_bar_all_tab">All</string>
+    <string name="bottom_bar_camera_tab">Camera</string>
+    <string name="bottom_bar_settings_tab">Settings</string>
 
-    <string name="google_login">Login with Google</string>
-    <string name="google_logout">Logout from Google</string>
+    <!-- RecyclerView - Problem Card View -->
+    <string name="problem_solved">Solved</string>
+    <string name="problem_unsolved">Unsolved</string>
 
-    <string name="user_preferences_id">User Preferences</string>
+    <!-- GraphView Strings-->
+    <string name="graph_all_stats_title">Problem Statistics</string>
 
-    <string name="bottom_bar_tab1">Home</string>
-    <string name="bottom_bar_tab2">All</string>
-    <string name="bottom_bar_tab3">Camera</string>
-    <string name="bottom_bar_tab4">Settings</string>
+    <!-- PhotoFragment Strings -->
+    <string name="select_image">Please Load Image</string>
+    <string name="select_category">Please Select Category</string>
+    <string name="select_location">Please Select Location</string>
 
-    <string name="web_client_id">382495725967-imhqnsm4rfn0kr2fuq08ibcgdbn0to7t.apps.googleusercontent.com</string>
+    <string name="identifying_image">Identifying Image</string>
+    <string name="identification_failed">Identification Failed</string>
 
-    <string name="photofragment_button_camera">Camera</string>
-    <string name="photofragment_button_gallery">Gallery</string>
-    <string name="photofragment_button_upload">Upload Image</string>
-    <string name="photofragment_imageview_description">Image to be uploaded</string>
-    <string name="location_content_description">Location</string>
-    <string name="add_location">Add Location</string>
-    <string name="upload_content_description">Upload Image Icon</string>
+    <!-- Upload Notification-->
+    <string name="notification_upload_image_title">Uploading image</string>
+    <string name="notification_upload_image_details">Upload in Progress</string>
+    <string name="notification_upload_image_complete">Upload complete</string>
 
-    <string name="title_activity_maps">Map</string>
+    <!-- Image Categories -->
+    <string name="category_garbage">Garbage</string>
+    <string name="category_potholes">Potholes</string>
+    <string name="category_traffic">Traffic</string>
+    <string name="category_none">None</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Basic Strings -->
+    <string name="on">on</string>
+    <string name="off">off</string>
+    <string name="ok">OK</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- Themes Strings -->
+    <string name="theme_indigo_pink">Indigo-Pink</string>
+    <string name="theme_midNightBlue_yellow">MidNightBlue-Yellow</string>
+    <string name="theme_wetAsphalt_turquoise">WetAsphalt-Turquoise</string>
+    <string name="theme_grey_emerald">Grey-Emerald</string>
+    <string name="theme_teal_orange">Teal-Orange</string>
+    <string name="theme_brown_blue">Brown-Blue</string>
+
+    <!-- SettingsFragment Strings -->
+    <string name="notification_dialog_title">Notifications</string>
+    <string name="language_dialog_title">Select Language</string>
+    <string name="themes_dialog_title">Select Theme</string>
+
+    <!-- Permissions -->
+    <string name="permission_group_contacts">Contacts</string>
+    <string name="permission_group_location">Location</string>
+    <string name="permission_group_storage">Storage</string>
+
+    <!-- permission_snackbar_part1 + permission_group + permission_snackbar_part2 -->
+    <string name="permission_snackbar_part1">Please Give </string>
+    <string name="permission_snackbar_part2"> Permissions for Proper Functioning</string>
+
+    <!-- Login Activity -->
+    <string name="progress_dialog_authenticating">Authenticating</string>
+
+    <!-- Main Activity -->
+    <string name="progress_dialog_logging_in">Logging in</string>
+
+    <!-- Map Activity -->
+    <string name="add_solution_dialog_title">"Add Solution</string>
+    <string name="add_solution_dialog_details">Do you want to add solution?</string>
+
+    <!-- SLA Notification -->
+    <string name="sla_update_problem_title">Update problem"</string>
+    <string name="sla_update_problem_details_start">Update problem: </string>
+
+    <!--SolutionDialog Activity -->
+    <string name="solution_dialog_title">Add Solution Proof</string>
+
+    <!-- GPS Service -->
+    <string name="gps_disabled_dialog_title">GPS is not enabled</string>
+    <string name="gps_disabled_dialog_details">Do you want to go to settings menu to enable it?</string>
+    <string name="gps_disabled_settings_button">Settings</string>
+
 </resources>

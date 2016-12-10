@@ -76,6 +76,9 @@ public class PhotoFragment extends Fragment {
     private final static int CAMERA_CALL = 100;
     private final static int PICKER_CALL = 400;
 
+    public static final String INTENT_BITMAP_DATA = "data";
+    public static final String TEMP_CAMERA_FILE = "tempfile.jpg";
+
     private ImageView mImageView;
     private OnPhotoListener mListener;
 
@@ -252,12 +255,12 @@ public class PhotoFragment extends Fragment {
     }
 
     private Bitmap handleCameraUpload(Intent data) {
-        Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+        Bitmap bitmap = (Bitmap) data.getExtras().get(INTENT_BITMAP_DATA);
         Log.d(TAG, (bitmap==null? "Bitmap not loaded":"Bitmap loaded"));
         mImageView.setImageBitmap(bitmap);
         try {
             File outputDir = getContext().getCacheDir();
-            File outFile = new File(outputDir,"tmpfile.jpg");
+            File outFile = new File(outputDir, TEMP_CAMERA_FILE);
             FileOutputStream fos = new FileOutputStream(outFile);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             imagePath = outFile.getPath();
@@ -315,7 +318,7 @@ public class PhotoFragment extends Fragment {
         hasLocation = true;
 
         if(locationX == 0 && locationY == 0){
-            locationTV.setText("Please Select Location");
+            locationTV.setText(getString(R.string.select_location));
             hasLocation = false;
         }
     }
@@ -411,8 +414,8 @@ public class PhotoFragment extends Fragment {
         final NotificationManager mNotificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
         final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getContext());
         mBuilder
-                .setContentTitle("Uploading image")
-                .setContentText("Upload in Progress")
+                .setContentTitle(getString(R.string.notification_upload_image_title))
+                .setContentText(getString(R.string.notification_upload_image_details))
                 .setSmallIcon(R.drawable.ic_file_upload);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -469,7 +472,7 @@ public class PhotoFragment extends Fragment {
         .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                mBuilder.setContentText("Upload complete")
+                mBuilder.setContentText(getString(R.string.notification_upload_image_complete))
                         .setProgress(0,0,false);
                 mNotificationManager.notify(tsInt, mBuilder.build());
 
@@ -493,20 +496,20 @@ public class PhotoFragment extends Fragment {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         long SLA= 0;
-        String categoryString= "none";
+        String categoryString= getString(R.string.category_none);
 
         switch(category){
             case ProblemModel.CATEGORY_GARBAGE:
                 SLA= 7;
-                categoryString = "Garbage";
+                categoryString = getString(R.string.category_garbage);
                 break;
             case ProblemModel.CATEGORY_POTHOLES:
                 SLA = 15;
-                categoryString = "Potholes";
+                categoryString = getString(R.string.category_potholes);
                 break;
             case ProblemModel.CATEGORY_TRAFFIC:
                 SLA = 92;
-                categoryString = "Traffic";
+                categoryString = getString(R.string.category_traffic);
                 break;
         }
 
@@ -564,13 +567,13 @@ public class PhotoFragment extends Fragment {
             TextView descriptionTV = (TextView) view.findViewById(R.id.problem_description);
             description = String.valueOf(descriptionTV.getText());
             if(imagePath.length() <= 0){
-                Snackbar.make(view, "Please Load Image", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(view, getString(R.string.select_image), Snackbar.LENGTH_LONG).show();
             }
             else if(!hasCategory){
-                Snackbar.make(view, "Please Select Category", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(view, getString(R.string.select_category), Snackbar.LENGTH_LONG).show();
             }
             else if(!hasLocation){
-                Snackbar.make(view, "Please Select Location", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(view, getString(R.string.select_location), Snackbar.LENGTH_LONG).show();
             }
             else {
                 handleImageUpload();

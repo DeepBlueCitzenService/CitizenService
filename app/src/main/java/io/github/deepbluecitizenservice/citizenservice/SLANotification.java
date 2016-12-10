@@ -29,8 +29,8 @@ public class SLANotification extends BroadcastReceiver{
 
         NotificationCompat.Builder mBuilder = (android.support.v7.app.NotificationCompat.Builder) new NotificationCompat.Builder(context)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("Update problem")
-                .setContentText("Update problem: " + extras.get(CATEGORY) + " in " + extras.get(LOCATION))
+                .setContentTitle(context.getString(R.string.sla_update_problem_title))
+                .setContentText(context.getString(R.string.sla_update_problem_details_start) + extras.get(LOCATION) + " (" + extras.get(CATEGORY) + ")")
                 .setVibrate(new long[]{0, 300, 0})
                 .setAutoCancel(true)
                 .setContentIntent(actionPendingIntent);

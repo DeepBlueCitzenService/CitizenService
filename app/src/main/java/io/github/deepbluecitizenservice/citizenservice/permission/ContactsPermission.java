@@ -3,10 +3,12 @@ package io.github.deepbluecitizenservice.citizenservice.permission;
 import android.Manifest;
 import android.content.Context;
 
+import io.github.deepbluecitizenservice.citizenservice.R;
+
 public class ContactsPermission extends Permission {
 
     public ContactsPermission(Context context){
-        super(context, "Contacts");
+        super(context, context.getString(R.string.permission_group_contacts));
     }
 
     private String[] getContactsPermissions(){
