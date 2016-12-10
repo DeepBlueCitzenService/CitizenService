@@ -132,7 +132,7 @@
     <string name="progress_dialog_logging_in">Logging in</string>
 
     <!-- Map Activity -->
-    <string name="add_solution_dialog_title">"Add Solution</string>
+    <string name="add_solution_dialog_title">Add Solution</string>
     <string name="add_solution_dialog_details">Do you want to add solution?</string>
 
     <!-- SLA Notification -->
