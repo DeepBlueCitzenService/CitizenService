@@ -9,6 +9,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 
+import io.github.deepbluecitizenservice.citizenservice.R;
+
 abstract class Permission implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private Context context;
@@ -54,9 +56,10 @@ abstract class Permission implements ActivityCompat.OnRequestPermissionsResultCa
         if(!isPermissionGranted()){
             if(shouldShowRationales()){
                 Snackbar snackbar = Snackbar.make(v,
-                        "Please Give " + permissionGroup + " Permissions for Proper Functioning",
+                        context.getString(R.string.permission_snackbar_part1) + permissionGroup +
+                                context.getString(R.string.permission_snackbar_part2),
                         Snackbar.LENGTH_LONG);
-                snackbar.setAction("Ok", okListener());
+                snackbar.setAction(context.getString(R.string.ok), okListener());
                 snackbar.show();
             }
             else {

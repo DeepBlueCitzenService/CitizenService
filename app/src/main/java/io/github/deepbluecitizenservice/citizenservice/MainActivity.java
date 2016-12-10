@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Logging in");
+        progressDialog.setMessage(getString(R.string.progress_dialog_logging_in));
 
 
         new AsyncTask<Void, Void, Void>() {
@@ -127,10 +127,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 .build();
 
 
-        SharedPreferences prefs = getSharedPreferences(getString(R.string.user_preferences_id), Context.MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences(LoginActivity.SP_ID, Context.MODE_PRIVATE);
 
         //Check if logged in through shared preferences
-        boolean isLoggedIn = prefs.getBoolean(getString(R.string.logged_in_state), false);
+        boolean isLoggedIn = prefs.getBoolean(LoginActivity.SP_LOGGED_IN_STATE, false);
 
         //Check if user is logged in to firebase
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
 
         Log.d(TAG, "Logged in state in shared preferences" + (isLoggedIn? "True": "False"));
-        Log.d(TAG, prefs.getBoolean(getString(R.string.logged_in_state), false)? "True" : "False");
+        Log.d(TAG, prefs.getBoolean(LoginActivity.SP_LOGGED_IN_STATE, false)? "True" : "False");
 
         //While we redirect to the login activity if not connected to firebase OR google, it might be
         //wise to handle these values separately. This is because shared preferences are available offline
@@ -165,11 +165,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         @Override
                         public void onResult(@NonNull Status status) {
                             Log.d(TAG, "Logged out");
-                            SharedPreferences prefs = getSharedPreferences(getString(R.string.user_preferences_id), MODE_PRIVATE);
+                            SharedPreferences prefs = getSharedPreferences(LoginActivity.SP_ID, MODE_PRIVATE);
                             SharedPreferences.Editor editor = prefs.edit();
 
                             //Set logged in state to false
-                            editor.putBoolean(getString(R.string.logged_in_state), false);
+                            editor.putBoolean(LoginActivity.SP_LOGGED_IN_STATE, false);
                             editor.apply();
 
                             //Log out of firebase
@@ -197,10 +197,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         getTheme().resolveAttribute(R.attr.colorAccent, accentColor, true);
 
         // Create items
-        AHBottomNavigationItem item1 = new AHBottomNavigationItem(R.string.bottom_bar_tab1, R.drawable.ic_home, primaryColor.resourceId);
-        AHBottomNavigationItem item2 = new AHBottomNavigationItem(R.string.bottom_bar_tab2, R.drawable.ic_world, primaryColor.resourceId);
-        AHBottomNavigationItem item3 = new AHBottomNavigationItem(R.string.bottom_bar_tab3, R.drawable.ic_camera, primaryColor.resourceId);
-        AHBottomNavigationItem item4 = new AHBottomNavigationItem(R.string.bottom_bar_tab4, R.drawable.ic_settings, primaryColor.resourceId);
+        AHBottomNavigationItem item1 = new AHBottomNavigationItem(R.string.bottom_bar_home_tab, R.drawable.ic_home, primaryColor.resourceId);
+        AHBottomNavigationItem item2 = new AHBottomNavigationItem(R.string.bottom_bar_all_tab, R.drawable.ic_world, primaryColor.resourceId);
+        AHBottomNavigationItem item3 = new AHBottomNavigationItem(R.string.bottom_bar_camera_tab, R.drawable.ic_camera, primaryColor.resourceId);
+        AHBottomNavigationItem item4 = new AHBottomNavigationItem(R.string.bottom_bar_settings_tab, R.drawable.ic_settings, primaryColor.resourceId);
 
         // Add items
         bottomNavigation.addItem(item1);
@@ -264,7 +264,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         if (backStack.size() > 1) {
             int position = backStack.get(1);
-            Log.e(TAG, "Back stack woo " + backStack.size() + " " + backStack);
+            Log.d(TAG, "Back stack woo " + backStack.size() + " " + backStack);
 
             bottomNavigation.restoreBottomNavigation();
             viewPager.setCurrentItem(position, true);

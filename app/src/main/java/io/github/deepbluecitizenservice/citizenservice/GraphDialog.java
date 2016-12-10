@@ -29,10 +29,12 @@ public class GraphDialog extends Dialog {
     private List<Pair<String, Integer>> graphData;
     private String graphTitle;
     private WebView webView;
+    private Context context;
 
     public GraphDialog(Context context, String graphTitle, int type) {
         super(context);
         this.graphTitle = graphTitle;
+        this.context = context;
 
         switch (type){
             case ALL_PROBLEMS:
@@ -98,8 +100,8 @@ public class GraphDialog extends Dialog {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(!onceDone){
                     onceDone = true;
-                    result.add(new Pair<>("Unsolved", (int) dataSnapshot.child("problems").getChildrenCount()));
-                    result.add(new Pair<>("Solved", (int) dataSnapshot.child("solutions").getChildrenCount()));
+                    result.add(new Pair<>(context.getString(R.string.problem_unsolved), (int) dataSnapshot.child("problems").getChildrenCount()));
+                    result.add(new Pair<>(context.getString(R.string.problem_solved), (int) dataSnapshot.child("solutions").getChildrenCount()));
                     triggerLoadUrl();
                 }
             }

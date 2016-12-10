@@ -24,7 +24,6 @@ import io.github.deepbluecitizenservice.citizenservice.MainActivity;
 import io.github.deepbluecitizenservice.citizenservice.R;
 
 public class SettingsFragment extends Fragment {
-    private final String TAG = "SettingsFragment";
 
     public static String SP_NOTIFICATION = "settingsNotification";
     public static String SP_LANGUAGE = "SettingsLanguage";
@@ -34,10 +33,13 @@ public class SettingsFragment extends Fragment {
     private int languageStatus = -1;
     private int themeStatus = -1;
 
-    private String[] notificationGroup = {"on","off"};
-    private String[] languageGroup = {"English", "हिंदी"};
-    private String[] themeGroup = {"Indigo-Pink", "MidNightBlue-Yellow",
-            "WetAsphalt-Turquoise", "Grey-Emerald", "Teal-Orange", "Brown-Blue"};
+    private String[] notificationGroup;
+    private String[] themeGroup;
+    private String[] languageGroup = {
+            "English",
+            "हिंदी"
+    };
+
 
     public static final int INDIGO_PINK = 0;
     public static final int MIDNIGHT_BLUE_YELLOW = 1;
@@ -57,6 +59,21 @@ public class SettingsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+
+        notificationGroup = new String[]{
+                getString(R.string.on),
+                getString(R.string.off)
+        };
+
+        themeGroup = new String[]{
+                getString(R.string.theme_indigo_pink),
+                getString(R.string.theme_midNightBlue_yellow),
+                getString(R.string.theme_wetAsphalt_turquoise),
+                getString(R.string.theme_grey_emerald),
+                getString(R.string.theme_teal_orange),
+                getString(R.string.theme_brown_blue)
+        };
+        
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         notificationStatus = sharedPreferences.getInt(SP_NOTIFICATION, -1);
         languageStatus = sharedPreferences.getInt(SP_LANGUAGE, -1);
@@ -92,7 +109,7 @@ public class SettingsFragment extends Fragment {
         notificationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDialog("Notification", notificationGroup,
+                showDialog(getString(R.string.notification_dialog_title), notificationGroup,
                         notificationStatus, getNotificationDialogListener());
             }
         });
@@ -101,7 +118,7 @@ public class SettingsFragment extends Fragment {
         languageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDialog("Select Language",languageGroup,
+                showDialog(getString(R.string.language_dialog_title),languageGroup,
                         languageStatus, getLanguageDialogListener());
             }
         });
@@ -109,7 +126,7 @@ public class SettingsFragment extends Fragment {
         themeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDialog("Select Theme", themeGroup,
+                showDialog(getString(R.string.themes_dialog_title), themeGroup,
                         themeStatus, getThemeDialogListener());
             }
         });

@@ -117,14 +117,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onInfoWindowLongClick(final Marker marker) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
-                builder.setTitle("Add Solution").setMessage("Do you want to add solution?");
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                builder.setTitle(getString(R.string.add_solution_dialog_title));
+                builder.setMessage(getString(R.string.add_solution_dialog_details));
+                builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                     }
                 });
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         ProblemModel problem = (ProblemModel) marker.getTag();

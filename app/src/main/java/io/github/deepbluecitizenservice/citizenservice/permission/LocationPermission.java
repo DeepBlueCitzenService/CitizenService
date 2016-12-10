@@ -3,10 +3,12 @@ package io.github.deepbluecitizenservice.citizenservice.permission;
 import android.Manifest;
 import android.content.Context;
 
+import io.github.deepbluecitizenservice.citizenservice.R;
+
 public class LocationPermission extends Permission {
 
     public LocationPermission(Context context){
-        super(context, "Location");
+        super(context, context.getString(R.string.permission_group_location));
     }
 
     private String[] getLocationPermissions(){

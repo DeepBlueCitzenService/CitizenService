@@ -99,7 +99,7 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
 
     private String checkIfProblemIsSolved(ProblemModel p){
         if(p.status == ProblemModel.STATUS_SOLVED){
-            return "Solved";
+            return context.getString(R.string.problem_solved);
         }
         else{
             return null;
@@ -115,7 +115,7 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                 byte[] imageBytes = stream.toByteArray();
 
-                ArrayList<String> imageUrls = new ArrayList<String>();
+                ArrayList<String> imageUrls = new ArrayList<>();
                 if(p.status == ProblemModel.STATUS_SOLVED){
                     imageUrls.add(p.url);
                     imageUrls.add(p.solutionUrl);
