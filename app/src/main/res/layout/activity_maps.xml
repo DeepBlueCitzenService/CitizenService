@@ -1,4 +1,6 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
@@ -18,7 +20,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:padding="8dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            tools:ignore="UseCompoundDrawables">
 
 
             <LinearLayout
@@ -29,14 +32,15 @@
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:id="@+id/map_legend_color_1"
-                    android:background="@color/purple_a200"/>
+                    android:background="@color/purple_a200"
+                    android:contentDescription="@string/category_traffic" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:id="@+id/map_legend_text_1"
-                    android:text="Traffic"/>
+                    android:text="@string/category_traffic"/>
 
             </LinearLayout>
 
@@ -50,14 +54,15 @@
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:id="@+id/map_legend_color_2"
-                    android:background="@color/orange_a400"/>
+                    android:background="@color/orange_a400"
+                    android:contentDescription="@string/category_garbage" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:id="@+id/map_legend_text_2"
-                    android:text="Garbage"/>
+                    android:text="@string/category_garbage"/>
 
             </LinearLayout>
 
@@ -70,18 +75,17 @@
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:id="@+id/map_legend_color_3"
-                    android:background="@color/blue_a400"/>
+                    android:background="@color/blue_a400"
+                    android:contentDescription="@string/category_potholes" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:id="@+id/map_legend_text_3"
-                    android:text="Potholes"/>
-
+                    android:text="@string/category_potholes"/>
 
             </LinearLayout>
-
 
         </LinearLayout>
 

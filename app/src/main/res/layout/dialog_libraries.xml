@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -15,7 +16,7 @@
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
         android:layout_marginBottom="20dp"
-        android:text="Libraries Used"/>
+        android:text="@string/libraries_dialog_title"/>
 
     <View android:layout_width="match_parent"
         android:layout_height="2dp"
@@ -50,26 +51,26 @@
                         android:layout_marginTop="8dp"
                         android:textStyle="bold"
                         android:textSize="16sp"
-                        android:text="Google Support Libraries"/>
+                        android:text="@string/google_support_libraries"/>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="v7 cardview library"/>
+                        android:text="@string/v7_cardview_library"/>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="design support library"/>
+                        android:text="@string/design_support_library"/>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:layout_marginBottom="4dp"
-                        android:text="v4 support library"/>
+                        android:text="@string/v4_support_library"/>
 
                 </LinearLayout>
 
@@ -95,32 +96,32 @@
                         android:layout_marginTop="8dp"
                         android:textStyle="bold"
                         android:textSize="16sp"
-                        android:text="Firebase Libraries"/>
+                        android:text="@string/firebase_libraries"/>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="firebase core library"/>
+                        android:text="@string/firebase_core_library"/>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="firebase storage library"/>
+                        android:text="@string/firebase_storage_library"/>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="firebase auth library"/>
+                        android:text="@string/firebase_auth_library"/>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:layout_marginBottom="4dp"
-                        android:text="firebase database library"/>
+                        android:text="@string/firebase_database_library"/>
 
                 </LinearLayout>
 
@@ -146,20 +147,20 @@
                         android:layout_marginTop="8dp"
                         android:textStyle="bold"
                         android:textSize="16sp"
-                        android:text="FirebaseUI Libraries"/>
+                        android:text="@string/firebaseui_libraries"/>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="firebase-ui storage library"/>
+                        android:text="@string/firebaseui_storage_library"/>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:layout_marginBottom="4dp"
-                        android:text="firebase-ui database library"/>
+                        android:text="@string/firebaseui_database_library"/>
 
                 </LinearLayout>
 
@@ -185,14 +186,14 @@
                         android:layout_marginTop="8dp"
                         android:textStyle="bold"
                         android:textSize="16sp"
-                        android:text="Google Services Libraries"/>
+                        android:text="@string/google_services_libraries"/>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:layout_marginBottom="4dp"
-                        android:text="play services"/>
+                        android:text="@string/play_services"/>
 
                 </LinearLayout>
 
@@ -218,14 +219,14 @@
                         android:layout_marginTop="8dp"
                         android:textStyle="bold"
                         android:textSize="16sp"
-                        android:text="Aurelhubert's Libraries"/>
+                        android:text="@string/aurelhubert_libraries"/>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:layout_marginBottom="4dp"
-                        android:text="ahbottomnavigation"/>
+                        android:text="@string/ahbottomnavigation"/>
 
                 </LinearLayout>
 
