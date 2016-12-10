@@ -3,6 +3,7 @@ package io.github.deepbluecitizenservice.citizenservice.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -78,6 +79,15 @@ public class HomeFragment extends Fragment {
                                 linearLayoutManager.findLastVisibleItemPosition() + QueryModel.OFFSET_VIEW){
                     queryModel.makeQuery(queryModel.lastSeen, ref, adapter);
                 }
+            }
+        });
+
+        final SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.home_view_swipe);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //TODO: Add method to refresh the view
+                refreshLayout.setRefreshing(false);
             }
         });
 
