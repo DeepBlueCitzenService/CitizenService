@@ -89,6 +89,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }.execute();
     }
 
+    @Override
+    public void onResume(){
+        SettingsFragment.setLocaleFromSharedPreferences(this);
+        super.onResume();
+    }
+
     private void setThemeFromPreferences() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         switch (preferences.getInt(SettingsFragment.SP_THEME, 0)){
