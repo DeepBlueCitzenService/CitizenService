@@ -19,8 +19,8 @@
                 android:layout_height="40dp"
                 android:layout_width="40dp"
                 android:id="@+id/map_info_user_image"
-                android:src="@drawable/ic_perm_identity">
-            </ImageView>
+                android:src="@drawable/ic_person"
+                android:contentDescription="@string/profile_photo" />
 
         </LinearLayout>
 
@@ -36,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textStyle="bold"
-                android:text="UserName"
+                android:text="@string/profile_name"
                 android:id="@+id/map_info_user_name_tv"/>
 
             <ImageView
@@ -45,7 +45,8 @@
                 android:src="@drawable/ic_date_range"
                 android:scaleType="centerInside"
                 android:id="@+id/map_info_date_iv"
-                android:layout_alignParentBottom="true"/>
+                android:layout_alignParentBottom="true"
+                android:contentDescription="@string/problem_time_period" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -55,7 +56,7 @@
                 android:textSize="12sp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="TimePeriod"
+                android:text="@string/problem_time_period"
                 android:id="@+id/map_info_period_tv"
                 android:layout_alignParentBottom="true"
                 android:layout_toEndOf="@id/map_info_date_iv"/>
@@ -75,7 +76,8 @@
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
             android:src="@drawable/image_placeholder"
-            android:id="@+id/map_info_image_view"/>
+            android:id="@+id/map_info_image_view"
+            android:contentDescription="@string/image_label" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -87,7 +89,7 @@
             android:background="#66000000"
             android:textColor="@android:color/white"
             android:textStyle="bold"
-            android:text="Category"
+            android:text="@string/category_label"
             android:id="@+id/map_info_category_tv"/>
 
     </RelativeLayout>

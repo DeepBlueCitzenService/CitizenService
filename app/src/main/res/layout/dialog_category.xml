@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
@@ -13,7 +14,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginBottom="16dp"
         android:id="@+id/dialog_category_title"
-        android:text="Select Category"/>
+        android:text="@string/category_dialog_title"/>
     
     <RadioGroup
         android:layout_width="wrap_content"
@@ -28,19 +29,19 @@
             android:layout_height="wrap_content"
             android:checked="true"
             android:id="@+id/radio_traffic"
-            android:text="Traffic"/>
+            android:text="@string/category_traffic"/>
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/radio_garbage"
-            android:text="Garbage"/>
+            android:text="@string/category_garbage"/>
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/radio_potholes"
-            android:text="Potholes"/>
+            android:text="@string/category_potholes"/>
 
     </RadioGroup>
 
@@ -50,7 +51,7 @@
         android:layout_height="48dp"
         android:layout_marginTop="8dp"
         android:id="@+id/dialog_category_cancel"
-        android:text="Cancel"
+        android:text="@string/cancel"
         android:layout_below="@id/dialog_category_radiogroup"
         style="@style/Widget.AppCompat.Button.Borderless" />
 
@@ -60,7 +61,7 @@
         android:layout_height="48dp"
         android:layout_below="@+id/dialog_category_radiogroup"
         android:id="@+id/dialog_category_ok"
-        android:text="OK"
+        android:text="@string/ok"
         android:layout_toEndOf="@+id/dialog_category_cancel"
         style="@style/Widget.AppCompat.Button.Borderless"/>
 

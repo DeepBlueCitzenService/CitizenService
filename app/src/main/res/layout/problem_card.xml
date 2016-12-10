@@ -33,10 +33,10 @@
                         android:layout_height="40dp"
                         android:layout_width="match_parent"
                         android:id="@+id/user_image"
-                        android:src="@drawable/ic_perm_identity"
+                        android:src="@drawable/ic_person"
                         android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true">
-                    </ImageView>
+                        android:layout_centerHorizontal="true"
+                        android:contentDescription="@string/profile_photo" />
 
                 </android.support.v7.widget.CardView>
 
@@ -61,7 +61,8 @@
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:id="@+id/category_tv"
-                    android:layout_alignParentEnd="true" />
+                    android:layout_alignParentEnd="true"
+                    tools:ignore="RelativeOverlap" />
 
                 <ImageView
                     android:layout_width="12dp"
@@ -69,7 +70,8 @@
                     android:src="@drawable/ic_location_on_black"
                     android:scaleType="centerInside"
                     android:id="@+id/clock_iv"
-                    android:layout_alignParentBottom="true"/>
+                    android:layout_alignParentBottom="true"
+                    android:contentDescription="@string/location_label" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -94,7 +96,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:id="@+id/image_view"/>
+                android:id="@+id/image_view"
+                android:contentDescription="@string/image_label" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -119,7 +122,8 @@
                 android:layout_height="wrap_content"
                 android:textSize="13sp"
                 android:textStyle="bold"
-                android:id="@+id/time_period_tv"/>
+                android:id="@+id/time_period_tv"
+                tools:ignore="RelativeOverlap" />
 
             <ImageView
                 android:layout_width="16dp"
@@ -130,7 +134,8 @@
                 android:layout_toStartOf="@+id/arrow_button"
                 android:id = "@+id/add_solution_button"
                 tools:targetApi="lollipop"
-                android:layout_marginRight="20dp"/>
+                android:layout_marginEnd="20dp"
+                android:contentDescription="@string/problem_solve_button" />
 
             <ImageView
                 android:background="?android:selectableItemBackgroundBorderless"
@@ -141,8 +146,8 @@
                 android:src="@drawable/ic_keyboard_arrow_down"
                 android:layout_alignParentEnd="true"
                 android:id="@+id/arrow_button"
-                tools:targetApi="lollipop" />
-
+                tools:targetApi="lollipop"
+                android:contentDescription="@string/problem_expand_button" />
 
         </RelativeLayout>
 

@@ -12,7 +12,7 @@
         android:textSize="24sp"
         android:textStyle="bold"
         android:id="@+id/graph_chart_title"
-        android:text="Graph" />
+        android:text="@string/graph_default_title" />
 
     <WebView
         android:id="@+id/graph_chart_web_view"

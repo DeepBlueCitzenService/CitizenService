@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -16,10 +17,9 @@
             android:layout_width="match_parent"
             android:layout_height="160dp"
             android:id= "@+id/dialog_problem_image_view"
-            />
+            android:contentDescription="@string/solution_dialog_problem_image" />
 
     </LinearLayout>
-
 
     <LinearLayout
         android:layout_marginTop="8dp"
@@ -30,13 +30,12 @@
         android:layout_below="@+id/problem_image_container"
         android:visibility="gone">
 
-
         <ImageView
             android:id="@+id/dialog_solution_image_view"
             android:layout_width="match_parent"
             android:layout_height="160dp"
             android:scaleType="centerCrop"
-            />
+            android:contentDescription="@string/solution_dialog_solution_image" />
 
     </LinearLayout>
 
@@ -56,7 +55,7 @@
             android:id = "@+id/solution_dialog_gallery"
             android:clickable="true"
             android:background="?attr/selectableItemBackground"
-            />
+            android:contentDescription="@string/source_gallery" />
 
         <View
             android:layout_width="1dp"
@@ -72,7 +71,7 @@
             android:id = "@+id/solution_dialog_camera"
             android:clickable="true"
             android:background="?attr/selectableItemBackground"
-            />
+            android:contentDescription="@string/source_camera" />
 
     </LinearLayout>
 
@@ -80,8 +79,7 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_centerInParent="true"
-        android:id = "@+id/solution_dialog_progress_fab"
-        >
+        android:id = "@+id/solution_dialog_progress_fab">
 
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
@@ -91,4 +89,5 @@
             android:src = "@drawable/ic_cloud_upload"/>
 
     </com.github.jorgecastilloprz.FABProgressCircle>
+
 </RelativeLayout>

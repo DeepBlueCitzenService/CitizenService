@@ -1,4 +1,6 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -14,7 +16,8 @@
             android:layout_marginBottom="32dp"
             android:id="@+id/problem_image"
             android:scaleType="centerCrop"
-            android:src="@drawable/image_placeholder"/>
+            android:src="@drawable/image_placeholder"
+            android:contentDescription="@string/image_label" />
 
         <android.support.design.widget.FloatingActionButton
             android:layout_width="56dp"
@@ -38,7 +41,8 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginTop="4dp"
-                android:src="@drawable/ic_label_black"/>
+                android:src="@drawable/ic_label_black"
+                android:contentDescription="@string/category_label" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -50,14 +54,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
-                    android:text="Category"/>
+                    android:text="@string/category_label"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="12sp"
                     android:layout_marginTop="2dp"
-                    android:text="PlaceHolder"
+                    android:text="@string/select_category"
                     android:id="@+id/problem_category_tv"/>
 
             </LinearLayout>
@@ -75,7 +79,8 @@
                     android:scaleX="0.8"
                     android:scaleY="0.8"
                     android:id="@+id/problem_category_edit"
-                    android:src="@drawable/ic_edit_black"/>
+                    android:src="@drawable/ic_edit_black"
+                    android:contentDescription="@string/edit_category" />
 
             </LinearLayout>
 
@@ -93,7 +98,8 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginTop="4dp"
-                android:src="@drawable/ic_location_on_black"/>
+                android:src="@drawable/ic_location_on_black"
+                android:contentDescription="@string/location_label" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -105,14 +111,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
-                    android:text="Location"/>
+                    android:text="@string/location_label"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="12sp"
                     android:layout_marginTop="2dp"
-                    android:text="PlaceHolder"
+                    android:text="@string/select_location"
                     android:id="@+id/problem_location_tv"/>
 
             </LinearLayout>
@@ -130,7 +136,8 @@
                     android:scaleX="0.8"
                     android:scaleY="0.8"
                     android:src="@drawable/ic_edit_black"
-                    android:id="@+id/problem_location_edit"/>
+                    android:id="@+id/problem_location_edit"
+                    android:contentDescription="@string/edit_location" />
 
             </LinearLayout>
 
@@ -147,7 +154,8 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginTop="4dp"
-                android:src="@drawable/ic_insert_comment_black"/>
+                android:src="@drawable/ic_insert_comment_black"
+                android:contentDescription="@string/description_label" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -168,7 +176,7 @@
                         android:inputType="textMultiLine"
                         android:scrollbars="vertical"
                         android:maxLines="5"
-                        android:hint="Description"/>
+                        android:hint="@string/description_label"/>
 
                 </android.support.design.widget.TextInputLayout>
 
