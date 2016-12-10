@@ -145,13 +145,13 @@ public class GPSService extends Service implements LocationListener {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
 
         // Setting Dialog Title
-        alertDialog.setTitle(getString(R.string.gps_disabled_dialog_title));
+        alertDialog.setTitle(context.getString(R.string.gps_disabled_dialog_title));
 
         // Setting Dialog Message
-        alertDialog.setMessage(getString(R.string.gps_disabled_dialog_details));
+        alertDialog.setMessage(context.getString(R.string.gps_disabled_dialog_details));
 
         // On pressing Settings button
-        alertDialog.setPositiveButton(getString(R.string.gps_disabled_settings_button), new DialogInterface.OnClickListener() {
+        alertDialog.setPositiveButton(context.getString(R.string.gps_disabled_settings_button), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog,int which) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 context.startActivity(intent);
@@ -159,7 +159,7 @@ public class GPSService extends Service implements LocationListener {
         });
 
         // on pressing cancel button
-        alertDialog.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+        alertDialog.setNegativeButton(context.getString(R.string.cancel), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
             }
