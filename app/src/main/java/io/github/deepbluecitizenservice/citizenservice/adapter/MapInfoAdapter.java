@@ -59,7 +59,7 @@ public class MapInfoAdapter implements GoogleMap.InfoWindowAdapter {
         ProblemModel problem = (ProblemModel) marker.getTag();
         
         userNameTV.setText(problem.creatorName);
-        periodTV.setText(problem.getPeriod());
+        periodTV.setText(problem.getPeriod(context));
         categoryTV.setText(problem.getCategory(context));
         descriptionTV.setText(problem.description);
 

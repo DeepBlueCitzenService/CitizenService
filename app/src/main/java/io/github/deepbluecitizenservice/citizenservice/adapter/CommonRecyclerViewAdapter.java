@@ -67,7 +67,7 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
         holder.userNameTV.setText(problem.creatorName);
         holder.locationTV.setText(problem.locationAddress);
         holder.categoryTV.setText(problem.getCategory(context));
-        holder.periodTV.setText(problem.getPeriod());
+        holder.periodTV.setText(problem.getPeriod(context));
         holder.descriptionTV.setText(problem.description);
 
         String status = checkIfProblemIsSolved(problem);
