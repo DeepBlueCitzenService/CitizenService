@@ -1,5 +1,6 @@
 package io.github.deepbluecitizenservice.citizenservice.database;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -9,6 +10,8 @@ import com.google.firebase.database.IgnoreExtraProperties;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import io.github.deepbluecitizenservice.citizenservice.R;
 
 @IgnoreExtraProperties
 public class ProblemModel implements Parcelable{
@@ -126,23 +129,36 @@ public class ProblemModel implements Parcelable{
     }
 
     @Exclude
-    public static String getCategory(int category){
-
+    public static String getCategory(Context context, int category){
         switch(category){
-            case ProblemModel.CATEGORY_POTHOLES:
-                return "Potholes";
-            case ProblemModel.CATEGORY_GARBAGE:
-                return "Garbage";
-            case ProblemModel.CATEGORY_TRAFFIC:
-                return "Traffic";
+            case CATEGORY_POTHOLES:
+                return context.getString(R.string.category_potholes);
+            case CATEGORY_GARBAGE:
+                return context.getString(R.string.category_garbage);
+            case CATEGORY_TRAFFIC:
+                return context.getString(R.string.category_traffic);
+            default:
+                return context.getString(R.string.category_none);
         }
-
-        return "none";
     }
 
     @Exclude
-    public String getCategory(){
-        return getCategory(category);
+    public static int getCategory(String category){
+        if(category.equalsIgnoreCase("Potholes")){
+            return CATEGORY_POTHOLES;
+        }
+        else if(category.equalsIgnoreCase("Garbage")){
+            return  CATEGORY_GARBAGE;
+        }
+        else if(category.equalsIgnoreCase("Traffic")){
+            return CATEGORY_TRAFFIC;
+        }
+        else return -1;
+    }
+
+    @Exclude
+    public String getCategory(Context context){
+        return getCategory(context, this.category);
     }
 
     @Exclude

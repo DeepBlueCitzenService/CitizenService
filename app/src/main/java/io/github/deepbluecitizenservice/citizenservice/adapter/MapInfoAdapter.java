@@ -60,7 +60,7 @@ public class MapInfoAdapter implements GoogleMap.InfoWindowAdapter {
         
         userNameTV.setText(problem.creatorName);
         periodTV.setText(problem.getPeriod());
-        categoryTV.setText(problem.getCategory());
+        categoryTV.setText(problem.getCategory(context));
         descriptionTV.setText(problem.description);
 
         StorageReference refProblem = FirebaseStorage.getInstance().getReference(problem.url);
