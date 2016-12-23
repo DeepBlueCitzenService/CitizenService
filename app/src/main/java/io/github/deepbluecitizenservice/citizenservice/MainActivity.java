@@ -159,6 +159,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             //If not logged in, start the login activity
             Intent startLoginActivity = new Intent(this, LoginActivity.class);
             startActivity(startLoginActivity);
+            finish();
         }
     }
 
