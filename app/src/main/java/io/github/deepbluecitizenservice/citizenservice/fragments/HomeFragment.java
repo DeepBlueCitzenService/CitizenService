@@ -58,6 +58,7 @@ public class HomeFragment extends Fragment {
         RecyclerView rv = (RecyclerView) v.findViewById(R.id.home_recycle_view);
 
         final CommonRecyclerViewAdapter adapter = new CommonRecyclerViewAdapter(
+                rv,
                 getContext(),
                 problemModelList,
                 MainActivity.HOME_TAG);

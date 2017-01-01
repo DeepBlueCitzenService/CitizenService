@@ -160,4 +160,7 @@
     <!--Placeholder-->
     <string name="placeholder">Placeholder</string>
 
+    <!--SnackBar And Toasts-->
+    <string name="image_not_loaded">Image not loaded yet. Please click again after the Image loads.</string>
+
 </resources>
