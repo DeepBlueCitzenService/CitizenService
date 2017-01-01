@@ -129,4 +129,7 @@
     <!--Placeholder-->
     <string name="placeholder">प्लेसहोल्डर</string>
 
+    <!--SnackBar And Toasts-->
+    <string name="image_not_loaded">तस्वीर अभी तक लोड नहीं हुई। तस्वीर लोड होने के बाद फिर से क्लिक करें।</string>
+
 </resources>

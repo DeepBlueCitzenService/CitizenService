@@ -3,6 +3,7 @@ package io.github.deepbluecitizenservice.citizenservice.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,9 +23,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import io.github.deepbluecitizenservice.citizenservice.MapsActivity;
 import io.github.deepbluecitizenservice.citizenservice.ExpImageActivity;
 import io.github.deepbluecitizenservice.citizenservice.MainActivity;
+import io.github.deepbluecitizenservice.citizenservice.MapsActivity;
 import io.github.deepbluecitizenservice.citizenservice.R;
 import io.github.deepbluecitizenservice.citizenservice.SLANotification;
 import io.github.deepbluecitizenservice.citizenservice.SolutionDialogActivity;
@@ -35,8 +36,10 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
     private List<ProblemModel> problemList;
     private HashSet<String> problemIds;
     private String FragmentTAG;
+    private RecyclerView recyclerView;
 
-    public CommonRecyclerViewAdapter(Context context, List<ProblemModel> problems, String FragmentTAG){
+    public CommonRecyclerViewAdapter(RecyclerView rv, Context context, List<ProblemModel> problems, String FragmentTAG){
+        this.recyclerView = rv;
         this.context = context;
         this.problemList = problems;
         this.problemIds = new HashSet<>();
@@ -81,10 +84,15 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
                 .using(new FirebaseImageLoader())
                 .load(refProblem)
                 .override(400, 300)
+                .placeholder(R.drawable.image_placeholder)
                 .crossFade()
                 .into(holder.imageView);
 
-        Glide.with(context).load(problem.creatorURL).into(holder.userImage);
+        Glide.with(context)
+                .load(problem.creatorURL)
+                .placeholder(R.drawable.ic_person)
+                .crossFade()
+                .into(holder.userImage);
 
         setExpandButtonListener(holder.expandButton, holder.descriptionTV);
         setLocationClickListener(holder.locationTV, problem);
@@ -110,21 +118,26 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
         img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Bitmap bitmap = ((GlideBitmapDrawable) img.getDrawable()).getBitmap();
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                byte[] imageBytes = stream.toByteArray();
+                try {
+                    Bitmap bitmap = ((GlideBitmapDrawable) img.getDrawable()).getBitmap();
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                    byte[] imageBytes = stream.toByteArray();
 
-                ArrayList<String> imageUrls = new ArrayList<>();
-                if(p.status == ProblemModel.STATUS_SOLVED){
-                    imageUrls.add(p.url);
-                    imageUrls.add(p.solutionUrl);
+                    ArrayList<String> imageUrls = new ArrayList<>();
+                    if(p.status == ProblemModel.STATUS_SOLVED){
+                        imageUrls.add(p.url);
+                        imageUrls.add(p.solutionUrl);
+                    }
+
+                    Intent intent = new Intent(context, ExpImageActivity.class);
+                    intent.putStringArrayListExtra(ExpImageActivity.URL_LIST, imageUrls);
+                    intent.putExtra(ExpImageActivity.IMAGE_PARCEL, imageBytes);
+                    context.startActivity(intent);
                 }
-
-                Intent intent = new Intent(context, ExpImageActivity.class);
-                intent.putStringArrayListExtra(ExpImageActivity.URL_LIST, imageUrls);
-                intent.putExtra(ExpImageActivity.IMAGE_PARCEL, imageBytes);
-                context.startActivity(intent);
+                catch (ClassCastException e) {
+                    Snackbar.make(recyclerView, R.string.image_not_loaded, Snackbar.LENGTH_SHORT).show();
+                }
             }
         });
     }
