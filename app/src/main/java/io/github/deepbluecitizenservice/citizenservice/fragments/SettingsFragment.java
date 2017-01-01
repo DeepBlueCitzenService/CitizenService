@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -44,13 +43,15 @@ public class SettingsFragment extends Fragment {
             "हिंदी"
     };
 
-
     public static final int INDIGO_PINK = 0;
     public static final int MIDNIGHT_BLUE_YELLOW = 1;
     public static final int WET_ASPHALT_TURQUOISE = 2;
     public static final int GREY_EMERALD = 3;
     public static final int TEAL_ORANGE = 4;
     public static final int BROWN_BLUE = 5;
+
+    public static final int NOTIFICATION_ON = 0;
+    public static final int NOTIFICATION_OFF = 1;
 
     private OnSettingsFragmentInteraction mListener;
 
@@ -79,9 +80,9 @@ public class SettingsFragment extends Fragment {
         };
         
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        notificationStatus = sharedPreferences.getInt(SP_NOTIFICATION, 0);
+        notificationStatus = sharedPreferences.getInt(SP_NOTIFICATION, NOTIFICATION_ON);
         languageStatus = getLocaleInt(sharedPreferences.getString(SP_LANGUAGE, "en"));
-        themeStatus = sharedPreferences.getInt(SP_THEME, 0);
+        themeStatus = sharedPreferences.getInt(SP_THEME, INDIGO_PINK);
     }
 
 
@@ -187,8 +188,6 @@ public class SettingsFragment extends Fragment {
             public void onClick(DialogInterface dialog, int selection) {
                 notificationStatus = selection;
                 sharedPreferences.edit().putInt(SP_NOTIFICATION, selection).apply();
-                //TODO : Handle selection
-                Toast.makeText(getContext(), "WIP Feature; Will be added soon", Toast.LENGTH_LONG).show();
                 dialog.dismiss();
             }
         };
