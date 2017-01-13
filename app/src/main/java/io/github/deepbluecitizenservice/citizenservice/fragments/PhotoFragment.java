@@ -353,7 +353,7 @@ public class PhotoFragment extends Fragment {
     }
 
     private void setImageCategory(String imagePath){
-        new ImageClassifyTask().execute(imagePath);
+        new ImageClassifyTask().execute(imagePath, getContext().getCacheDir().getAbsolutePath());
     }
 
     //Handle uploads
@@ -379,7 +379,24 @@ public class PhotoFragment extends Fragment {
                                             .getReference()
                                             .child(userName+"/openProblems/problem-"+ts+".jpg");
 
-        Uri file = Uri.fromFile(new File(imagePath));
+        //Compress images before uploading if they are greater than 100kb
+        Uri file;
+        try {
+            long fileSize = new File(imagePath).length();
+            int qualityPercentage = (int) (10240000 / fileSize);
+            if(qualityPercentage > 100) qualityPercentage = 100;
+
+            File tmpFile = File.createTempFile("problem_", ".jpeg", getContext().getCacheDir());
+            FileOutputStream fos = new FileOutputStream(tmpFile);
+            BitmapFactory.decodeFile(imagePath)
+                    .compress(Bitmap.CompressFormat.JPEG, qualityPercentage, fos);
+
+            file = Uri.fromFile(tmpFile);
+
+        } catch (Exception e){
+            file = Uri.fromFile(new File(imagePath));
+        }
+
 
         new AsyncTask<Void, Void, Void>() {
             @Override
@@ -565,7 +582,7 @@ public class PhotoFragment extends Fragment {
         @Override
         protected Boolean doInBackground(String... imgPaths) {
             try {
-                ImageClassifier tfImageClassifier = new ImageClassifier(imgPaths[0]);
+                ImageClassifier tfImageClassifier = new ImageClassifier(imgPaths[0], imgPaths[1]);
                 List<Pair<String, Float>> classifyResult = tfImageClassifier.uploadAndClassify();
                 if(classifyResult == null) return false;
                 result = ImageClassifier.getBestCategory(classifyResult);

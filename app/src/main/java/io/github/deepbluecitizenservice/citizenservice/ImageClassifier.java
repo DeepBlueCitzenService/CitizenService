@@ -1,17 +1,19 @@
 package io.github.deepbluecitizenservice.citizenservice;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Pair;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,8 +33,16 @@ public class ImageClassifier {
     private String imagePath;
     private FileInputStream fileInputStream;
 
-    public ImageClassifier(String imgPath) throws MalformedURLException, FileNotFoundException {
-        this.fileInputStream = new FileInputStream(imgPath);
+    public ImageClassifier(String imgPath, String cacheDir) throws IOException {
+        long fileSize = new File(imgPath).length();
+        int qualityPercentage = (int) (10240000 / fileSize);
+        if(qualityPercentage > 100) qualityPercentage = 100;
+
+        File tmpFile = File.createTempFile("tf_", ".jpeg", new File(cacheDir));
+        FileOutputStream fos = new FileOutputStream(tmpFile);
+        BitmapFactory.decodeFile(imgPath).compress(Bitmap.CompressFormat.JPEG, qualityPercentage, fos);
+
+        this.fileInputStream = new FileInputStream(tmpFile);
         this.imagePath = imgPath;
         connectURL = new URL(serverURL);
     }
