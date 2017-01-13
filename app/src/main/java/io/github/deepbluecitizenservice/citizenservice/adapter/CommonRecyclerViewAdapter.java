@@ -46,6 +46,18 @@ public class CommonRecyclerViewAdapter extends RecyclerView.Adapter<CommonRecycl
         this.FragmentTAG = FragmentTAG;
     }
 
+    public void clear() {
+        int size = this.problemList.size();
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                this.problemList.remove(0);
+            }
+
+            this.notifyItemRangeRemoved(0, size);
+        }
+        problemIds.clear();
+    }
+
     public void addProblem(ProblemModel problemModel, String id){
         problemModel.setKey(id);
         problemList.add(problemModel);
