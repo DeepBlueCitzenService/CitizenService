@@ -251,7 +251,24 @@ public class SolutionDialogActivity extends AppCompatActivity {
             }
         }.execute();
 
-        Uri file = Uri.fromFile(new File(mSolutionImagePath));
+        //Compress images before uploading if they are greater than 100kb
+        Uri file;
+        try {
+            long fileSize = new File(mSolutionImagePath).length();
+            int qualityPercentage = (int) (10240000 / fileSize);
+            if(qualityPercentage > 100) qualityPercentage = 100;
+
+            File tmpFile = File.createTempFile("solution_", ".jpeg", getCacheDir());
+            FileOutputStream fos = new FileOutputStream(tmpFile);
+            BitmapFactory.decodeFile(mSolutionImagePath)
+                    .compress(Bitmap.CompressFormat.JPEG, qualityPercentage, fos);
+
+            file = Uri.fromFile(tmpFile);
+
+        } catch (Exception e){
+            file = Uri.fromFile(new File(mSolutionImagePath));
+        }
+
         UploadTask uploadTask = storageRef.putFile(file);
 
         uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {

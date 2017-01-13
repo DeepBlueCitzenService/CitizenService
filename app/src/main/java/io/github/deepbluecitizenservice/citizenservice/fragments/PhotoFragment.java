@@ -431,7 +431,24 @@ public class PhotoFragment extends Fragment {
                                             .getReference()
                                             .child(userName+"/openProblems/problem-"+ts+".jpg");
 
-        Uri file = Uri.fromFile(new File(imagePath));
+        //Compress images before uploading if they are greater than 100kb
+        Uri file;
+        try {
+            long fileSize = new File(imagePath).length();
+            int qualityPercentage = (int) (10240000 / fileSize);
+            if(qualityPercentage > 100) qualityPercentage = 100;
+
+            File tmpFile = File.createTempFile("problem_", ".jpeg", getContext().getCacheDir());
+            FileOutputStream fos = new FileOutputStream(tmpFile);
+            BitmapFactory.decodeFile(imagePath)
+                    .compress(Bitmap.CompressFormat.JPEG, qualityPercentage, fos);
+
+            file = Uri.fromFile(tmpFile);
+
+        } catch (Exception e){
+            file = Uri.fromFile(new File(imagePath));
+        }
+
 
         new AsyncTask<Void, Void, Void>() {
             @Override
