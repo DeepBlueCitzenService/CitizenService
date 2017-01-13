@@ -2,6 +2,7 @@ package io.github.deepbluecitizenservice.citizenservice.database;
 
 import android.graphics.Rect;
 import android.os.AsyncTask;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -18,7 +19,8 @@ public class QueryModel {
     public boolean allAdded = false;
     public final static int QUERY_SIZE = 3, OFFSET_VIEW= 2;
 
-    public void makeQuery(long startAt, final DatabaseReference ref, final CommonRecyclerViewAdapter adapter){
+    public void makeQuery(long startAt, final DatabaseReference ref,
+                          final CommonRecyclerViewAdapter adapter, final SwipeRefreshLayout refreshLayout){
         allAdded = false;
         counter = 0;
 
@@ -26,12 +28,23 @@ public class QueryModel {
             @Override
             public void onDataChange(final DataSnapshot dataSnapshot) {
                 size = dataSnapshot.getChildrenCount();
-                if(size==0) allAdded = true;
+                if(size==0) {
+                    allAdded = true;
+                    if(refreshLayout != null)
+                        refreshLayout.setRefreshing(false);
+                }
 
                 for(final DataSnapshot ds : dataSnapshot.getChildren()){
                     new AsyncTask<Void, Void, Boolean>() {
 
                         ProblemModel user;
+
+                        @Override
+                        protected void onPreExecute(){
+                            if(refreshLayout != null)
+                                refreshLayout.setRefreshing(true);
+                        }
+
                         @Override
                         protected Boolean doInBackground(Void... voids) {
                             if(!adapter.isAdded(ds.getKey())){
@@ -49,6 +62,9 @@ public class QueryModel {
                                 counter+=1;
                                 allAdded = counter>=size;
                             }
+
+                            if(refreshLayout != null)
+                                refreshLayout.setRefreshing(false);
                         }
 
                     }.execute();

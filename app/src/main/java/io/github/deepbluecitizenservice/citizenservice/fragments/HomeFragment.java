@@ -55,7 +55,7 @@ public class HomeFragment extends Fragment {
                 .child(user.getUid())
                 .child("openProblems");
 
-        RecyclerView rv = (RecyclerView) v.findViewById(R.id.home_recycle_view);
+        final RecyclerView rv = (RecyclerView) v.findViewById(R.id.home_recycle_view);
 
         final CommonRecyclerViewAdapter adapter = new CommonRecyclerViewAdapter(
                 rv,
@@ -64,12 +64,13 @@ public class HomeFragment extends Fragment {
                 MainActivity.HOME_TAG);
 
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        final SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.home_view_swipe);
 
         rv.setLayoutManager(linearLayoutManager);
         rv.addItemDecoration(new QueryModel.SpacingDecoration(8));
         rv.setAdapter(adapter);
 
-        queryModel.makeQuery(0-(System.currentTimeMillis()/1000), ref, adapter);
+        queryModel.makeQuery(0-(System.currentTimeMillis()/1000), ref, adapter, refreshLayout);
 
         rv.addOnScrollListener(new RecyclerView.OnScrollListener(){
             @Override
@@ -78,17 +79,16 @@ public class HomeFragment extends Fragment {
                 if(queryModel.allAdded &&
                         linearLayoutManager.getItemCount() <=
                                 linearLayoutManager.findLastVisibleItemPosition() + QueryModel.OFFSET_VIEW){
-                    queryModel.makeQuery(queryModel.lastSeen, ref, adapter);
+                    queryModel.makeQuery(queryModel.lastSeen, ref, adapter, refreshLayout);
                 }
             }
         });
 
-        final SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.home_view_swipe);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                //TODO: Add method to refresh the view
-                refreshLayout.setRefreshing(false);
+                adapter.clear();
+                queryModel.lastSeen = 0-(System.currentTimeMillis()/1000);
             }
         });
 
