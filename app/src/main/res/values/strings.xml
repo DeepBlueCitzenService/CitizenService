@@ -162,5 +162,6 @@
 
     <!--SnackBar And Toasts-->
     <string name="image_not_loaded">Image not loaded yet. Please click again after the Image loads.</string>
+    <string name="swipe_network_error">Slow network or network error</string>
 
 </resources>
