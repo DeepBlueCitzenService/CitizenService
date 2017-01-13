@@ -2,6 +2,8 @@ package io.github.deepbluecitizenservice.citizenservice.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -85,6 +87,17 @@ public class AllViewFragment extends Fragment {
             public void onRefresh() {
                 adapter.clear();
                 queryModel.lastSeen = 0-(System.currentTimeMillis()/1000);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(refreshLayout.isRefreshing()) {
+                            refreshLayout.setRefreshing(false);
+                            Snackbar.make(refreshLayout, R.string.swipe_network_error,
+                                    Snackbar.LENGTH_SHORT).show();
+                        }
+                    }
+                }, 5000);
             }
         });
 
