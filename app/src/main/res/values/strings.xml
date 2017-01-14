@@ -116,6 +116,9 @@
     <string name="settings_about_about">About</string>
     <string name="settings_logout_logout">Log Out</string>
 
+    <!-- All View Fragment -->
+    <string name="show_solved_problems">Show solved problems</string>
+
     <!-- Permissions -->
     <string name="permission_group_contacts">Contacts</string>
     <string name="permission_group_location">Location</string>

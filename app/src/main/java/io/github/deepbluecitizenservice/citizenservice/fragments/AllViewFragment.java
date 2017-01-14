@@ -15,6 +15,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -59,22 +61,30 @@ public class AllViewFragment extends Fragment {
             return v;
         }
 
-        final DatabaseReference ref = FirebaseDatabase
+
+        final DatabaseReference problemRef = FirebaseDatabase
                 .getInstance()
                 .getReference()
                 .child("problems");
+
+        final DatabaseReference solutionRef = FirebaseDatabase
+                .getInstance()
+                .getReference()
+                .child("solutions");
+
+        final DatabaseReference[] ref = {problemRef};
 
         RecyclerView rv = (RecyclerView) v.findViewById(R.id.all_recycle_view);
 
         final CommonRecyclerViewAdapter adapter = new CommonRecyclerViewAdapter(rv, getContext(), problemModelList, MainActivity.ALL_TAG);
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        final SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.all_view_swipe);
-
         rv.setLayoutManager(linearLayoutManager);
         rv.addItemDecoration(new QueryModel.SpacingDecoration(8));
         rv.setAdapter(adapter);
 
-        queryModel.makeQuery(0- (System.currentTimeMillis()/1000), ref, adapter, refreshLayout);
+        final SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.all_view_swipe);
+
+        queryModel.makeQuery(0- (System.currentTimeMillis()/1000), ref[0], adapter, refreshLayout);
 
         rv.addOnScrollListener(new RecyclerView.OnScrollListener(){
             @Override
@@ -83,7 +93,7 @@ public class AllViewFragment extends Fragment {
                 if(queryModel.allAdded &&
                         linearLayoutManager.getItemCount() <=
                                 linearLayoutManager.findLastVisibleItemPosition() + QueryModel.OFFSET_VIEW){
-                    queryModel.makeQuery(queryModel.lastSeen, ref, adapter, refreshLayout);
+                    queryModel.makeQuery(queryModel.lastSeen, ref[0], adapter, refreshLayout);
                 }
             }
         });
@@ -106,6 +116,21 @@ public class AllViewFragment extends Fragment {
                         }
                     }
                 }, 5000);
+            }
+        });
+
+        Switch showSolutionSwitch = (Switch) v.findViewById(R.id.all_view_solution_switch);
+        showSolutionSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                adapter.clear();
+                queryModel.lastSeen = 0-(System.currentTimeMillis()/1000);
+                if (isChecked){
+                    ref[0] = solutionRef;
+                }
+                else {
+                    ref[0] = problemRef;
+                }
             }
         });
 
