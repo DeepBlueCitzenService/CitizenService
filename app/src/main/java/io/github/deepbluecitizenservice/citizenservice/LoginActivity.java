@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -193,6 +194,12 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             //Authorize firebase with current google account
             firebaseAuthWithGoogle(account);
         }
+        else {
+            View baseView = findViewById(R.id.login_base_view);
+            Snackbar.make(baseView, R.string.error_logging_in, Snackbar.LENGTH_LONG).show();
+            if(progressDialog != null)
+                progressDialog.dismiss();
+        }
     }
 
     //Authenticate firebase with google account
@@ -232,6 +239,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
                         //Create a new user if logging in for the first time
                         if(!prefs.getBoolean(SP_USER_EXISTS_IN_FIREBASE, false)) {
+                            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
                             CustomDatabase db = new CustomDatabase(FirebaseDatabase.getInstance().getReference());
                             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                             db.createUser(user.getDisplayName(), user.getEmail(), user.getUid(), user.getPhotoUrl());
