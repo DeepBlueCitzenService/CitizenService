@@ -35,6 +35,7 @@ public class ExpImageActivity extends AppCompatActivity {
         }
 
         ZoomImageView imageView = (ZoomImageView) findViewById(R.id.expanded_image);
+        View baseView = findViewById(R.id.exp_image_base);
 
         Intent intent = getIntent();
         List<String> urlList = intent.getStringArrayListExtra(URL_LIST);
@@ -45,7 +46,7 @@ public class ExpImageActivity extends AppCompatActivity {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.image_recycle_view);
         RecyclerView.LayoutManager manager =
                 new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        RecyclerView.Adapter adapter = new ExpImageRVAdapter(this, urlList, imageView);
+        RecyclerView.Adapter adapter = new ExpImageRVAdapter(this, urlList, imageView, baseView);
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(adapter);
 

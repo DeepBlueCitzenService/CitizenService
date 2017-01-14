@@ -3,6 +3,7 @@ package io.github.deepbluecitizenservice.citizenservice.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,11 +23,13 @@ public class ExpImageRVAdapter extends RecyclerView.Adapter<ExpImageRVAdapter.Vi
     private Context context;
     private List<String> imageUrlList;
     private ImageView expandedImage;
+    private View baseView;
 
-    public ExpImageRVAdapter(Context context, List<String> bitmapList, ImageView expandedImage){
+    public ExpImageRVAdapter(Context context, List<String> bitmapList, ImageView expandedImage, View baseView){
         this.context = context;
         this.imageUrlList = bitmapList;
         this.expandedImage = expandedImage;
+        this.baseView = baseView;
     }
 
     @Override
@@ -57,8 +60,13 @@ public class ExpImageRVAdapter extends RecyclerView.Adapter<ExpImageRVAdapter.Vi
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
-                expandedImage.setImageBitmap(bitmap);
+                try {
+                    Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
+                    expandedImage.setImageBitmap(bitmap);
+                }
+                catch (ClassCastException e){
+                    Snackbar.make(baseView, R.string.image_not_loaded, Snackbar.LENGTH_SHORT).show();
+                }
             }
         });
     }
