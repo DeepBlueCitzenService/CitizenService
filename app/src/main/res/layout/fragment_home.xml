@@ -20,6 +20,9 @@
         <include layout="@layout/card_no_internet"
             android:id="@+id/no_connection_card" />
 
+        <include layout="@layout/card_add_problem"
+            android:id="@+id/add_problem_card" />
+
     </LinearLayout>
 
 </android.support.v4.widget.SwipeRefreshLayout>

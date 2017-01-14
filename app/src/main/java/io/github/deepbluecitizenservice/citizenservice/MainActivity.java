@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -271,6 +272,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         viewPager.setOffscreenPageLimit(4);
     }
 
+    public void changeBottomBarSelection(int idx){
+        bottomNavigation.setCurrentItem(idx);
+    }
+
     public void adjustFragmentWithBottomBar(){
         if(bottomNavigation != null){
             int height = bottomNavigation.getHeight();
@@ -282,11 +287,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
     public void setupNoInternetCard(CardView noInternetCard){
-        TypedValue typedValue = new TypedValue();
-        Resources.Theme theme = getTheme();
-        theme.resolveAttribute(R.attr.colorControlActivated, typedValue, true);
-        noInternetCard.setBackgroundColor(typedValue.data);
-
+        noInternetCard = setCardColor(noInternetCard, R.attr.colorControlActivated);
         TextView openSettings = (TextView) noInternetCard.findViewById(R.id.no_internet_connection);
         openSettings.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -294,6 +295,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 startActivity(new Intent(Settings.ACTION_SETTINGS));
             }
         });
+    }
+
+    public CardView setCardColor(CardView card, @AttrRes int attr){
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = getTheme();
+        theme.resolveAttribute(attr, typedValue, true);
+        card.setBackgroundColor(typedValue.data);
+        return card;
     }
 
     public boolean checkInternetConnectivity(CardView card){

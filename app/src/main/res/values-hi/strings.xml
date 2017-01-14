@@ -136,8 +136,14 @@
 
     <!-- No internet card -->
     <string name="no_internet_connection_title">कोई इंटरनेट कनेक्शन नहीं</string>
-    <string name="no_internet_connection_message">आप इस एप्लिकेशन का उपयोग करने के लिए इंटरनेट से जुड़े होना चाहिए.
-        कनेक्ट करे और फिर से कोशिश करें</string>
+    <string name="no_internet_connection_message">आप इस एप्लिकेशन का उपयोग करने के लिए इंटरनेट से जुड़े होना चाहिए।
+        कनेक्ट करे और फिर से कोशिश करें।</string>
     <string name="no_internet_connection_button">सेटिंग्स खोलें</string>
+
+    <!-- Add problem Card -->
+    <string name="add_problem_card_title">कोई समस्या जोड़ी नहीं है</string>
+    <string name="add_problem_card_message">आपने कोई समस्या जोड़ी नहीं है।
+        नीचे दिए गए बटन पर क्लिक करके अपनी पहली समस्या जुड़े। </string>
+    <string name="add_problem_card_button">समस्या जुड़े</string>
 
 </resources>

@@ -3,6 +3,7 @@ package io.github.deepbluecitizenservice.citizenservice.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -12,11 +13,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -39,9 +44,13 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_home, container, false);
         final CardView noInternetCard = (CardView) v.findViewById(R.id.no_connection_card);
+        final CardView addProblemCard = (CardView) v.findViewById(R.id.add_problem_card);
 
+        setupAddProblemCard(addProblemCard);
         ((MainActivity)getActivity()).setupNoInternetCard(noInternetCard);
-        ((MainActivity)getActivity()).checkInternetConnectivity(noInternetCard);
+
+        boolean isConnected = ((MainActivity)getActivity()).checkInternetConnectivity(noInternetCard);
+
 
         queryModel = new QueryModel();
 
@@ -61,6 +70,8 @@ public class HomeFragment extends Fragment {
                 .child("users")
                 .child(user.getUid())
                 .child("openProblems");
+
+        checkIfUserHasAddedProblem(ref, addProblemCard, isConnected);
 
         RecyclerView rv = (RecyclerView) v.findViewById(R.id.home_recycle_view);
 
@@ -112,5 +123,39 @@ public class HomeFragment extends Fragment {
         });
 
         return v;
+    }
+
+    void setupAddProblemCard(CardView addProblemCard){
+        addProblemCard = ((MainActivity)getActivity())
+                .setCardColor(addProblemCard, R.attr.colorControlActivated);
+
+        TextView openFragment = (TextView) addProblemCard.findViewById(R.id.add_problem_card_button);
+        openFragment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity)getActivity()).changeBottomBarSelection(2);
+            }
+        });
+    }
+
+    void checkIfUserHasAddedProblem(DatabaseReference ref, final CardView card, final boolean isConnected){
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(isConnected){
+                    if(!dataSnapshot.exists()){
+                        card.setVisibility(View.VISIBLE);
+                    }
+                    else {
+                        card.setVisibility(View.GONE);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }
