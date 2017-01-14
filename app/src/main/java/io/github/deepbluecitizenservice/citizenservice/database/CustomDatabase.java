@@ -17,8 +17,21 @@ public class CustomDatabase{
 
     //Create a new user- only called once during first login
     public void createUser(String name, String email, String id, Uri photoURL){
-        UserModel user = new UserModel(name, email, photoURL);
-        db.child("users").child(id).setValue(user);
+        final UserModel user = new UserModel(name, email, photoURL);
+        final DatabaseReference userRef = db.child("users").child(id);
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.exists()){
+                    userRef.setValue(user);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     //Create a new problem

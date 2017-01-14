@@ -132,6 +132,7 @@
     <!--SnackBar And Toasts-->
     <string name="image_not_loaded">तस्वीर अभी तक लोड नहीं हुई। तस्वीर लोड होने के बाद फिर से क्लिक करें।</string>
     <string name="swipe_network_error">धीमी गति से नेटवर्क है या नेटवर्क त्रुटि</string>
+    <string name="error_logging_in">लॉगिंग इन करने में त्रुटि</string>
 
     <!-- No internet card -->
     <string name="no_internet_connection_title">कोई इंटरनेट कनेक्शन नहीं</string>

@@ -163,6 +163,7 @@
     <!--SnackBar And Toasts-->
     <string name="image_not_loaded">Image not loaded yet. Please click again after the Image loads.</string>
     <string name="swipe_network_error">Slow network or network error</string>
+    <string name="error_logging_in">Error while logging in</string>
 
     <!-- No internet card -->
     <string name="no_internet_connection_title">No Internet Connection</string>
