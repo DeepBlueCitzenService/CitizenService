@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -37,6 +38,10 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_home, container, false);
+        final CardView noInternetCard = (CardView) v.findViewById(R.id.no_connection_card);
+
+        ((MainActivity)getActivity()).setupNoInternetCard(noInternetCard);
+        ((MainActivity)getActivity()).checkInternetConnectivity(noInternetCard);
 
         queryModel = new QueryModel();
 
@@ -57,7 +62,7 @@ public class HomeFragment extends Fragment {
                 .child(user.getUid())
                 .child("openProblems");
 
-        final RecyclerView rv = (RecyclerView) v.findViewById(R.id.home_recycle_view);
+        RecyclerView rv = (RecyclerView) v.findViewById(R.id.home_recycle_view);
 
         final CommonRecyclerViewAdapter adapter = new CommonRecyclerViewAdapter(
                 rv,
@@ -91,6 +96,7 @@ public class HomeFragment extends Fragment {
             public void onRefresh() {
                 adapter.clear();
                 queryModel.lastSeen = 0-(System.currentTimeMillis()/1000);
+                ((MainActivity)getActivity()).checkInternetConnectivity(noInternetCard);
 
                 new Handler().postDelayed(new Runnable() {
                     @Override
