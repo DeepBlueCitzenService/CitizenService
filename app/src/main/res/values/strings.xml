@@ -171,4 +171,10 @@
         Please connect and try again</string>
     <string name="no_internet_connection_button">Open settings</string>
 
+    <!-- Add problem Card -->
+    <string name="add_problem_card_title">No Problem Added</string>
+    <string name="add_problem_card_message">Seems like you have not added any problem.
+        Add your first problem by clicking the button below. </string>
+    <string name="add_problem_card_button">Add problem</string>
+
 </resources>
