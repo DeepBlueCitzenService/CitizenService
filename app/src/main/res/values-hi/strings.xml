@@ -85,6 +85,9 @@
     <string name="settings_about_about">एप के बारे में</string>
     <string name="settings_logout_logout">लोग आउट</string>
 
+    <!-- All View Fragment -->
+    <string name="show_solved_problems">हल हुए समस्याओं देखें</string>
+
     <!-- Permissions -->
     <string name="permission_group_contacts">कॉन्टेक्ट्स</string>
     <string name="permission_group_location">लोकेशन</string>
