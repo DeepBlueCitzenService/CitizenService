@@ -164,4 +164,10 @@
     <string name="image_not_loaded">Image not loaded yet. Please click again after the Image loads.</string>
     <string name="swipe_network_error">Slow network or network error</string>
 
+    <!-- No internet card -->
+    <string name="no_internet_connection_title">No Internet Connection</string>
+    <string name="no_internet_connection_message">You must be connected to internet to use this app.
+        Please connect and try again</string>
+    <string name="no_internet_connection_button">Open settings</string>
+
 </resources>
