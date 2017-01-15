@@ -21,7 +21,6 @@ import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
-import com.github.jorgecastilloprz.FABProgressCircle;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,14 +37,17 @@ import java.io.FileOutputStream;
 import io.github.deepbluecitizenservice.citizenservice.database.CustomDatabase;
 import io.github.deepbluecitizenservice.citizenservice.fragments.PhotoFragment;
 import io.github.deepbluecitizenservice.citizenservice.fragments.SettingsFragment;
+import io.github.deepbluecitizenservice.citizenservice.service.GPSService;
+import io.github.deepbluecitizenservice.citizenservice.views.ModifiedProgressFAB;
 
 public class SolutionDialogActivity extends AppCompatActivity {
     private String imageKey, mSolutionImagePath="";
 
     private ImageView mSolutionImageView;
     private LinearLayout mButtons, mImageLayout;
+    private View baseView;
 
-    private FABProgressCircle fabCircle;
+    private ModifiedProgressFAB fabCircle;
     private FloatingActionButton mFab;
     private  boolean isClicked;
 
@@ -64,6 +66,8 @@ public class SolutionDialogActivity extends AppCompatActivity {
 
         mFab = (FloatingActionButton) findViewById(R.id.fab_problem_dialog);
         mFab.setVisibility(View.GONE);
+
+        baseView = findViewById(R.id.solution_dialog_base);
 
         mFab.setBackgroundTintList(ContextCompat.getColorStateList(this, getThemeColorID()));
 
@@ -94,21 +98,41 @@ public class SolutionDialogActivity extends AppCompatActivity {
             }
         });
 
-        fabCircle = (FABProgressCircle) findViewById(R.id.solution_dialog_progress_fab);
+        fabCircle = (ModifiedProgressFAB) findViewById(R.id.solution_dialog_progress_fab);
 
         mFab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                fabCircle.show();
                 if(mSolutionImagePath.length()>0 && !isClicked) {
-                    isClicked = true;
-                    fabCircle.show();
-                    mFab.setOnClickListener(null);
+                    new AsyncTask<Void, Void, Boolean>(){
 
-                    new AsyncTask<Void, Void, Void>(){
+                        boolean analysisSuccess = false;
+
                         @Override
-                        protected Void doInBackground(Void... params) {
-                            handleSolutionUpload(imageKey);
-                            return null;
+                        protected void onPreExecute() {
+                            analysisSuccess = analyseImage(mSolutionImagePath);
+                        }
+
+                        @Override
+                        protected Boolean doInBackground(Void... params) {
+                            if(analysisSuccess){
+                                handleSolutionUpload(imageKey);
+                                return true;
+                            }
+                            else {
+                                return false;
+                            }
+                        }
+                        @Override
+                        protected void onPostExecute(Boolean result){
+                            if(result){
+                                isClicked = true;
+                                mFab.setOnClickListener(null);
+                            }
+                            else {
+                                fabCircle.hide();
+                            }
                         }
                     }.execute();
                 }
@@ -150,37 +174,32 @@ public class SolutionDialogActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode== CAMERA_CALL){
             if(resultCode == Activity.RESULT_OK){
-                Bitmap bitmap = handleCameraUpload(data);
-
+                handleCameraUpload(data);
                 mButtons.setVisibility(View.GONE);
                 mImageLayout.setVisibility(View.VISIBLE);
-                //TODO:
-                //Analyse then allow upload
-                //Probably should start a progress dialog here
-                //with async task
-                if(analyseImage(bitmap)){
-                    mFab.setVisibility(View.VISIBLE);
-                }
+                mFab.setVisibility(View.VISIBLE);
             }
         }
 
         //Get image from Gallery
         if(requestCode== GALLERY_CALL){
             if(resultCode== Activity.RESULT_OK) {
-                Bitmap bitmap = handleGalleryUpload(data);
-
+                handleGalleryUpload(data);
                 mButtons.setVisibility(View.GONE);
                 mImageLayout.setVisibility(View.VISIBLE);
-
-                if(analyseImage(bitmap)){
-                    mFab.setVisibility(View.VISIBLE);
-                }
+                mFab.setVisibility(View.VISIBLE);
             }
         }
     }
 
-    public boolean analyseImage(Bitmap bitmap){
-        //TODO: Check whether solution is done
+    public boolean analyseImage(String imagePath){
+        GPSService gpsService = new GPSService(this, baseView);
+        if(!gpsService.isGPSEnabled() && !gpsService.isGPSPermissionGranted()){
+            return false;
+        }
+        // TODO: Get location and verify if it's correct
+        // TODO: Upload image to tensorflow server to get probabilities and then verify
+        //For now return true (i.e. image is verified)
         return true;
     }
 
@@ -275,15 +294,12 @@ public class SolutionDialogActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                 fabCircle.beginFinalAnimation();
-
-                try {
-                    Thread.sleep(500);
-                }
-                catch (InterruptedException e){
-                    e.printStackTrace();
-                }
-
-                finish();
+                fabCircle.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        finish();
+                    }
+                });
             }
         });
     }
