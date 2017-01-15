@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/solution_dialog_base"
     android:padding="16dp">
 
     <LinearLayout
@@ -75,19 +76,19 @@
 
     </LinearLayout>
 
-    <com.github.jorgecastilloprz.FABProgressCircle
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
+    <io.github.deepbluecitizenservice.citizenservice.views.ModifiedProgressFAB
+        android:layout_height="60dp"
+        android:layout_width="60dp"
         android:layout_centerInParent="true"
         android:id = "@+id/solution_dialog_progress_fab">
 
         <android.support.design.widget.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:id="@+id/fab_problem_dialog"
             app:fabSize="normal"
             android:src = "@drawable/ic_cloud_upload"/>
 
-    </com.github.jorgecastilloprz.FABProgressCircle>
+    </io.github.deepbluecitizenservice.citizenservice.views.ModifiedProgressFAB>
 
 </RelativeLayout>
