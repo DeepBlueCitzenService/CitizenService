@@ -5,6 +5,8 @@
     <item android:drawable="@color/wet_asphalt_700"/>
 
     <item
+        android:height="120dp"
+        android:width="120dp"
         android:drawable="@drawable/ic_app_icon"
         android:gravity="center">
     </item>

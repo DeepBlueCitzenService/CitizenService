@@ -110,14 +110,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     private void setThemeFromPreferences() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        switch (preferences.getInt(SettingsFragment.SP_THEME, 0)){
-            default:
+        switch (preferences.getInt(SettingsFragment.SP_THEME, 2)){
             case SettingsFragment.INDIGO_PINK:
                 setTheme(R.style.AppTheme_IndigoPink);
                 break;
             case SettingsFragment.MIDNIGHT_BLUE_YELLOW:
                 setTheme(R.style.AppTheme_MidNightBlueYellow);
                 break;
+            default:
             case SettingsFragment.WET_ASPHALT_TURQUOISE:
                 setTheme(R.style.AppTheme_WetAsphaltTurquoise);
                 break;
