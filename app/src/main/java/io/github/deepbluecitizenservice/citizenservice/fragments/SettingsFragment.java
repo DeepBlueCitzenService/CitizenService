@@ -34,7 +34,7 @@ public class SettingsFragment extends Fragment {
 
     private int notificationStatus = 0;
     private int languageStatus = 0;
-    private int themeStatus = 0;
+    private int themeStatus = 2;
 
     private String[] notificationGroup;
     private String[] themeGroup;
@@ -82,7 +82,7 @@ public class SettingsFragment extends Fragment {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         notificationStatus = sharedPreferences.getInt(SP_NOTIFICATION, NOTIFICATION_ON);
         languageStatus = getLocaleInt(sharedPreferences.getString(SP_LANGUAGE, "en"));
-        themeStatus = sharedPreferences.getInt(SP_THEME, INDIGO_PINK);
+        themeStatus = sharedPreferences.getInt(SP_THEME, WET_ASPHALT_TURQUOISE);
     }
 
 

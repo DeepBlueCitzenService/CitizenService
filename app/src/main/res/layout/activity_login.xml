@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/indigo_500"
+    android:background="@color/wet_asphalt_700"
     android:id="@+id/login_base_view"
     android:orientation="vertical">
 
@@ -40,8 +40,8 @@
 
     <ImageView
         android:id="@+id/login_logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:layout_marginBottom="12dp"
         android:layout_gravity="center"
         android:src="@mipmap/ic_launcher"

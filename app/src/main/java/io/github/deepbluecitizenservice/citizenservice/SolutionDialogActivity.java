@@ -152,12 +152,12 @@ public class SolutionDialogActivity extends AppCompatActivity {
     //HACK
     private int getThemeColorID(){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        switch (preferences.getInt(SettingsFragment.SP_THEME, 0)){
-            default:
+        switch (preferences.getInt(SettingsFragment.SP_THEME, 2)){
             case SettingsFragment.INDIGO_PINK:
                 return R.color.pink_a200;
             case SettingsFragment.MIDNIGHT_BLUE_YELLOW:
                 return R.color.might_night_blue_700;
+            default:
             case SettingsFragment.WET_ASPHALT_TURQUOISE:
                 return R.color.turquoise_500;
             case SettingsFragment.GREY_EMERALD:
